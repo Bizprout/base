@@ -1,0 +1,4 @@
+https://spring.io/guides/tutorials/bookmarks/#_getting_started
+
+https://dzone.com/articles/hibernate-query-example-qbe
+
