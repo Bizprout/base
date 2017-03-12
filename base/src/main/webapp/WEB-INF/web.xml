@@ -4,7 +4,7 @@
 	version="3.0">
 	<display-name>Bizprout</display-name>
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>html/Index.html</welcome-file>
 	</welcome-file-list>
 
 	<!-- Spring listener to start container -->
