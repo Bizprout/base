@@ -1,0 +1,61 @@
+<script type="text/javascript">
+            $(document).ready(function (){
+            	
+            	$("#menu").show();
+		            
+               $('.submenu-button-open').click(function (){
+                  $('.submenu-container').animate({
+                     left: '0px' 
+                  },700);
+                  $('body').css('overflow','hidden');
+               }); 
+               
+               $('.submenu-button-close').click(function (){
+                   $('.submenu-container').animate({
+                     left: '-250px' 
+                  },700);
+                  $('body').css('overflow','auto');
+               });
+            });
+        </script>
+	       
+        <div class="dashboard-page">
+            <div class="right" style="margin-left:100px;">
+                <div class="heading">
+					<div class="path">Welcome!</div>
+                    <div class="path">Your Last Login was on </div>
+                    <div class="text">Choose Your Option</div>
+                </div>
+                	
+                	<div class="app-section">
+                	<div class="app-section-container path" role="button" data-toggle="modal" data-target="#last-step-modal" style="width:calc((100% - 90px - 28px ) / 3);">
+                        <div class="app-type">Masters - Setup</div>
+                        <div class="title">Masters Creation</div>
+                        
+                        <div class="content">
+                            About App Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        </div>
+                        <a href="#masters"  class="btn btn-success" style="text-decoration:none;">Masters</a>
+                   </div>
+                   <div class="app-section-container path" role="button" data-toggle="modal" data-target="#last-step-modal" style="width:calc((100% - 90px - 28px ) / 3);">
+                       <div class="app-type">Mapping - Setup</div>
+                       <div class="title">Masters Mappings</div>
+                       
+                       <div class="content">
+                           About App Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                       </div>
+                           <a href="#mapping" style="text-decoration:none;"><button type="button" class="btn btn-success">Mapping</button></a>
+                   </div>
+                    <div class="app-section-container path" role="button" data-toggle="modal" data-target="#last-step-modal" style="width:calc((100% - 90px - 28px ) / 3);">
+                       <div class="app-type">Reports</div>
+                       <div class="title">Reports Generation</div>
+                       
+                       <div class="content">
+                           About App Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                       </div>
+                           <a href="#reports" style="text-decoration:none;"><button type="button" class="btn btn-success">Reports</button></a>
+                   </div>
+                   </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>

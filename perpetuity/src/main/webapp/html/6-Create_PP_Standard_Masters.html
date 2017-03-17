@@ -1,0 +1,138 @@
+
+<script type="text/javascript">
+            $(document).ready(function () {
+            	$("#menu").show();
+            	
+                $('.submenu-button-open').click(function () {
+                    $('.submenu-container').animate({
+                        left: '0px'
+                    }, 700);
+                    $('body').css('overflow', 'hidden');
+                });
+
+                $('.submenu-button-close').click(function () {
+                    $('.submenu-container').animate({
+                        left: '-250px'
+                    }, 700);
+                    $('body').css('overflow', 'auto');
+                });
+
+                $('#cu_user_type').selectpicker({
+                    style: 'btn-info'
+                });
+
+            });
+        </script>
+
+<div class="dashboard-page">
+	<div class="right" style="margin-left: 100px;">
+		<div class="heading">
+			<div class="path">Create PP Standard Masters</div>
+			<div class="text">Standard Masters</div>
+		</div>
+		<div class="cu-section">
+		
+		<div class="row">
+		<div class="col-xs-4">
+		<label class="radio-inline"><input type="radio" name="change_screen" ng-model="addpp" value="Add" ng-checked="(addpp == Add)" ng-click="routedirect('Add')">Add PP Masters</label>
+		<label class="radio-inline"><input type="radio" name="change_screen" ng-model="impexp_pp" value="Edit" ng-click="routedirect('Edit')">Import/Export PP Masters</label>							
+		</div>
+		</div>
+		<br><br>
+		
+		<div id="add" ng-show="showadd">
+			<div class="row">
+				<div class="col-xs-3">
+					<span>Select&nbsp;Master Type:</span> <select class="selectpicker"
+						id="master_type" name="master_type">
+						<option selected disabled>Select Master Type</option>
+						<option>Ledgers</option>
+						<option>Groups</option>
+						<option>Cost Categories</option>
+						<option>Cost Centers</option>
+						<option>Voucher Types</option>
+					</select>
+				</div>
+
+			</div>
+
+			<div class="row">
+				<div class="col-xs-3">
+					<span>PP Master Name:</span> <input type="text"
+						name="pp_mastername" id="pp_mastername" class="form-control"
+						placeholder="PP Master Name" required autofocus>
+				</div>
+				<div class="col-xs-4">
+					<span>Select PP Parent Name:</span> <select class="selectpicker"
+						id="pp_parent" name="pp_parent">
+						<option selected disabled>Select PP Parent Name</option>
+						<option>Direct Expenses</option>
+						<option>InDirect Expenses</option>
+						<option>Direct Incomes</option>
+						<option>InDirect Incomes</option>
+						<option>Sales Account</option>
+						<option>Purchase Account</option>
+					</select>
+				</div>
+
+			</div>
+
+			<br />
+			<br />
+
+			<div class="row">
+				<div class="col-xs-5">
+					<button type="button" class="btn btn-success">Create/ Edit</button>
+					<button type="button" class="btn btn-success">Report</button>
+					<button type="button" class="btn btn-success">Cancel</button>
+					<a href="#masters" class="btn btn-success">Back</a>
+				</div>
+			</div>
+			</div>
+			
+			
+			<div id="edit" ng-show="showedit">
+				 <div class="row">  
+				 <div class="col-xs-3">
+				  <div class="input-group" style="width:500px;">
+				  <span class="input-group-btn">
+				    <span class="btn btn-success" onclick="$(this).parent().find('input[type=file]').click();">Browse</span>
+				    <input name="uploaded_file" onchange="$(this).parent().parent().find('.form-control').html($(this).val().split(/[\\|/]/).pop());" style="display: none;" type="file">
+				  </span>
+				  <span class="form-control"></span>
+				</div>
+				</div>
+				</div>
+				
+				<br />
+				<br />
+				
+				<div class="row">
+				<div class="col-xs-5">
+					<button type="button" class="btn btn-success">Import</button>
+					<button type="button" class="btn btn-success">Export</button>
+					<button type="button" class="btn btn-success">Cancel</button>
+					<a href="#masters" class="btn btn-success">Back</a>
+				</div>
+			</div>
+			</div>
+			
+		</div>
+
+	</div>
+</div>
+<div class="clearfix"></div>
+</div>
+
+<script type="text/javascript">
+var config = {
+'.chosen-select': {},
+'.chosen-select-deselect': {allow_single_deselect: true},
+'.chosen-select-no-single': {disable_search_threshold: 10},
+'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
+'.chosen-select-width': {width: "95%"}
+}
+for (var selector in config) {
+$(selector).chosen(config[selector]);
+}
+        </script>

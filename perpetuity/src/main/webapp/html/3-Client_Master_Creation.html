@@ -1,0 +1,127 @@
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.submenu-button-open').click(function () {
+                    $('.submenu-container').animate({
+                        left: '0px'
+                    }, 700);
+                    $('body').css('overflow', 'hidden');
+                });
+
+                $('.submenu-button-close').click(function () {
+                    $('.submenu-container').animate({
+                        left: '-250px'
+                    }, 700);
+                    $('body').css('overflow', 'auto');
+                });
+
+                $('#cu_user_type').selectpicker({
+                    style: 'btn-info'
+                });
+
+            });
+        </script>
+
+        <div class="dashboard-page">
+            <div class="right" style="margin-left:100px;">
+                <div class="heading">
+                    <div class="path">Client Master</div>
+                    <div class="text">New Client</div>
+                </div>
+                <div class="cu-section">
+                    <form id="cu-form" action="" method="post" enctype="multipart/form-data">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="cu-section-content">
+                                    
+                                    <label class="radio-inline"><input type="radio" name="change_screen" ng-model="addclient" value="Add" ng-checked="(addclient == Add)" ng-click="routedirect('Add')">Add Client</label>
+						   		    <label class="radio-inline"><input type="radio" name="change_screen" ng-model="editclient" value="Edit" ng-click="routedirect('Edit')">Edit Client</label>							
+                                  								                            	
+									<br><br>
+									
+									<div id="add" ng-show="showadd">
+									<span>Client Name:</span>
+									 <input type="text" name="client_name" id="client_name" class="form-control" placeholder="Client Name" required autofocus>
+									 
+									 <span>Contact Person:</span>
+									 <input type="text" name="contact" id="contact" class="form-control" placeholder="Contact Person" required autofocus>
+									 
+									 <span>E-mail Address:</span>
+									  <input type="Email" name="email" id="email" class="form-control" placeholder="E-mail Address" required autofocus>
+									  
+									  <span>Telephone No.:</span>
+									 <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Telephone No." required autofocus>
+									 
+									  <span>User Status:</span><br>
+									 <select class="selectpicker" id="userstatus" name="userstatus">
+									 <option selected disabled>User Status</option>
+									  <option selected>Active</option>
+									  <option>InActive</option>
+									 </select>
+									 
+									 <br/><br/>
+									
+									 <button type="button" class="btn btn-success">Create</button>									
+									 <button type="button" class="btn btn-success">Report</button>									
+									 <button type="button" class="btn btn-success">Cancel</button>
+									 <a href="#masters" class="btn btn-success">Back</a>
+									 </div>
+									 
+									 
+									 <div id="edit" ng-show="showedit">
+									
+									 <span>Select Client Name:</span><br>
+									 <select class="selectpicker" id="sel_client_name" name="sel_client_name">
+									 <option selected disabled>Client Name</option>
+									  <option>Bizprout</option>
+									  <option>Tiramisu</option>
+									  <option>Cenduit</option>
+									 </select><br>
+									 
+									 <span>Contact Person:</span>
+									 <input type="text" name="contact" id="contact" class="form-control" placeholder="Contact Person" required autofocus>
+									 
+									 <span>E-mail Address:</span>
+									  <input type="Email" name="email" id="email" class="form-control" placeholder="E-mail Address" required autofocus>
+									  
+									  <span>Telephone No.:</span>
+									 <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Telephone No." required autofocus>
+									 
+									  <span>User Status:</span><br>
+									 <select class="selectpicker" id="userstatus" name="userstatus">
+									 <option selected disabled>User Status</option>
+									  <option selected>Active</option>
+									  <option>InActive</option>
+									 </select>
+									 
+									 <br/><br/>
+									
+									 <button type="button" class="btn btn-success">Edit</button>									
+									 <button type="button" class="btn btn-success">Report</button>									
+									 <button type="button" class="btn btn-success">Cancel</button>
+									 <a href="#masters" class="btn btn-success">Back</a>
+									 </div>
+									                                         
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+      
+        <script type="text/javascript">
+var config = {
+'.chosen-select': {},
+'.chosen-select-deselect': {allow_single_deselect: true},
+'.chosen-select-no-single': {disable_search_threshold: 10},
+'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
+'.chosen-select-width': {width: "95%"}
+}
+for (var selector in config) {
+$(selector).chosen(config[selector]);
+}
+        </script>

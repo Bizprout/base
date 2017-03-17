@@ -1,0 +1,49 @@
+        <script type="text/javascript">
+            $(document).ready(function (){
+            	$("#menu").show();
+               $('.submenu-button-open').click(function (){
+                  $('.submenu-container').animate({
+                     left: '0px' 
+                  },700);
+                  $('body').css('overflow','hidden');
+               }); 
+               
+               $('.submenu-button-close').click(function (){
+                   $('.submenu-container').animate({
+                     left: '-250px' 
+                  },700);
+                  $('body').css('overflow','auto');
+               });
+            });
+        </script>
+        
+        <div class="dashboard-page">
+            <div class="right" style="margin-left:100px;">
+                <div class="heading">
+                    <div class="text">Choose Your Option for Mapping</div>
+                </div>                
+                
+                    <div class="app-section">
+                	<div class="app-section-container path" role="button" data-toggle="modal" data-target="#last-step-modal" style="width:calc((100% - 90px - 28px ) / 2);">
+                        <div class="app-type">User Mapping- Setup</div>
+                        <div class="title">Users Mapping to Clients</div>
+                        
+                        <div class="content">
+                            About App Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        </div>
+                        <a href="#mappingUsers" style="text-decoration:none;"><button type="button" class="btn btn-success">Continue</button></a>
+                   </div>
+                   <div class="app-section-container path" role="button" data-toggle="modal" data-target="#last-step-modal" style="width:calc((100% - 90px - 28px ) / 2);">
+                       <div class="app-type">PP Mapping - Setup</div>
+                       <div class="title">PP Mapping to Tally</div>
+                       
+                       <div class="content">
+                           About App Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                       </div>
+                           <a href="#PPstandards" style="text-decoration:none;"><button type="button" class="btn btn-success">Continue</button></a>
+                   </div>
+                   </div>           
+                
+            </div>
+            <div class="clearfix"></div>
+        </div>

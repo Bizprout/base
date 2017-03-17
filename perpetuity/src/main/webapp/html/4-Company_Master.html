@@ -1,0 +1,155 @@
+        <script type="text/javascript">
+            $(document).ready(function () {
+			
+			$(function(){
+				$('.example1').jqCron();
+			});
+
+                $('.submenu-button-open').click(function () {
+                    $('.submenu-container').animate({
+                        left: '0px'
+                    }, 700);
+                    $('body').css('overflow', 'hidden');
+                });
+
+                $('.submenu-button-close').click(function () {
+                    $('.submenu-container').animate({
+                        left: '-250px'
+                    }, 700);
+                    $('body').css('overflow', 'auto');
+                });
+
+                $('#cu_user_type').selectpicker({
+                    style: 'btn-info'
+                });
+				
+				 var date_input=$('input[name="syncdatafrom"]'); //our date input has the name "date"
+				  var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+				  var options={
+					format: 'd-M-yyyy',
+					container: container,
+					todayHighlight: true,
+					autoclose: true,
+					todayBtn: "linked",
+					toggleActive: true,
+					clearBtn: true,
+				  };
+				  date_input.datepicker(options);
+
+            });
+        </script>
+
+        <div class="dashboard-page">
+           
+            <div class="right" style="margin-left:100px;">
+                <div class="heading">
+                    <div class="path">Tally Database Mapping to Company</div>
+                    <div class="text">New Company</div>
+                </div>
+                <div class="cu-section">
+					<div class="row">
+					  <div class="col-xs-3">
+						 <span>Select Client:</span>
+						 <select class="selectpicker" id="company_select" name="company_select">
+									 <option selected disabled>Select Client</option>
+									  <option>Bizprout</option>
+									  <option>Tiramisu</option>
+									 </select>
+					  </div>
+					  </div>
+					  
+					  <div class="row">
+					  <div class="col-xs-3">
+						 <span>Company Name:</span>
+						<input type="text" name="company_name" id="company_name" class="form-control" placeholder="Company Name" required>
+					  </div>
+					  </div>
+					  
+					  <div class="row">
+					  
+					   <div class="col-xs-3">
+						 <span>Tally GUID:</span>
+						 <input type="text" name="tallyguid" id="tallyguid" class="form-control" placeholder="Tally GUID" required autofocus>
+					  </div>					   
+						 
+					  <div class="col-xs-3">
+						 <span>Sync Data From:</span>
+						 <input type="text" name="syncdatafrom" id="syncdatafrom" class="form-control" placeholder="Sync Data From" required>						 
+					  </div>
+					  
+					  </div>
+					
+					<div class="row">
+					  <div class="col-xs-3">
+						 <span>Mysql Username:</span>
+						 <input type="text" name="mysql_username" id="mysql_username" class="form-control" placeholder="Mysql Username" required autofocus>
+					  </div>
+					  <div class="col-xs-3">
+						 <span>Mysql Password:</span>
+						 <input type="password" name="mysql_password" id="mysql_password" class="form-control" placeholder="Mysql Password" required autofocus>
+					  </div>
+					 </div> 
+					
+					<div class="row">
+					  <div class="col-xs-3">
+						 <span>User Status:</span><br>
+						 <select class="selectpicker" id="userstatus" name="userstatus">
+									 <option selected disabled>User Status</option>
+									  <option selected>Active</option>
+									  <option>InActive</option>
+									 </select>
+					  </div>
+					  </div>
+
+				</div>
+				
+				 <div class="heading">
+                    <div class="text">Cron Job Details</div>
+                </div>			
+				
+				<div class="cu-section">
+					<div class="row">
+					  <div class="col-xs-8">
+						<div class="example1"></div>
+					  </div>
+					</div>
+					<br/>
+					
+					<div class="row">
+					  <div class="col-xs-3">
+					  <span>No. of Retrials:</span>
+						<input type="text" name="retrials" id="retrials" class="form-control" placeholder="No. Of Retrials" required autofocus>
+					  </div>
+					 </div> 
+					 
+					 <br/>
+				
+				<div class="row">
+					  <div class="col-xs-5">
+				 <button type="button" class="btn btn-success">Create/ Edit</button>									
+				 <button type="button" class="btn btn-success">Report</button>									
+				 <button type="button" class="btn btn-success">Cancel</button>
+				 <a href="#masters" class="btn btn-success">Back</a>
+				 </div>
+				 </div>
+
+				</div>				
+				
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+      
+        <script type="text/javascript">
+var config = {
+'.chosen-select': {},
+'.chosen-select-deselect': {allow_single_deselect: true},
+'.chosen-select-no-single': {disable_search_threshold: 10},
+'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
+'.chosen-select-width': {width: "95%"}
+}
+for (var selector in config) {
+$(selector).chosen(config[selector]);
+}
+        </script>
+

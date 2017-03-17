@@ -1,0 +1,326 @@
+
+ul.resp-tabs-list, p {
+    margin: 0px;
+    padding: 0px;
+}
+#verticalTab {margin-top: 100px!important;}
+.resp-tabs-list li {
+    font-weight: 600;
+    font-size: 15px;
+    display: inline-block;
+    padding: 13px 15px;
+    margin: 0;
+    list-style: none;
+    cursor: pointer;
+    float: left;
+    /*font-family: 'Open Sans', sans-serif;*/
+    text-transform:uppercase;
+}
+
+.resp-tabs-container {
+    padding: 0px;
+    background-color: #fff;
+    clear: left;
+}
+.resp-tabs-container div:firstchild{
+    max-width:430px;
+}
+h2.resp-accordion {
+    cursor: pointer;
+    padding: 5px;
+    display: none;
+}
+
+.resp-tab-content {
+    display: none;
+    padding: 0px;
+}
+
+.resp-tab-active {
+    border: 1px solid #c1c1c1;
+    border-bottom: none;
+    margin-bottom: -1px !important;
+    padding: 12px 14px 14px 14px !important;
+}
+
+.resp-tab-active {
+    border-bottom: none;
+    background-color: #fff;
+}
+
+.resp-content-active, .resp-accordion-active {
+    display: block;
+}
+
+.resp-tab-content {
+    border: 1px solid #c1c1c1;
+}
+
+h2.resp-accordion {
+    font-size: 13px;
+    border: 1px solid #c1c1c1;
+    border-top: 0px solid #c1c1c1;
+    margin: 0px;
+    padding: 10px 15px; background-color:#f5f3f1;
+}
+
+h2.resp-tab-active {
+    border-bottom: 0px solid #fff !important;
+    margin-bottom: 0px !important; color:#666!important;
+    padding: 10px 15px !important; background-color:#e7e7e7;
+}
+
+h2.resp-tab-title:last-child {
+    border-bottom: 12px solid #c1c1c1 !important;
+    background: blue;
+}
+/*-----------Vertical tabs-----------*/
+.resp-vtabs{
+    border:1px solid #ccc; 
+}
+.resp-vtabs * {
+    -webkit-transition: all 0s ease;
+    -moz-transition: all 0s ease;
+    -ms-transition: all 0s ease;
+    -o-transition: all 0s ease;
+    transition: all 0s ease;
+}
+.resp-vtabs ul.resp-tabs-list {
+    float: left;
+    width: 25%;
+    background: #f5f3f1;
+}
+
+.resp-vtabs .resp-tabs-list li {
+    display: block;
+    color: #be1b33;
+    padding: 30px 15px 30px 85px !important;
+    margin: 0; 
+    cursor: pointer;
+    float: none; border-bottom: 1px solid #cccccc;
+}
+
+.resp-vtabs .resp-tabs-container {
+    padding: 0px;
+    /*background-color: #000;*/
+    /*border: 1px solid #cccccc;*/
+    border-left:0;
+    float: left;
+    width: 75%;
+    min-height: 304px;
+    border-radius: 1px;
+    clear: none; overflow:hidden
+}
+
+.resp-vtabs .resp-tab-content {
+    border: none; padding:30px 30px 30px 17%; max-width:630px;
+}
+
+
+.resp-vtabs .resp-tabs-list li:nth-child(1) {
+    background: url(../img/icons/virtualization.png) no-repeat 20px 17px;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(1), .resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(1):hover {
+    background-image: url('../img/icons/arrow.png'), url(../img/icons/virtualization-w.png);
+    background-position: right center, 20px 17px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(1):hover {
+    background-image: url(../img/icons/virtualization-w.png);
+    background-repeat: no-repeat;
+    background-color: #be1b33;
+    color: #fff;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(2){
+    background: url(../img/icons/virtual-network.png) no-repeat 23px 17px;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(2), .resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(2):hover {
+    background-image: url('../img/icons/arrow.png'), url(../img/icons/virtual-network-w.png);
+    background-position: right center, 23px 17px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(2):hover {
+    background-image: url(../img/icons/virtual-network-w.png);
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-color: #be1b33;
+    color: #fff;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(3){
+    background: url(../img/icons/service-creation.png) no-repeat 20px 17px;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(3),.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(3):hover {
+    background-image: url('../img/icons/arrow.png'), url(../img/icons/service-creation-w.png);
+    background-position: right center, 20px 17px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(3):hover {
+    background-image: url(../img/icons/service-creation-w.png);
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-color: #be1b33;
+    color: #fff;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(4){
+    background: url(../img/icons/wifi.png) no-repeat 20px 17px;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(4), .resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(4):hover {
+    background-image: url('../img/icons/arrow.png'), url(../img/icons/wifi-w.png);
+    background-position: right center, 20px 17px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(4):hover{
+    background-image: url(../img/icons/wifi-w.png);
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-color: #be1b33;
+    color: #fff;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(5){
+    background: url(../img/icons/service-automation.png) no-repeat 20px 17px;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(5),.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(5):hover {
+    background-image: url('../img/icons/arrow.png'), url(../img/icons/service-automation-w.png);
+    background-position: right center, 20px 17px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(5):hover {
+    background-image: url(../img/icons/service-automation-w.png);
+    background-repeat: no-repeat;
+    cursor: pointer;
+    background-color: #be1b33;
+    color: #fff;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(6){
+    background: url(../img/icons/5g.png) no-repeat 20px 17px;
+    cursor: pointer;
+    border-bottom: 0px solid #cccccc;
+}
+.resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(6), .resp-vtabs .resp-tabs-list li.resp-tab-active:nth-child(6):hover {
+    background-image: url('../img/icons/arrow.png'), url(../img/icons/5g-w.png);
+    background-position: right center, 20px 17px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    border-bottom: 1px solid #cccccc;
+}
+.resp-vtabs .resp-tabs-list li:nth-child(6):hover {
+    background-image: url(../img/icons/5g-w.png);
+    background-repeat: no-repeat;
+    cursor: pointer;
+    border-bottom: 1px solid #cccccc;
+    background-color: #be1b33;
+    color: #fff;
+}
+.resp-vtabs li.resp-tab-active {
+    border: 0px solid #e7e7e7; 
+    border-right: none; 
+    position: relative;
+    z-index: 1; color:#ffffff;
+    margin-right: -38px !important;
+    padding: 30px 15px 30px 85px !important;
+    /*border-bottom: 1px solid #363636;*/
+    background-color:#be1b33 !important;
+}
+
+/*.resp-vtabs li:hover {
+    border: 0px solid #e7e7e7; 
+    border-right: none; background: url('../img/icons/arrow.png') no-repeat right center;
+    position: relative;
+    z-index: 1; color:#ffffff;
+    margin-right: -22px !important;
+    padding: 23px 15px 23px 14px !important;
+}*/
+.resp-arrow {
+    width: 0;
+    height: 0;
+    float: right;
+    margin-top: 3px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 12px solid #c1c1c1;
+}
+
+h2.resp-tab-active span.resp-arrow {
+    border: none;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 12px solid #363636;
+}
+
+/*-----------Accordion styles-----------*/
+h2.resp-tab-active {
+    background: #363636 !important; color:#ffffff !important; text-transform:uppercase;
+}
+.resp-easy-accordion  h2.resp-accordion {
+    display: block;
+}
+.resp-easy-accordion .resp-tab-content {
+    border: 1px solid #c1c1c1;
+}
+
+.resp-easy-accordion .resp-tab-content:last-child {
+    border-bottom: 1px solid #c1c1c1 !important;
+}
+
+.resp-jfit {
+    width: 100%;
+    margin: 0px;
+}
+
+.resp-tab-content-active {
+    display: block;
+}
+
+h2.resp-accordion:first-child {
+    border-top: 1px solid #c1c1c1 !important;
+}
+
+/*Here your can change the breakpoint to set the accordion, when screen resolution changed*/
+@media only screen and (max-width: 768px) {
+    ul.resp-tabs-list {
+        display: none;
+    }
+
+    h2.resp-accordion {
+        display: block;
+    }
+
+    .resp-vtabs .resp-tab-content {
+        border: 1px solid #C1C1C1;
+        padding: 10px 10px 10px;
+    }
+
+    .resp-vtabs .resp-tabs-container {
+        border: none;
+        float: none;
+        width: 100%;
+        min-height: initial;
+        clear: none;
+    }
+    .resp-accordion-closed {
+        display:none !important;
+    }
+    .resp-vtabs .resp-tab-content:last-child {
+        border-bottom: 1px solid #c1c1c1 !important;
+    }
+    #verticalTab {
+        margin-top: 20px!important;
+    }
+    
+h2.resp-tab-active span.resp-arrow {
+    border: none;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 12px solid #fff;
+}
+}

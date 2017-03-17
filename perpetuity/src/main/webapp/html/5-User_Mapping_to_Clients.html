@@ -1,0 +1,113 @@
+
+<script type="text/javascript">
+            $(document).ready(function () {			
+            	
+            	$("#menu").show();
+				
+                $('.submenu-button-open').click(function () {
+                    $('.submenu-container').animate({
+                        left: '0px'
+                    }, 700);
+                    $('body').css('overflow', 'hidden');
+                });
+
+                $('.submenu-button-close').click(function () {
+                    $('.submenu-container').animate({
+                        left: '-250px'
+                    }, 700);
+                    $('body').css('overflow', 'auto');
+                });
+
+                $('#cu_user_type').selectpicker({
+                    style: 'btn-info'
+                });
+
+            });
+        </script>
+
+<div class="dashboard-page">
+	<div class="right" style="margin-left: 100px;">
+		<div class="heading">
+			<div class="path">User Mapping to Clients/ Role Creation</div>
+			<div class="text">User Mapping</div>
+		</div>
+		<div class="cu-section">
+			<form id="cu-form" action="" method="post"
+				enctype="multipart/form-data">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="cu-section-content">
+
+								<span>Select User:</span><br> <select class="selectpicker"
+									id="userselect" name="userselect">
+									<option selected disabled>Select User</option>
+									<option>Rishwanth</option>
+									<option>Banesh</option>
+								</select>
+
+								<div class="form-group">
+									<div class="col-md-4">
+										<span>Select&nbsp;Company:</span> <select class="selectpicker"
+											id="company_select" multiple
+											data-selected-text-format="count" data-actions-box="true"
+											title="Select Company">
+											<option value="cheese">Bizprout</option>
+											<option value="tomatoes">Tiramisu</option>
+											<option value="tomatoes">Perpetuity</option>
+											<option value="tomatoes">Cenduit</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-12">
+							<div class="cu-section-content">
+								<div class="form-group">
+									<div class="col-md-4">
+										<span>Select&nbsp;Screen:</span> <select class="selectpicker"
+											id="screen_select" multiple data-selected-text-format="count"
+											data-actions-box="true" title="Select Screen">
+											<option value="cheese">Bizprout</option>
+											<option value="cheese">User Screen</option>
+											<option value="tomatoes">Mapping Screen</option>
+											<option value="tomatoes">Tally Mapping Screen</option>
+										</select>
+									</div>
+								</div>
+
+								<br />
+								<br />
+								<br />
+
+								<button type="button" class="btn btn-success">Add/
+									Remove</button>
+
+								<button type="button" class="btn btn-success">Report</button>
+
+								<button type="button" class="btn btn-success">Cancel</button>
+								
+								<a href="#mapping" class="btn btn-success">Back</a>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+<script type="text/javascript">
+var config = {
+'.chosen-select': {},
+'.chosen-select-deselect': {allow_single_deselect: true},
+'.chosen-select-no-single': {disable_search_threshold: 10},
+'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
+'.chosen-select-width': {width: "95%"}
+}
+for (var selector in config) {
+$(selector).chosen(config[selector]);
+}
+        </script>
