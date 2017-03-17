@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bizprout</title>
+
+<link type="text/css" rel="stylesheet" href="css/bootstrap.css" />
+<link type="text/css" rel="stylesheet" href="css/custom-styles.css" />
+
+<link type="text/css" rel="stylesheet" href="css/font-awesome.css" />
+<link type="text/css" rel="stylesheet" href="css/form.css" />
+<link type="text/css" rel="stylesheet"
+	href="css/bootstrap-select.min.css" />
+
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+	rel="stylesheet">
+<!--font-family: 'Montserrat', sans-serif;-->
+<link
+	href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i"
+	rel="stylesheet">
+<!--font-family: 'Open Sans', sans-serif;-->
+
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-select.min.js"></script>
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.min.js"></script>
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-cookies.js"></script>
+
+
+<script>
+	var app = angular.module("bizapp", [ "ngCookies" ]);
+
+	app
+			.controller(
+					"bizappctrl",
+					function($scope, $http, $window, $cookies) {
+
+						$scope.submit_form = function(e) {
+
+							var parameter = JSON.stringify({
+								"username" : $scope.username,
+								"password" : $scope.password
+							});
+
+							$http({
+								method : "POST",
+								url : "login/authe",
+								data : parameter,
+								headers : {
+									'Content-Type' : 'application/json'
+								}
+							})
+									.then(
+											function mySucces(response) {
+
+												if ((response.data.superAdminType == "1" || response.data.superAdminType == "0")
+														&& response.data.userType == "0") {
+													$window.location = "Company_Master.html";
+												}
+
+												if (response.data.superAdminType == "2"
+														&& (response.data.userType == "1"
+																|| response.data.userType == "2"
+																|| response.data.userType == "3" || response.data.userType == "4")) {
+
+													
+													 $cookies.put('User', response.data.loginUserName);
+
+													$window.location = "Landing_Page.html";
+												}
+
+											},
+											function myError(response) {
+
+												if (response.statusText == "error") {
+													alert("Username or password does not Exists.");
+													return false;
+												}
+
+											});
+						}
+
+					});
+</script>
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		$('#login_company, #login_roll').selectpicker({
+			style : 'btn-info'
+		});
+
+		$(function() {
+
+			var $formLogin = $('#login-form');
+			var $formForgot = $('#forgot-form');
+			var $formOTP = $('#otp-form');
+			var $divForms = $('#div-forms');
+			var $modalAnimateTime = 300;
+
+			$('.close').click(function() {
+				location.reload();
+			});
+
+			$('#login_forgot_btn').click(function() {
+				modalAnimate($formLogin, $formForgot);
+			});
+			$('#forgot_otp_btn').click(function() {
+				modalAnimate($formForgot, $formOTP);
+			});
+			function modalAnimate($oldForm, $newForm) {
+				var $oldH = $oldForm.height();
+				var $newH = $newForm.height();
+				$divForms.css("height", $oldH);
+				$oldForm.fadeToggle($modalAnimateTime, function() {
+					$divForms.animate({
+						height : $newH
+					}, $modalAnimateTime, function() {
+						$newForm.fadeToggle($modalAnimateTime);
+					});
+				});
+			}
+
+		});
+	});
+</script>
+
+</head>
+<body>
+	<!--Header starts here-->
+	<nav class="navbar-wrapper navbar-default navbar-fixed-top"
+		role="navigation">
+		<div class="headers">
+			<div class="logo">
+				<a href="javascript:void(0)"><img src="img/logo.png"
+					alt="Bizprout Logo" /></a>
+			</div>
+
+			<div id="menu">
+				<div class="menu-button closed" title="Menu">
+					<span class="menu-bar first"></span> <span class="menu-bar second"></span>
+					<span class="menu-bar third"></span>
+				</div>
+
+				<div class="static-menu-button" title="Menu"
+					onclick="$(this).hide();
+                            $('.menu-button').click();">
+					<span class="menu-bar first"></span> <span class="menu-bar second"></span>
+					<span class="menu-bar third"></span>
+				</div>
+
+
+				<div class="menu-list collapse navbar-collapse" id="navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li class=""><a href="javascript:void(0)">Payroll</a></li>
+						<li class="active"><a href="javascript:void(0)">Accounting</a></li>
+						<li class=""><a href="javascript:void(0)">Consulting</a></li>
+						<li class="compliance"><a href="javascript:void(0)">Compliance</a>
+							|</li>
+						<li class="header-icon"><a href="javascript:void(0)"><img
+								src="img/contact.png" alt="contact" /></a></li>
+						<li class="header-icon"><a href="javascript:void(0)"><img
+								src="img/search.png" alt="Search" /></a></li>
+						<li class="header-icon"><a href="javascript:void(0)"><img
+								src="img/myaccount.png" alt="My Account" /></a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</nav>
+	<!-- Header Ends Here -->
+
+	<div class="dashboard-page">
+		<div class="right no-right">
+			<div class="heading">
+				<div class="path" role="button" data-toggle="modal"
+					data-target="#login-modal">Login</div>
+			</div>
+			<div class="login-section">
+
+				<div class="modal fade" id="login-modal" tabindex="-1" role="dialog"
+					aria-labelledby="myModalLabel" aria-hidden="true"
+					style="display: none;">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header" align="center">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								</button>
+							</div>
+							<!-- Begin # DIV Form -->
+							<div id="div-forms">
+								<!-- Begin # Login Form -->
+								<form id="login-form" action="" method="POST" ng-app="bizapp"
+									ng-controller="bizappctrl">
+									<div class="modal-header" align="center">
+										<div class="heading">Welcome to Bizprout!</div>
+										<div class="text">Enter Username and Password to proceed
+										</div>
+									</div>
+									<div class="modal-body">
+										<div class="user-login-details">
+											<div class="container-fluid">
+												<div class="row">
+													<div class="col-sm-12">
+														<input type="text" ng-model="username"
+															name="login_username" id="login_username"
+															class="input-field" value="User Name"
+															placeholder="User Name"
+															onfocus="this.value != 'User Name' ? this.value = this.value : this.value = '';"
+															onblur="this.value = !this.value ? 'User Name' : this.value;" />
+
+														<input type="password" ng-model="password"
+															name="login_password" id="login_password"
+															class="input-field" value="Password"
+															placeholder="Password"
+															onfocus="this.value != 'Password' ? this.value = this.value : this.value = '';"
+															onblur="this.value = !this.value ? 'Password' : this.value;" />
+														<br /> <input type="button" name="login_button"
+															class="login_button" id="login_button" value="Login"
+															ng-click="submit_form($event)" />
+														<div class="forgot-passowrd">
+															<button id="login_forgot_btn" type="button"
+																class="btn btn-link">Forgot Password?</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+								<!-- End # Login Form -->
+
+								<!-- Begin | Forgot Password Form -->
+								<form id="forgot-form" style="display: none;">
+									<div class="modal-header" align="center">
+										<div class="heading">Forgot Password</div>
+										<div class="text">Pick one of the following</div>
+									</div>
+									<div class="modal-body">
+										<div class="user-login-details">
+											<div class="container-fluid">
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="radio">
+															<input type="radio" name="login_forgot_pwd_pick_any"
+																id="login_forgot_pwd_pick_any1"
+																value="Send OTP to my email address" checked> <label
+																for="login_forgot_pwd_pick_any1"> Send OTP to my
+																email address </label>
+														</div>
+														<div class="radio">
+															<input type="radio" name="login_forgot_pwd_pick_any"
+																id="login_forgot_pwd_pick_any2"
+																value="Send OTP to my mobile number"> <label
+																for="login_forgot_pwd_pick_any2"> Send OTP to my
+																mobile number </label>
+														</div>
+														<div class="radio">
+															<input type="radio" name="login_forgot_pwd_pick_any"
+																id="login_forgot_pwd_pick_any3" value="Send email to HR">
+															<label for="login_forgot_pwd_pick_any3"> Send
+																email to HR </label>
+														</div>
+														<input type="button" id="forgot_otp_btn"
+															name="forgot_otp_btn" class="login_button"
+															value="Continue" />
+													</div>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</form>
+								<!-- End | Forgot Password Form -->
+
+								<!-- Begin | OTP Form -->
+								<form id="otp-form" style="display: none;">
+									<div class="modal-header" align="center">
+										<div class="heading">Enter OTP</div>
+										<div class="text">Your one time password has been sent
+											to xyz@gmail.com</div>
+									</div>
+									<div class="modal-body">
+										<div class="user-login-details">
+											<div class="container-fluid">
+												<div class="row">
+													<div class="col-sm-12">
+														<input type="text" name="login_enter_otp"
+															id="login_enter_otp" class="input-field"
+															value="Enter OTP" placeholder="Enter OTP"
+															onfocus="this.value != 'Enter OTP' ? this.value = this.value : this.value = '';"
+															onblur="this.value = !this.value ? 'Enter OTP' : this.value;" />
+														<input type="button" name="login_submit_enter_otp"
+															class="login_button" id="submit_login_enter_otp"
+															value="Continue" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+								<!-- End | OTP Form -->
+
+							</div>
+							<!-- End # DIV Form -->
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!-- END LOGIN Section-->
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</body>
+</html>
