@@ -1,0 +1,6 @@
+https://spring.io/guides/tutorials/bookmarks/#_getting_started
+
+https://dzone.com/articles/hibernate-query-example-qbe
+
+bootstrap angularJS dropdown select -- http://frozen-tundra-7264.herokuapp.com/examples/L8/#
+

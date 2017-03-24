@@ -28,7 +28,7 @@
                     <div class="text">New User</div>
                 </div>
                 <div class="cu-section">
-                    <form id="cu-form" action="" method="post" enctype="multipart/form-data">
+                    <form id="cu-form" action="" method="post" name="usercreate" enctype="multipart/form-data">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-12">
@@ -39,67 +39,104 @@
                                   								                            	
 									<br><br>
 									
-									<div id="add" ng-show="showadd">
+									<div id="add" ng-show="showadd">									
+									
 									<span>Username:</span>
-									 <input type="text" name="username" id="username" class="form-control" placeholder="Username" required autofocus>
+									 <input type="text" name="username" id="username" ng-model="username" class="form-control" required placeholder="Username" autofocus>									 
 									 
 									 <span>Password:</span>
-									 <input type="Password" name="password" id="password" class="form-control" placeholder="Password" required autofocus>
+									 <input type="Password" name="password" id="password" ng-model="password" class="form-control" required placeholder="Password" autofocus>
 									 
-									<span>User Type:</span><br>
-									 <select class="selectpicker" id="usertype" name="usertype">
+									 <span>User Type:</span><br>
+									 <!-- <select class="btn btn-default dropdown-toggle" ng-model="usertypemodel">
+									<option ng-repeat="x in usertypes" value="{{x.id}}">{{x.name}}</option>
+									</select> -->
+									<div bs-dropdown 
+									 bs-dropdown-items="usertypes" 
+									 bs-dropdown-item-disabled="{{[0]}}" 
+									 ng-model="usertypemodel" 
+									 bs-dropdown-display="User Type" 
+									 ng-change="usertype()"></div><br>		
+									 
+									 <span>User Status:</span><br>
+									 <div bs-dropdown 
+									 bs-dropdown-items="userstatusses"
+									 ng-model="userstatusmodel" 
+									 bs-dropdown-display="User Status" 
+									 ></div>							 
+									 
+									
+									<!--  <select class="selectpicker" id="usertype" name="usertype">
 									 <option selected disabled>User Type</option>
 									  <option>PP Admin</option>
 									  <option>PP SuperAdmin</option>
-									 </select><br>
+									 </select><br> -->
 									 
-									 <span>User Status:</span><br>
+									 <!-- <span>User Status:</span><br>
 									 <select class="selectpicker" id="userstatus" name="userstatus">
 									 <option selected disabled>User Status</option>
 									  <option selected>Active</option>
 									  <option>InActive</option>
-									 </select>
+									 </select> -->
 									 
 									 <br/><br/>
 									
-									 <button type="button" class="btn btn-success">Create</button>									
+									 <button type="button" class="btn btn-success" ng-click="createuser(username,password,usertypemodel,userstatusmodel)">Create</button>									
 									 <button type="button" class="btn btn-success">Report</button>									
 									 <button type="button" class="btn btn-success">Cancel</button>
 									 <a href="#masters" class="btn btn-success">Back</a>            
 									 </div>           
 									 
-									 
-									 
 									<div id="edit" ng-show ="showedit">
 									
 									<span>Select Username:</span><br>
-									 <select class="selectpicker" id="sel_username" name="sel_username">
+									 <div bs-dropdown 
+									 bs-dropdown-items="usernames" 
+									 bs-dropdown-item-disabled="{{[0]}}" 
+									 ng-model="usernamesmodel" 
+									 bs-dropdown-display="Select Username" 
+									 ></div><br>
+									<!--  <select class="selectpicker" id="sel_username" name="sel_username">
 									 <option selected disabled>Username</option>
 									  <option>Rishwanth</option>
 									  <option>Banesh</option>
-									 </select><br>
+									 </select><br> -->
 									 
 									<span>User Type:</span><br>
-									 <select class="selectpicker" id="usertype" name="usertype">
+									<div bs-dropdown 
+									 bs-dropdown-items="usertypes" 
+									 bs-dropdown-item-disabled="{{[0]}}" 
+									 ng-model="usertypemodel" 
+									 bs-dropdown-display="User Type" 
+									 ></div><br>
+									 <!-- <select class="selectpicker" id="usertype" name="usertype">
 									 <option selected disabled>User Type</option>
 									  <option>PP Admin</option>
 									  <option>PP SuperAdmin</option>
-									 </select><br>
+									 </select><br> -->
 									 
 									 <span>User Status:</span><br>
-									 <select class="selectpicker" id="userstatus" name="userstatus">
+									  <div bs-dropdown 
+									 bs-dropdown-items="userstatusses"
+									 ng-model="userstatusmodel" 
+									 bs-dropdown-display="User Status" 
+									 ></div>	
+									 <!-- <select class="selectpicker" id="userstatus" name="userstatus">
 									 <option selected disabled>User Status</option>
 									  <option selected>Active</option>
 									  <option>InActive</option>
-									 </select>
+									 </select> -->
 									 
 									 <br/><br/>
 									
-									 <button type="button" class="btn btn-success">Edit</button>									
+									 <button type="button" class="btn btn-success" ng-click="edituser(usernamesmodel,usertypemodel,userstatusmodel)">Edit</button>									
 									 <button type="button" class="btn btn-success">Report</button>									
 									 <button type="button" class="btn btn-success">Cancel</button>
 									 <a href="#masters" class="btn btn-success">Back</a>            
-									 </div>                     	
+									 </div>                   
+									 <br>
+									 <h3>{{result}}</h3>
+									   	
                                     </div>
                                 </div>
                             </div>

@@ -1,8 +1,6 @@
 
 <script type="text/javascript">
             $(document).ready(function () {			
-            	
-            	$("#menu").show();
 				
                 $('.submenu-button-open').click(function () {
                     $('.submenu-container').animate({
@@ -16,10 +14,6 @@
                         left: '-250px'
                     }, 700);
                     $('body').css('overflow', 'auto');
-                });
-
-                $('#cu_user_type').selectpicker({
-                    style: 'btn-info'
                 });
 
             });
@@ -39,13 +33,20 @@
 						<div class="col-sm-12">
 							<div class="cu-section-content">
 
-								<span>Select User:</span><br> <select class="selectpicker"
+								<span>Select User:</span><br> 
+								 <div bs-dropdown 
+									 bs-dropdown-items="usernames" 
+									 bs-dropdown-item-disabled="{{[0]}}" 
+									 ng-model="usernamesmodel" 
+									 bs-dropdown-display="Select Username" 
+									 ></div><br>
+								<!-- <select class="selectpicker"
 									id="userselect" name="userselect">
 									<option selected disabled>Select User</option>
 									<option>Rishwanth</option>
 									<option>Banesh</option>
 								</select>
-
+ -->
 								<div class="form-group">
 									<div class="col-md-4">
 										<span>Select&nbsp;Company:</span> <select class="selectpicker"

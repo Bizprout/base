@@ -1,9 +1,5 @@
         <script type="text/javascript">
             $(document).ready(function () {
-			
-			$(function(){
-				$('.example1').jqCron();
-			});
 
                 $('.submenu-button-open').click(function () {
                     $('.submenu-container').animate({
@@ -35,6 +31,7 @@
 					clearBtn: true,
 				  };
 				  date_input.datepicker(options);
+				  
 
             });
         </script>
@@ -50,11 +47,16 @@
 					<div class="row">
 					  <div class="col-xs-3">
 						 <span>Select Client:</span>
-						 <select class="selectpicker" id="company_select" name="company_select">
+						 <div bs-dropdown 
+									 bs-dropdown-items="clientnames"
+									 ng-model="clientmodel" 
+									 bs-dropdown-item-disabled="{{[0]}}"
+									 bs-dropdown-display="Select Client Name"></div><br>
+						 <!-- <select class="selectpicker" id="company_select" name="company_select">
 									 <option selected disabled>Select Client</option>
 									  <option>Bizprout</option>
 									  <option>Tiramisu</option>
-									 </select>
+									 </select> -->
 					  </div>
 					  </div>
 					  
@@ -77,6 +79,7 @@
 						 <input type="text" name="syncdatafrom" id="syncdatafrom" class="form-control" placeholder="Sync Data From" required>						 
 					  </div>
 					  
+					  
 					  </div>
 					
 					<div class="row">
@@ -93,11 +96,16 @@
 					<div class="row">
 					  <div class="col-xs-3">
 						 <span>User Status:</span><br>
-						 <select class="selectpicker" id="userstatus" name="userstatus">
+						 <div bs-dropdown 
+						 bs-dropdown-items="userstatusses"
+						 ng-model="userstatusmodel" 
+						 bs-dropdown-display="User Status" 
+						 ></div>	
+						 <!-- <select class="selectpicker" id="userstatus" name="userstatus">
 									 <option selected disabled>User Status</option>
 									  <option selected>Active</option>
 									  <option>InActive</option>
-									 </select>
+									 </select> -->
 					  </div>
 					  </div>
 

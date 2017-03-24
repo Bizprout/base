@@ -1,6 +1,6 @@
 baseApp.controller("MainController", function($scope, $location) {
 	
-	$scope.navbar_show=false;
+	$scope.navbarShow=true;
 	
 	$scope.onClick = function(value) {
 

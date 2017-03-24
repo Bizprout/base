@@ -1,4 +1,5 @@
-        <script type="text/javascript">
+
+<script type="text/javascript">
             $(document).ready(function () {
             	
             	$("#menu").show();
@@ -46,118 +47,132 @@
             
         </script>
 <div class="dashboard-page">
-            <div class="right no-right">
-                <div class="heading">
-                    <div class="path" role="button" data-toggle="modal" data-target="#login-modal">Login</div>
-                </div>
-                <div class="login-section">
+	<div class="right no-right">
+		<div class="heading">
+			<div class="path" role="button" data-toggle="modal"
+				data-target="#login-modal">Login</div>
+		</div>
+		<div class="login-section">
 
-                    <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header" align="center">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                                <!-- Begin # DIV Form -->
-                                <div id="div-forms">
-                                    <!-- Begin # Login Form -->
-                                    <form id="login-form">
-                                        <div class="modal-header" align="center">
-                                            <div class="heading">
-                                                Welcome
-                                            </div>
-                                            <div class="text">
-                                                Enter Username to proceed
-                                            </div>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="user-login-details">
-                                                <div class="container-fluid">
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <input type="text" name="login_username" id="login_username" ng-model="username" class="input-field" value="User Name" placeholder="User Name" onfocus="this.value != 'User Name' ? this.value = this.value : this.value = '';" onblur="this.value = !this.value ? 'User Name' : this.value;" />
+			<div class="modal fade" id="login-modal" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel" aria-hidden="true"
+				style="display: none;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header" align="center">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+						</div>
+						<!-- Begin # DIV Form -->
+						<div id="div-forms">
+							<!-- Begin # Login Form -->
+							<form id="login-form">
+								<div class="modal-header" align="center">
+									<div class="heading">Welcome</div>
+									<div class="text">Enter Username to proceed</div>
+								</div>
+								<div class="modal-body">
+									<div class="user-login-details">
+										<div class="container-fluid">
+											<div class="row">
+												<div class="col-sm-12">
+													<input type="text" name="login_username"
+														id="login_username" ng-model="username"
+														class="input-field" value="User Name"
+														placeholder="User Name"
+														onfocus="this.value != 'User Name' ? this.value = this.value : this.value = '';"
+														onblur="this.value = !this.value ? 'User Name' : this.value;" />
 
-                                                            <input type="password" name="login_password" id="login_password" ng-model="password" class="input-field" value="Password" placeholder="Password" onfocus="this.value != 'Password' ? this.value = this.value : this.value = '';" onblur="this.value = !this.value ? 'Password' : this.value;" /> <br />
+													<input type="password" name="login_password"
+														id="login_password" ng-model="password"
+														class="input-field" value="Password"
+														placeholder="Password"
+														onfocus="this.value != 'Password' ? this.value = this.value : this.value = '';"
+														onblur="this.value = !this.value ? 'Password' : this.value;" />
+													<br /> <input type="button" name="login_button"
+														class="login_button" id="login_button" value="Login"
+														ng-click="login(username,password)" />
+													<div class="forgot-passowrd">
+														<button id="login_forgot_btn" type="button"
+															class="btn btn-link">Forgot Password?</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+							<!-- End # Login Form -->
 
-                                                            <input type="button" name="login_button" class="login_button" id="login_button" value="Login" ng-click="login(username,password)" />
-                                                            <div class="forgot-passowrd">
-                                                                <button id="login_forgot_btn" type="button" class="btn btn-link">Forgot Password?</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <!-- End # Login Form -->
+							<!-- Begin | Forgot Password Form -->
+							<form id="forgot-form" style="display: none;">
+								<div class="modal-header" align="center">
+									<div class="heading">Forgot Password</div>
+									<div class="text">Pick one of the following</div>
+								</div>
+								<div class="modal-body">
+									<div class="user-login-details">
+										<div class="container-fluid">
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="radio">
+														<input type="radio" name="login_forgot_pwd_pick_any"
+															id="login_forgot_pwd_pick_any1"
+															value="Send OTP to my email address" checked> <label
+															for="login_forgot_pwd_pick_any1"> Send OTP to my
+															email address </label>
+													</div>
+													<input type="button" id="forgot_otp_btn"
+														name="forgot_otp_btn" class="login_button"
+														value="Continue" />
+												</div>
+											</div>
+										</div>
+									</div>
 
-                                    <!-- Begin | Forgot Password Form -->
-                                    <form id="forgot-form" style="display:none;">
-                                        <div class="modal-header" align="center">
-                                            <div class="heading">
-                                                Forgot Password
-                                            </div>
-                                            <div class="text">
-                                                Pick one of the following
-                                            </div>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="user-login-details">
-                                                <div class="container-fluid">
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <div class="radio">
-                                                                <input type="radio" name="login_forgot_pwd_pick_any" id="login_forgot_pwd_pick_any1" value="Send OTP to my email address" checked>
-                                                                <label for="login_forgot_pwd_pick_any1">
-                                                                    Send OTP to my email address
-                                                                </label>
-                                                            </div>
-                                                            <input type="button" id="forgot_otp_btn" name="forgot_otp_btn" class="login_button" value="Continue" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+								</div>
+							</form>
+							<!-- End | Forgot Password Form -->
 
-                                        </div>
-                                    </form>
-                                    <!-- End | Forgot Password Form -->
+							<!-- Begin | OTP Form -->
+							<form id="otp-form" style="display: none;">
+								<div class="modal-header" align="center">
+									<div class="heading">Enter OTP</div>
+									<div class="text">Your one time password has been sent to
+										xyz@gmail.com</div>
+								</div>
+								<div class="modal-body">
+									<div class="user-login-details">
+										<div class="container-fluid">
+											<div class="row">
+												<div class="col-sm-12">
+													<input type="text" name="login_enter_otp"
+														id="login_enter_otp" class="input-field" value="Enter OTP"
+														placeholder="Enter OTP"
+														onfocus="this.value != 'Enter OTP' ? this.value = this.value : this.value = '';"
+														onblur="this.value = !this.value ? 'Enter OTP' : this.value;" />
+													<input type="button" name="login_submit_enter_otp"
+														class="login_button" id="submit_login_enter_otp"
+														value="Continue" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+							<!-- End | OTP Form -->
 
-                                    <!-- Begin | OTP Form -->
-                                    <form id="otp-form" style="display:none;">
-                                        <div class="modal-header" align="center">
-                                            <div class="heading">
-                                                Enter OTP
-                                            </div>
-                                            <div class="text">
-                                                Your one time password has been sent to xyz@gmail.com
-                                            </div>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="user-login-details">
-                                                <div class="container-fluid">
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <input type="text" name="login_enter_otp" id="login_enter_otp" class="input-field" value="Enter OTP" placeholder="Enter OTP" onfocus="this.value != 'Enter OTP' ? this.value = this.value : this.value = '';" onblur="this.value = !this.value ? 'Enter OTP' : this.value;" />
-                                                            <input type="button" name="login_submit_enter_otp" class="login_button" id="submit_login_enter_otp" value="Continue" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <!-- End | OTP Form -->
+						</div>
+						<!-- End # DIV Form -->
 
-                                </div>
-                                <!-- End # DIV Form -->
+					</div>
+				</div>
+			</div>
 
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- END LOGIN Section-->
-            </div>
-            <div class="clearfix"></div>           
-        </div>
+		</div>
+		<!-- END LOGIN Section-->
+	</div>
+	<div class="clearfix"></div>
+</div>

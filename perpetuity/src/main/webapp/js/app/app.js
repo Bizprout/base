@@ -1,1 +1,1 @@
-var baseApp=angular.module("BaseApp",['ngRoute']);
+var baseApp=angular.module("BaseApp",['ngRoute', 'ng.bs.dropdown']);

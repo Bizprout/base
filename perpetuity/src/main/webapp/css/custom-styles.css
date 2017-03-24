@@ -10,8 +10,26 @@ font-family: 'Lato', sans-serif;
 font-family: 'Work Sans', sans-serif;*/
 html, body {
 	
-    height: 110%;
+    height: 100%;
 }
+
+footer{
+	background-color: #ffffff;
+}
+
+.Site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.Site-content {
+  flex: 1;
+}
+/* .ng-hide:not(.ng-hide-animate) {
+  These are just alternative ways of hiding an element
+  display: block!important;
+} */
 body {
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;

@@ -33,17 +33,29 @@
 		<div class="cu-section">
 
 			<div class="row">
-				<div class="col-xs-3">
-					<span>Select Client:</span><br> <select class="selectpicker"
+				<div class="col-xs-4">
+					<span>Select Client:</span><br> 
+					 <div bs-dropdown 
+					 bs-dropdown-items="clientnames"
+					 ng-model="clientmodel" 
+					 bs-dropdown-item-disabled="{{[0]}}"
+					 bs-dropdown-display="Select Client Name"></div><br>
+					<!-- <select class="selectpicker"
 						id="client_sel" name="client_sel">
 						<option selected disabled>Select Client</option>
 						<option>Bizprout</option>
 						<option>Tiramisu</option>
 						<option>Perpetuity</option>
-					</select>
+					</select> -->
 				</div>
-				<div class="col-xs-4">
-					<span>Select Company:</span><br> <select class="selectpicker"
+				<div class="col-xs-5">
+					<span>Select Company:</span><br> 
+					 <div bs-dropdown 
+					 bs-dropdown-items="companylist"
+					 ng-model="companymodel"
+					 bs-dropdown-item-disabled="{{[0]}}" 
+					 bs-dropdown-display="Select Company"></div><br>
+					<!-- <select class="selectpicker"
 						id="company_select" name="company_select">
 						<option selected disabled>Select Company</option>
 						<option>Bizprout-Payroll</option>
@@ -52,19 +64,25 @@
 						<option>Bizprout-Compliance</option>
 						<option>Tiramisu-1</option>
 						<option>Perpetuity-4</option>
-					</select>
+					</select> -->
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-xs-3">
-					<span>Select Report:</span> <select class="selectpicker"
+					<span>Select Report:</span> 
+					 <div bs-dropdown 
+					 bs-dropdown-items="reportitems"
+					 ng-model="reportmodel"
+					 bs-dropdown-item-disabled="{{[0]}}" 
+					 bs-dropdown-display="Select Reports"></div><br>
+					<!-- <select class="selectpicker"
 						id="report_select" name="report_select">
 						<option selected disabled>Select Report</option>
 						<option>Bizprout</option>
 						<option>Tiramisu</option>
 						<option>Perpetuity</option>
-					</select>
+					</select> -->
 				</div>
 			</div>
 
