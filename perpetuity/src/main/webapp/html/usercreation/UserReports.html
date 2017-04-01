@@ -1,0 +1,32 @@
+        <div class="dashboard-page">
+            <div class="right" style="margin-left:100px;">
+                <div class="heading">
+                    <div class="path">User Reports</div>
+                    <div class="text">View Users</div>
+                </div>
+                <div class="cu-section">
+	<table id="example" class="display nowrap" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>User Type</th>
+                <th>User Status</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Name</th>
+                <th>User Type</th>
+                <th>User Status</th>
+            </tr>
+        </tfoot>
+        <tbody>
+              <tr ng-repeat="usr in usertype">
+	          	<td>{{usr.username}}</td>
+	          </tr>
+        </tbody>
+    </table>
+    <a href="#newuser" class="btn btn-success">Back</a>
+</div>
+</div>
+</div>

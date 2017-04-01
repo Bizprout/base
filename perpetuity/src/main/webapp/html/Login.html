@@ -2,12 +2,6 @@
 <script type="text/javascript">
             $(document).ready(function () {
             	
-            	$("#menu").show();
-
-                $('#login_company, #login_roll').selectpicker({
-                    style: 'btn-info'
-                });
-
                 $(function () {
                 	
                 /* 	$("#login_button").click(function(){
@@ -79,21 +73,21 @@
 											<div class="row">
 												<div class="col-sm-12">
 													<input type="text" name="login_username"
-														id="login_username" ng-model="username"
+														id="login_username" ng-model="loginDTO.username"
 														class="input-field" value="User Name"
 														placeholder="User Name"
 														onfocus="this.value != 'User Name' ? this.value = this.value : this.value = '';"
 														onblur="this.value = !this.value ? 'User Name' : this.value;" />
 
 													<input type="password" name="login_password"
-														id="login_password" ng-model="password"
+														id="login_password" ng-model="loginDTO.password"
 														class="input-field" value="Password"
 														placeholder="Password"
 														onfocus="this.value != 'Password' ? this.value = this.value : this.value = '';"
 														onblur="this.value = !this.value ? 'Password' : this.value;" />
 													<br /> <input type="button" name="login_button"
 														class="login_button" id="login_button" value="Login"
-														ng-click="login(username,password)" />
+														ng-click="login(loginDTO)" />
 													<div class="forgot-passowrd">
 														<button id="login_forgot_btn" type="button"
 															class="btn btn-link">Forgot Password?</button>

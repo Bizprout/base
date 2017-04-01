@@ -1,7 +1,6 @@
 
 <script type="text/javascript">
             $(document).ready(function () {
-            	$("#menu").show();
             	
                 $('.submenu-button-open').click(function () {
                     $('.submenu-container').animate({
@@ -17,24 +16,20 @@
                     $('body').css('overflow', 'auto');
                 });
 
-                $('#cu_user_type').selectpicker({
-                    style: 'btn-info'
-                });
-
             });
         </script>
 
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<div class="path">Create PP Standard Masters</div>
-			<div class="text">Standard Masters</div>
+			<div class="path">Map PP Masters with Tally Masters</div>
+			<div class="text">Mapping PP Masters to Tally Masters</div>
 		</div>
 		<div class="cu-section">
 		
 		<div class="row">
 		<div class="col-xs-4">
-		<label class="radio-inline"><input type="radio" name="change_screen" ng-model="addpp" value="Add" ng-checked="(addpp == Add)" ng-click="routedirect('Add')">Add PP Masters</label>
+		<label class="radio-inline"><input type="radio" name="change_screen" ng-model="mappp" value="Add" ng-checked="(mappp == Add)" ng-click="routedirect('Add')">Map PP Masters</label>
 		<label class="radio-inline"><input type="radio" name="change_screen" ng-model="impexp_pp" value="Edit" ng-click="routedirect('Edit')">Import/Export PP Masters</label>							
 		</div>
 		</div>
@@ -42,17 +37,47 @@
 		
 		<div id="add" ng-show="showadd">
 			<div class="row">
-				<div class="col-xs-3">
-					<span>Select&nbsp;Master Type:</span> 
-					
+				<div class="col-xs-4">
+					<span>Select Client:</span> 
 					 <div bs-dropdown 
-						 bs-dropdown-items="masteritems"
-						 ng-model="mastermodel" 
-						 bs-dropdown-item-disabled="{{[0]}}"
-						 bs-dropdown-display="Master Type" 
-						 ></div>
-						 
+					 bs-dropdown-items="clientnames"
+					 ng-model="clientmodel"
+					 bs-dropdown-item-disabled="{{[0]}}" 
+					 bs-dropdown-display="Select Client Name"></div><br>
 					<!-- <select class="selectpicker"
+						id="client_select" name="client_select">
+						<option selected disabled>Select Client</option>
+						<option>Bizprout</option>
+						<option>Tiramisu</option>
+						<option>Perpetuity</option>
+					</select> -->
+				</div>
+				<div class="col-xs-6">
+					<span>Select Company:</span><br> 
+					 <div bs-dropdown 
+					 bs-dropdown-items="companylist"
+					 ng-model="companymodel"
+					 bs-dropdown-item-disabled="{{[0]}}" 
+					 bs-dropdown-display="Select Company"></div><br>
+					<!-- <select class="selectpicker"
+						id="company_sel" name="company_sel">
+						<option selected disabled>Select Company</option>
+						<option>Bizprout_1</option>
+						<option>Tiramisu_4</option>
+						<option>Perpetuity_587</option>
+					</select> -->
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-3">
+					<span>Select Master Type:</span>
+					<div bs-dropdown 
+					 bs-dropdown-items="masteritems"
+					 ng-model="mastermodel"
+					 bs-dropdown-item-disabled="{{[0]}}" 
+					 bs-dropdown-display="Select Master Type"></div><br>
+					<!--  <select class="selectpicker"
 						id="master_type" name="master_type">
 						<option selected disabled>Select Master Type</option>
 						<option>Ledgers</option>
@@ -63,36 +88,33 @@
 					</select> -->
 				</div>
 
-			</div><br>
+			</div>
 
 			<div class="row">
-				<div class="col-xs-3">
-					<span>PP Master Name:</span> <input type="text"
-						name="pp_mastername" id="pp_mastername" class="form-control"
-						placeholder="PP Master Name" required autofocus>
-				</div>
 				<div class="col-xs-4">
-					<span>Select PP Parent Name:</span> 
-					
-					 <div bs-dropdown 
-						 bs-dropdown-items="ppitems"
-						 ng-model="ppmodel"
-						 bs-dropdown-item-disabled="{{[0]}}" 
-						 bs-dropdown-display="Select PP Parent Name" 
-						 ></div>
-						 
-					<!-- <select class="selectpicker"
-						id="pp_parent" name="pp_parent">
-						<option selected disabled>Select PP Parent Name</option>
-						<option>Direct Expenses</option>
-						<option>InDirect Expenses</option>
-						<option>Direct Incomes</option>
-						<option>InDirect Incomes</option>
-						<option>Sales Account</option>
-						<option>Purchase Account</option>
+					<span>Select Tally Master Name:</span> <select class="selectpicker"
+						id="tally_master_name" name="tally_master_name" multiple
+						data-selected-text-format="count" data-actions-box="true"
+						title="Select Tally Master Name">
+						<option>Bizprout</option>
+						<option>Tiramisu</option>
+						<option>Perpetuity</option>
+					</select>
+				</div>
+				<div class="col-xs-5">
+					<span>Map to PP Master:</span><br> 
+					<div bs-dropdown 
+					 bs-dropdown-items="mapppitems"
+					 ng-model="mapppmodel"
+					 bs-dropdown-item-disabled="{{[0]}}" 
+					 bs-dropdown-display="Map to PP Master"></div><br>
+					<!-- <select	class="selectpicker" id="map_pp_master" name="map_pp_master">
+						<option selected disabled>Map to PP Master</option>
+						<option>Bizprout_1</option>
+						<option>Tiramisu_4</option>
+						<option>Perpetuity_587</option>
 					</select> -->
 				</div>
-
 			</div>
 
 			<br />
@@ -100,14 +122,13 @@
 
 			<div class="row">
 				<div class="col-xs-5">
-					<button type="button" class="btn btn-success">Create/ Edit</button>
+					<button type="button" class="btn btn-success">Map/ Edit</button>
 					<button type="button" class="btn btn-success">Report</button>
-					<button type="button" class="btn btn-success">Cancel</button>
-					<a href="#masters" class="btn btn-success">Back</a>
+					<button type="cancel" class="btn btn-success">Clear</button>
+					<a href="#mapping" class="btn btn-success">Back</a>
 				</div>
 			</div>
 			</div>
-			
 			
 			<div id="edit" ng-show="showedit">
 				 <div class="row">  
@@ -129,14 +150,13 @@
 				<div class="col-xs-5">
 					<button type="button" class="btn btn-success">Import</button>
 					<button type="button" class="btn btn-success">Export</button>
-					<button type="button" class="btn btn-success">Cancel</button>
-					<a href="#masters" class="btn btn-success">Back</a>
+					<button type="button" class="btn btn-success">Clear</button>
+					<a href="#mapping" class="btn btn-success">Back</a>
 				</div>
 			</div>
 			</div>
 			
 		</div>
-
 	</div>
 </div>
 <div class="clearfix"></div>

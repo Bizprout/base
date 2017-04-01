@@ -96,5 +96,13 @@ Issues Faced
 
 	check whether you have annotated your service class with @Service and also Repository class with @Repository
 	
-						
+4) Angular js dropdown options: how to set to the DTO.
+
+	the names should be same as in the JavaDTO what you are passing and after that set your data to the ng-model. so your selection appears as a JSON.	
+	
+5) JSON is not supported for jackson version 2.5.2 and databind 2.4.1
+	update version to 
+	
+	<jackson.core.version>2.6.0</jackson.core.version>
+		<jackson.databind.version>2.6.0</jackson.databind.version>						
 					

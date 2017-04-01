@@ -1,0 +1,108 @@
+        <div class="dashboard-page">
+            <div class="right" style="margin-left:100px;">
+                <div class="heading">
+                    <div class="path">Users</div>
+                    <div class="text">New User</div>
+                </div>
+                <div class="cu-section">
+                    <form id="cu-form" action="" method="post" name="usercreate" enctype="multipart/form-data">
+                        <div class="container-fluid">
+                        
+                       <div ng-class="'alert alert-' + (alerts.type || 'warning')" ng-show="showSuccessAlert">
+						<button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">x</button> <strong>{{alerts.msgtype}}</strong> {{alerts.msg}}</div>
+						</div>
+						
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="cu-section-content">
+                                    
+                                    <label class="radio-inline"><input type="radio" name="change_screen" ng-model="adduser" value="Add" ng-checked="(adduser == Add)" ng-click="routedirect('Add')">Add User</label>
+						   		    <label class="radio-inline"><input type="radio" name="change_screen" ng-model="edituser" value="Edit" ng-click="routedirect('Edit')">Edit User</label>							
+                                  								                            	
+									<br><br>
+									
+									<div id="add" ng-show="showadd">		
+									
+									<span>Username:</span>
+									 <input type="text" name="username" id="username" ng-model="userDTO.username" class="form-control" required placeholder="Username" autofocus>									 
+									 
+									 <span>Password:</span>
+									 <input type="Password" name="password" id="password" ng-model="userDTO.password" class="form-control" required placeholder="Password" autofocus>
+									 
+									 <span>Confirm Password:</span>
+									 <input type="Password" name="confirmpassword" id="confirmpassword" ng-model="userDTO.confirmpassword" class="form-control" required placeholder="Confirm Password" autofocus>
+									 
+									 <span>User Type:</span><br>
+									 <!-- <select class="btn btn-default dropdown-toggle" name="usertype" ng-model="userDTO.usertype" ng-options="ut.id as ut.name disable when ut.disable for ut in usertypes" /> -->
+									<div custom-select="ut.name for ut in usertype | filter: { name: $searchTerm } track by ut.id" custom-select-options="userselectOptions" ng-model="userDTO.usertype" autofocus></div>
+									<br><br>		
+									 
+									 <span>User Status:</span><br>
+									 <!-- <select class="btn btn-default dropdown-toggle" ng-model="userDTO.userstatus" ng-options="ust.id as ust.name disable when ust.disable for ust in userstatus" /> -->	 
+									 <div custom-select="ust.id as ust.name for ust in userstatus | filter: { name: $searchTerm } track by ust.id" custom-select-options="userstatusselectOptions" ng-model="userDTO.userstatus" autofocus></div>
+									
+									<!--  <select class="selectpicker" id="usertype" name="usertype">
+									 <option selected disabled>User Type</option>
+									  <option>PP Admin</option>
+									  <option>PP SuperAdmin</option>
+									 </select><br> -->
+									 
+									 <!-- <span>User Status:</span><br>
+									 <select class="selectpicker" id="userstatus" name="userstatus">
+									 <option selected disabled>User Status</option>
+									  <option selected>Active</option>
+									  <option>InActive</option>
+									 </select> -->
+									 
+									 <br/><br/>
+									
+									 <button type="submit" class="btn btn-success" ng-click="createuser(userDTO)">Create</button>									
+									 <a href="#userreports"><button type="button" class="btn btn-success">Report</button></a>								
+									 <button type="reset" class="btn btn-success" ng-click="clear()">Clear</button>
+									 <a href="#masters" class="btn btn-success">Back</a>            
+									 </div>           
+									 
+									<div id="edit" ng-show ="showedit">
+									
+									<span>Select Username:</span><br>
+									  <!-- <select class="btn btn-default dropdown-toggle" ng-model="usernameselected" ng-options="usr.id as usr.name disable when usr.disable for usr in usernames" /> -->
+									 <div custom-select="user.userid as user.username for user in usernames | filter: { name: $searchTerm } track by user.userid" custom-select-options="userstatusselectOptions" ng-model="EdituserDTO.userid" autofocus></div>
+									 <br><br>
+									 
+									 <span>Edit Username:</span><br>
+									 <input type="text" name="editusername" id="editusername" ng-model="editusername" class="form-control" required placeholder="Edit Username" autofocus>
+									 
+									 
+									<span>User Type:</span><br>
+									 <select class="btn btn-default dropdown-toggle" ng-model="usertypeselected" ng-options="ut.id as ut.name for ut in usertypes" />
+									 <br><br>
+									 
+									 
+									 <span>User Status:</span><br>
+									 <select class="btn btn-default dropdown-toggle" ng-model="userstatusselected" ng-options="ust.id as ust.name for ust in userstatus" />
+									 <!-- <select class="selectpicker" id="userstatus" name="userstatus">
+									 <option selected disabled>User Status</option>
+									  <option selected>Active</option>
+									  <option>InActive</option>
+									 </select> -->
+									 
+									 <br/><br/>
+									
+									 <button type="button" class="btn btn-success" ng-click="edituser(userDTO)">Edit</button>									
+									 <button type="button" class="btn btn-success">Report</button>									
+									 <button type="button" class="btn btn-success">Clear</button>
+									 <a href="#masters" class="btn btn-success">Back</a>            
+									 </div>                   
+									 <br>
+									 <!-- <h3>{{result}}</h3> -->
+									   	
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        

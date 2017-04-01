@@ -4,14 +4,15 @@ baseApp.config(function($routeProvider){
     }).when("/home",{templateUrl:"html/LandingPage.html", controller:"LoginController"
     }).when("/masters",{templateUrl:"html/MasterPage.html", controller:"LoginController"
     }).when("/mapping",{templateUrl:"html/MappingPage.html", controller:"LoginController"
-    }).when("/reports",{templateUrl:"html/Reports.html", controller:"AddEditController"
-    }).when("/newuser",{templateUrl:"html/UserCreation.html", controller:"AddEditController"
-    }).when("/newclient",{templateUrl:"html/ClientMasterCreation.html", controller:"AddEditController"
-    }).when("/newcompany",{templateUrl:"html/CompanyMaster.html", controller:"AddEditController"
-    }).when("/PPmasters",{templateUrl:"html/CreatePPStandardMasters.html", controller:"AddEditController"
-    }).when("/PPstandards",{templateUrl:"html/MapPPStandardwithTally.html", controller:"AddEditController"
-    }).when("/mappingUsers",{templateUrl:"html/UserMappingtoClients.html", controller:"AddEditController"
-    }).when("/changepassword",{templateUrl:"html/ChangePassword.html", controller:"LoginController"
+    }).when("/reports",{templateUrl:"html/reports/Reports.html", controller:"AddEditController"
+    }).when("/newuser",{templateUrl:"html/usercreation/UserCreation.html", controller:"UserController"
+    }).when("/newclient",{templateUrl:"html/clientmaster/ClientMasterCreation.html", controller:"AddEditController"
+    }).when("/newcompany",{templateUrl:"html/companymaster/CompanyMaster.html", controller:"AddEditController"
+    }).when("/PPmasters",{templateUrl:"html/ppstandardmaster/CreatePPStandardMasters.html", controller:"AddEditController"
+    }).when("/PPstandards",{templateUrl:"html/ppstandardmapping/MapPPStandardwithTally.html", controller:"AddEditController"
+    }).when("/mappingUsers",{templateUrl:"html/usermapping/UserMappingtoClients.html", controller:"AddEditController"
+    }).when("/changepassword",{templateUrl:"html/changepassword/ChangePassword.html", controller:"LoginController"
+    }).when("/userreports",{templateUrl:"html/usercreation/UserReports.html", controller:"UserController"
     });   
         
 });

@@ -36,8 +36,7 @@ public class LoginResource {
 	
 	@RequestMapping(value="/authe")
 	public ResponseEntity authenticate(@RequestBody LoginVO loginVO)
-	{		
-		
+	{			
 		logger.debug("before calling authenticate with details {}",loginVO);
 		logger.info("calling authenticate with details {}",loginVO.getUsername());
 		LoginDTO loginDTO=loginService.authenticate(loginVO);

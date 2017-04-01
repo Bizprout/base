@@ -35,4 +35,9 @@ public class BaseServiceImpl implements BaseService<BaseDTO> {
 
 	}
 
+	public void updateservice(BaseDTO t) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

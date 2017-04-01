@@ -27,79 +27,18 @@ baseApp.controller("AddEditController", function($scope, $location, $http) {
 	});
 	
 	
-	$scope.createuser=function(username,password,usertypemodel,userstatusmodel){
-		
-		console.log("inside Create User..");
-		
-		if(usertypemodel==="PP Admin"){usertypemodel="0";}
-		else{usertypemodel="1";}
-		
-		if(userstatusmodel==="Active"){userstatusmodel="0";}
-		else{userstatusmodel="1";}
-		
-		var parameter = JSON.stringify({
-			"username" 		: username,
-			"password" 		: password,
-			"usertype" 		: usertypemodel,
-			"userstatus" 	: userstatusmodel
-		});
-		
-		//alert(parameter);
-		
-		//call user add service
-		
-		$http({
-			method : "POST",
-			url : "user/add",
-			data : parameter,
-			headers : {
-				'Content-Type' : 'application/json'
-			}
-		}).then(
-				function mySucces(response) {
-					
-					//alert(response.data);
-					
-					if(response.data==="success")
-					{
-						$scope.result="Data Inserted!";
-					}
 
-				},
-				function myError(response) {
-
-					if (response.statusText === "failure") {		
-						
-						//alert(response.statusText);
-						
-						$scope.result="Data not Inserted!";
-							
-					}
-
-				});		
-	}
 
 	//$scope.usertypes = [{name:"User Type", id:""}, {name:"PP Admin", id:0}, {name:"PP SuperAdmin", id:1}];
 
-	$scope.usertypes = ["User Type","PP Admin","PP SuperAdmin"];
+	//$scope.usertypes = ["User Type","PP Admin","PP SuperAdmin"];
 	
-	$scope.usertypemodel = $scope.usertypes[0];
+	//$scope.usertypemodel = $scope.usertypes[0];
 	/*$scope.usertype = function(){
 		console.log("User type say... " + $scope.usertypemodel);
 	};*/
 
-	$scope.userstatusses = [
-	                        "Active",    
-	                        "In Active"
-	                        ];
-	$scope.userstatusmodel = $scope.userstatusses[0];
-
-	$scope.usernames = [
-	                    "Username",    
-	                    "Rishwanth",
-	                    "Banesh"
-	                    ];
-	$scope.usernamesmodel = $scope.usernames[0];
+	$
 	$scope.clientnames = [
 	                      "Client Name",    
 	                      "Bizprout Corporate Solutions Pvt. Ltd.",

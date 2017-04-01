@@ -1,26 +1,27 @@
 baseApp.controller("LoginController", function($scope, $location) {
-	
+
 	console.log("LoginController loaded..");
-	
-	if("/"===$location.path())
-	{
+
+	if ("/" === $location.path()) {
 		$("#menu").hide();
-	}
-	else
-	{
+	} else {
 		$("#menu").show();
 	}
-	
 
-	$scope.login = function(name, password) {		
+	$scope.loginDTO = {
+		"username" : "",
+		"password" : ""
+	};
+
+	$scope.login = function(loginDTO) {
 		console.log("inside login..");
-		if ('om' === name && 'pass' === password) {
-			//angular.element('#login-modal').hide();
+		if ('om' === loginDTO.username && 'pass' === loginDTO.password) {
+			// angular.element('#login-modal').hide();
 			$(".modal-backdrop").hide();
 			$location.path('home/');
-			//$localStorage("navbar_show",true);
-			//$scope.navbarShow=true;		
-			
+			// $localStorage("navbar_show",true);
+			// $scope.navbarShow=true;
+
 		} else {
 			$location.path('/');
 		}

@@ -1,1 +1,1 @@
-var baseApp=angular.module("BaseApp",['ngRoute', 'ng.bs.dropdown']);
+var baseApp=angular.module("BaseApp",['ngRoute', 'AxelSoft']);
