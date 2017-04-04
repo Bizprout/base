@@ -65,26 +65,48 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 
 	@SuppressWarnings("unchecked")
 	public T getEntity(T t) {
+		
+		Criteria criteria = null;
 
-		logger.info("Inside Abstract class getEntity method.....");
+		try {
+			logger.info("Inside Abstract class getEntity method.....");
 
-		Example baseDTO = Example.create(t);
-		Session session = factory.getCurrentSession();
-		Criteria criteria = session.createCriteria(t.getClass()).add(baseDTO);
+			Example baseDTO = Example.create(t);
+			Session session = factory.getCurrentSession();
+			criteria = session.createCriteria(t.getClass()).add(baseDTO);			
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return (T) criteria.uniqueResult();
-
 	}
 
 	public List<T> getList() {
-		Session session = factory.getCurrentSession();
-
+		
+		Session session = null;
+		
+		try {
+		session = factory.getCurrentSession();
+		
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return (List<T>) session.createCriteria(
 				this.getClass().getTypeParameters().getClass()).list();
 	}
 
 	public List<Object> getListOfProperty(Class c,String propertyName) {
-		Session session = factory.getCurrentSession();
+		Session session = null;
 		
+		try {
+			session = factory.getCurrentSession();
+			
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return session.createCriteria(c)
 				.setProjection(Projections.property(propertyName)).list();
 	}

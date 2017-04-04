@@ -19,20 +19,30 @@ public class BaseServiceImpl implements BaseService<BaseDTO> {
 
 
 	public void testService(BaseDTO baseDTO) {
-		System.out.println("test inside service" + baseDTO);
-		logger.info("test inside service" + baseDTO);
-		baseRepository.save(baseDTO);
+		try {
+			System.out.println("test inside service" + baseDTO);
+			logger.info("test inside service" + baseDTO);
+			baseRepository.save(baseDTO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	public BaseDTO auth(BaseDTO baseDTO) {
-		System.out.println("inside auth method...");
-		logger.info("inside auth method...");
-		
-		BaseDTO fromDb = this.baseRepository.getEntity(baseDTO);
-		System.out.println(fromDb);
+		BaseDTO fromDb = null;
+		try {
+			System.out.println("inside auth method...");
+			logger.info("inside auth method...");
+			
+			fromDb= this.baseRepository.getEntity(baseDTO);
+			System.out.println(fromDb);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return fromDb;
-
 	}
 
 	public void updateservice(BaseDTO t) {

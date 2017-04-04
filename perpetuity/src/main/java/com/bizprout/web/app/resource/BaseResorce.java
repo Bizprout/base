@@ -24,26 +24,42 @@ public class BaseResorce {
 	private BaseService<BaseDTO> baseService;
 
 	public BaseResorce() {
-		System.out.println(this.getClass().getSimpleName() + "Created...");
-		logger.info(this.getClass().getSimpleName() + "Created...");
+		try {
+			System.out.println(this.getClass().getSimpleName() + "Created...");
+			logger.info(this.getClass().getSimpleName() + "Created...");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@PostMapping(value = "/call")
 	public ResponseEntity<BaseDTO> testGet(@RequestBody BaseDTO baseDTO) {
-		baseService.testService(baseDTO);
-		logger.info("Request.......testGet method......");
+		try {
+			baseService.testService(baseDTO);
+			logger.info("Request.......testGet method......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new ResponseEntity<BaseDTO>(baseDTO, HttpStatus.OK);
-
 	}
 
 	@PostMapping(value = "/auth")
 	public ResponseEntity auth(@RequestBody BaseDTO baseDTO) {
-		logger.info("Request........auth method......");
-		if (baseService.auth(baseDTO) != null) {
-			return new ResponseEntity<BaseDTO>(HttpStatus.OK);
+		ResponseEntity resp = null;
+		try {
+			logger.info("Request........auth method......");
+			if (baseService.auth(baseDTO) != null) {
+				resp = new ResponseEntity<BaseDTO>(HttpStatus.OK);
+			}
+			resp = new ResponseEntity<String>("Bad Credentials",
+					HttpStatus.FORBIDDEN);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return new ResponseEntity<String>("Bad Credentials",
-				HttpStatus.FORBIDDEN);
+		return resp;
 
 	}
 	

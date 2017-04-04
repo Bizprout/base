@@ -30,30 +30,42 @@ public class LoginResource {
 	
 	public LoginResource()
 	{
-		System.out.println(this.getClass().getSimpleName() + "Created...");
-		logger.info(this.getClass().getSimpleName() + "Created...");
+		try {
+			System.out.println(this.getClass().getSimpleName() + "Created...");
+			logger.info(this.getClass().getSimpleName() + "Created...");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(value="/authe")
 	public ResponseEntity authenticate(@RequestBody LoginVO loginVO)
-	{			
-		logger.debug("before calling authenticate with details {}",loginVO);
-		logger.info("calling authenticate with details {}",loginVO.getUsername());
-		LoginDTO loginDTO=loginService.authenticate(loginVO);
-		logger.debug("after service call in  authenticate with details {}",loginDTO);
-		
-		if(loginService.authenticate(loginVO)!=null)
-		{
-			logger.debug("Checking if the DTO is not null",loginDTO);
-			logger.debug("Sending HTTP status 200 - ok",loginDTO);
-			return new ResponseEntity<LoginDTO>(loginDTO, HttpStatus.OK);
+	{	
+		ResponseEntity resp = null;
+		try {
+			logger.debug("before calling authenticate with details {}",loginVO);
+			logger.info("calling authenticate with details {}",loginVO.getUsername());
+			LoginDTO loginDTO=loginService.authenticate(loginVO);
+			logger.debug("after service call in  authenticate with details {}",loginDTO);
+			
+			if(loginService.authenticate(loginVO)!=null)
+			{
+				logger.debug("Checking if the DTO is not null",loginDTO);
+				logger.debug("Sending HTTP status 200 - ok",loginDTO);
+				resp= new ResponseEntity<LoginDTO>(loginDTO, HttpStatus.OK);
+			}
+			else
+			{
+				logger.debug("Sending HTTP status - Forbidden",loginDTO);
+				logger.error("Error: Forbidden Access",loginDTO);
+				resp= new ResponseEntity<String>("Error1!", HttpStatus.FORBIDDEN);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		else
-		{
-			logger.debug("Sending HTTP status - Forbidden",loginDTO);
-			logger.error("Error: Forbidden Access",loginDTO);
-			return new ResponseEntity<String>("Error1!", HttpStatus.FORBIDDEN);
-		}
+		return resp;
 	}
 
 }

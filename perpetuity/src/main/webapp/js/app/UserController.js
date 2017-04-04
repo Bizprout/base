@@ -1,13 +1,6 @@
-baseApp.controller("UserController", function($scope, $location, $http, $timeout, $q) {
+baseApp.controller("UserController", function($scope, $location, $http, $timeout, $q, $filter) {
 
 	console.log("UserController loaded.....");
-
-/*	$('#example').DataTable( {
-		dom: 'Bfrtip',
-		buttons: [
-		          'copy', 'csv', 'excel', 'pdf', 'print'
-		          ]
-	});*/
 
 	//**********By default add screen will be enabled and edit will be disabled**********
 	$scope.showadd = true;
@@ -35,13 +28,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 		$scope[value] = !$scope[value];
 	};
 
-	//******Autocomplete dropdown default options for User Type********
-	$scope.userselectOptions = {
-			displayText: 'Select User Type',
-			emptyListText: 'Oops! The list is empty',
-			emptySearchResultText: 'Sorry, couldn\'t find "$0"'
-	};
-
 	//******Autocomplete dropdown default options for Select Username********
 	$scope.usernameselectOptions = {
 			displayText: 'Select Username',
@@ -49,52 +35,39 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			emptySearchResultText: 'Sorry, couldn\'t find "$0"'
 	};
 
-
 	//*******DTO to store the form values for add when populated**********
 	$scope.userDTO = {
 			"username" : "",
 			"password" : "",
 			"confirmpassword" : "",
-			"usertype" : 0,
-			"userstatus" : 0
-	};	
-
-	//*******DTO to store the form values for edit when populated**********
-	$scope.EdituserDTO = {
-			"userid" : "",
-			"username" : "",
-			"usertype" : 0,
-			"userstatus" : 0
+			"usertype" : "",
+			"userstatus" : ""
 	};	
 
 	//*******options for user types and default selected option*********
-	$scope.usertype = [{name:"PP Admin", id:0}, {name:"PP SuperAdmin", id:1}];
+	$scope.usertype = [{name:"Select User Type", id:"null"}, {name:"PP Admin", id:0}, {name:"PP SuperAdmin", id:1}];
 	$scope.userDTO.usertype = $scope.usertype[0].id;
 
 	//*******options for user status and default selected option*********
 	$scope.userstatus = [{name:"Active", id:0}, {name:"Inactive", id:1}];
-	$scope.userDTO.userstatus = $scope.userstatus[0].id;
-
-	//$scope.usernames =[{userid:1, username:"banesh"}, {userid:3, username:"rishwanth1"}];
+	$scope.userDTO.userstatus = $scope.userstatus[0].id;	
 
 	//to get Edit Username dropdown
-	$scope.userDTO={};
 	$http({
 		method : "GET",
-		url : "user/getusers",
+		url : "user/getusernames",
 		headers : {
 			'Content-Type' : 'application/json'
 		}
 	}).success(function(data, status, headers, config){
 
-		console.log(data);
-		
 		//*******options for user names and default selected option*********
-
-		$scope.userDTO=data;
+		
+		$scope.usernames=data;
+		
 	}).error(function(data, status, headers, config){
 		// called asynchronously if an error occurs
-        // or server returns response with an error status.
+		// or server returns response with an error status.
 	});
 
 
@@ -109,16 +82,14 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 	}
 
 	//************when submit button is pressed validate and post to the service************
+
+	//Create user=======================================================================================================
 	$scope.createuser=function(userDTO){
 
 		console.log("inside Create User..");
-
-		//$scope.userDTO.usertype = $scope.userDTO.usertype.id;
-
-		console.log(userDTO);
-
+		
 		//call user add service
-		if($scope.userDTO.username.length!=0 && $scope.userDTO.password.length!=0 && $scope.userDTO.confirmpassword.length!=0 && $scope.userDTO.usertype>=0 && $scope.userDTO.userstatus>=0)
+		if($scope.userDTO.username.length!=0 && $scope.userDTO.password.length!=0 && $scope.userDTO.confirmpassword.length!=0 && $scope.userDTO.usertype!="null" && $scope.userDTO.userstatus>=0)
 		{		
 			if($scope.userDTO.password===$scope.userDTO.confirmpassword)
 			{
@@ -131,8 +102,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 					}
 				}).then(
 						function mySucces(response) {
-
-							//alert(response.data);
 
 							if(response.data==="success")
 							{
@@ -169,58 +138,133 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 		}
 	}
 
+	//Edit User data====================================================================================================
 
+	//*******DTO to store the form values for edit when populated**********
+	$scope.edituserDTO = {
+			"Username" : "",
+			"EditUsername" : "",
+			"Usertype" : "",
+			"Userstatus" : ""
+	};	
 
-	/*
-	 $scope.edituser=function(usernamesmodel,editusername,usertypemodel,userstatusmodel){
+	$scope.populateuserdata=function(){
 
-		console.log("inside Edit User..");
-
-		if(usertypemodel==="PP Admin"){usertypemodel="0";}
-		else{usertypemodel="1";}
-
-		if(userstatusmodel==="Active"){userstatusmodel="0";}
-		else{userstatusmodel="1";}
-
-		var parameter = JSON.stringify({
-			"username" 		: username,
-			"usertype" 		: usertypemodel,
-			"userstatus" 	: userstatusmodel
-		});
-
-		//alert(parameter);
-
-		//call user add service
+		$scope.edituserDTO.EditUsername=$scope.edituserDTO.Username;
 
 		$http({
 			method : "POST",
-			url : "user/edit",
-			data : parameter,
+			url : "user/getuserdata",
+			data: {"username":$scope.edituserDTO.Username},
 			headers : {
 				'Content-Type' : 'application/json'
 			}
-		}).then(
-				function mySucces(response) {
+		}).success(function(data, status, headers, config){
 
-					//alert(response.data);
+			$scope.edituserDTO.Usertype = $filter('filter')($scope.usertype, {id: data.usertype})[0];
+			$scope.edituserDTO.Userstatus = data.userstatus; 
 
-					if(response.data==="success")
-					{
-						$scope.result="Data Updated!";
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});		
+		
+		$scope.edituser=function(edituserDTO){
+
+			console.log("inside Edit User..");
+			
+			$scope.edituserDTO.Usertype=$scope.edituserDTO.Usertype.id;
+			
+			console.log(edituserDTO);
+
+			//call user add service
+
+		if($scope.edituserDTO.Username.length!=0 && $scope.edituserDTO.EditUsername.length!=0 && $scope.edituserDTO.Usertype>=0 && $scope.edituserDTO.Userstatus>=0)
+			{
+				$http({
+					method : "POST",
+					url : "user/edit",
+					data : edituserDTO,
+					headers : {
+						'Content-Type' : 'application/json'
 					}
+				}).then(
+						function mySucces(response) {
 
-				},
-				function myError(response) {
+							if(response.data==="success")
+							{
+								$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'User Updated!'};
+								$scope.showSuccessAlert = true;
 
-					if (response.statusText === "failure") {		
+								$scope.edituserDTO.Username='';
+								$scope.edituserDTO.EditUsername='';
+								$scope.edituserDTO.Usertype = $scope.usertype[0].id;
+								$scope.edituserDTO.Userstatus = $scope.userstatus[0].id;
+							}
 
-						//alert(response.statusText);
+						},
+						function myError(response) {
 
-						$scope.result="Data not Updated!";
+							if (response.statusText === "failure") {		
 
-					}
+								$scope.alerts = { type: 'failure', msgtype: 'Failure!' ,msg: 'User not Updated!'};
+								$scope.showSuccessAlert = true;
 
-				});		
-	}*/
+							}
+
+						});		
+			}
+			else
+			{
+				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'All Fields should be Filled up.'};
+				$scope.showSuccessAlert = true;
+			}
+		}
+		
+	};
+
+	//View Users - Report================================================================================================
+
+	$scope.users = []; //declare an empty array
+	$http.get("user/getusersreport").success(function(response){ 
+		$scope.users = response;  //ajax request to fetch data into $scope.data
+	});
+
+	$scope.sort = function(keyname){
+		$scope.sortKey = keyname;   //set the sortKey to the param passed
+		$scope.reverse = !$scope.reverse; //if true make it false and vice versa
+	}
+
+
+	$scope.viewreport=function(){
+
+		$location.path('userreports');
+
+		//to get Edit Username dropdown
+		$http({
+			method : "GET",
+			url : "user/getusersreport",
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config){			
+
+			//*******options for user names and default selected option*********
+
+			$scope.viewrepo=data;
+
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});
+
+	}
+
+	$scope.exportData = function () {
+		var blob = new Blob([document.getElementById('exportable').innerHTML], {
+			type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+		});
+		saveAs(blob, "Report.xls");
+	};
 
 });

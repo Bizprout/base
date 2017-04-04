@@ -1,6 +1,7 @@
 package com.bizprout.web.app.repository;
 
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,18 +23,24 @@ public class LoginRepositoryImpl extends AbstractBaseRepository<LoginDTO> {
 
 	public LoginDTO getLoginUser(String username,String password) {
 
+		Session session;
+		Query qry = null;
+		
+		try {
+			logger.info("Inside getLoginUser method.......");
 
-		logger.info("Inside getLoginUser method.......");
+			session = factory.getCurrentSession();
 
-		Session session = factory.getCurrentSession();
+			qry=session.createQuery("from LoginDTO where UserName=:username and Password=:pwd and ActiveStatus=0");
 
-		Query qry=session.createQuery("from LoginDTO where UserName=:username and Password=:pwd and ActiveStatus=0");
-
-		qry.setParameter("username",username);
-		qry.setParameter("pwd",password);
+			qry.setParameter("username",username);
+			qry.setParameter("pwd",password);
+			
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return (LoginDTO) qry.uniqueResult();
-
-
 	}
 
 }

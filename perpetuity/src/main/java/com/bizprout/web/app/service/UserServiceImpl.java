@@ -12,6 +12,8 @@ import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.BaseService;
 import com.bizprout.web.api.service.UserService;
 import com.bizprout.web.app.dto.UserDTO;
+import com.bizprout.web.app.dto.UserEditVO;
+import com.bizprout.web.app.dto.UserVO;
 import com.bizprout.web.app.repository.UserRepositoryImpl;
 
 @Service
@@ -26,30 +28,66 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public void CreateUser(UserDTO t) {
-		System.out.println("inside test service " + t);
-		logger.info("inside test service " + t);
-		baseRepository.save(t);
+		try {
+			System.out.println("inside test service " + t);
+			logger.info("inside test service " + t);
+			baseRepository.save(t);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public void UpdateUser(UserDTO t) {
-		System.out.println("inside updateservice " + t);
-		logger.info("inside Update service " + t);
-		baseRepository.update(t);
+	public int UpdateUser(UserEditVO usereditVO) {
+		
+		try {
+			System.out.println("inside updateservice " + usereditVO);
+			logger.info("inside Update service " + usereditVO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userRepository.UpdateUsers(usereditVO);
 	}
 
 	public List<UserDTO> getUsers() {
-
-		logger.info("inside getUsers method ");
-		List<UserDTO> user = userRepository.getList();
+		List<UserDTO> user = null;
+		try {
+			logger.info("inside getUsers method ");
+			user = userRepository.getusers();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return user;
 	}
 
 	public List<String> getUsernameList() {
+		
+		List<String> userNameList = null;
 
-		logger.info("inside getUsernameList method ");
+		try {
+			logger.info("inside getUsernameList method ");
 
-		List<String> userNameList = (List<String>) (Object) userRepository
-				.getListOfProperty(UserDTO.class,"username");
+			userNameList = (List<String>) (Object) userRepository
+					.getListOfProperty(UserDTO.class,"username");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return userNameList;
 	}
+
+	public UserDTO getUserData(UserVO uservo) {
+		UserDTO user = null;
+		try {
+			logger.info("inside getUserData method...");
+			user=userRepository.getUserData(uservo.getUsername());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return user;
+	}
+	
 }

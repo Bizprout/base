@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bizprout.web.api.service.BaseService;
 import com.bizprout.web.api.service.UserService;
 import com.bizprout.web.app.dto.UserDTO;
+import com.bizprout.web.app.dto.UserEditVO;
+import com.bizprout.web.app.dto.UserVO;
 
 
 @RestController
@@ -32,45 +34,105 @@ public class UserResource {
 	
 	public UserResource()
 	{
-		System.out.println(this.getClass().getSimpleName() + "Created...");
-		logger.info(this.getClass().getSimpleName() + "Created...");
+		try {
+			System.out.println(this.getClass().getSimpleName() + "Created...");
+			logger.debug(this.getClass().getSimpleName() + "Created...");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@PostMapping(value="/add", produces = MediaType.TEXT_PLAIN_VALUE)
 	public ResponseEntity adduser(@RequestBody UserDTO userDTO)
 	{
-		userservice.CreateUser(userDTO);
-		logger.info("Request.......adduser method......");
-		
-		if(userDTO.getUserid()>0)
-		{
-			return new ResponseEntity<String>("success", HttpStatus.OK);
-		}
-		else
-		{
-			return new ResponseEntity<String>("failure", HttpStatus.OK);
+		ResponseEntity resp = null;
+		try {
+			userservice.CreateUser(userDTO);
+			logger.debug("Request.......adduser method......");
+			
+			if(userDTO.getUserid()>0)
+			{
+				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+			}
+			else
+			{
+				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}		
+		return resp;
 	}
 	
 	@PostMapping(value="/edit", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity edituser(@RequestBody UserDTO userDTO)
+	public ResponseEntity edituser(@RequestBody UserEditVO usereditVO)
 	{
-		userservice.UpdateUser(userDTO);
-		logger.info("Request.......Edit user method......");
-		
-		return new ResponseEntity<String>("success", HttpStatus.OK);
-		
+		ResponseEntity resp = null;
+		try {
+			int result=userservice.UpdateUser(usereditVO);
+			logger.debug("Request.......Edit user method......");
+			
+			if(result>0)
+			{
+				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+			}
+			else
+			{
+				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resp;		
 	}
 	
-	@GetMapping(value="/getusers")
+	@GetMapping(value="/getusernames")
 	@ResponseBody
 	public List<String> getUsers()
 	{
-		List<String> udto=userservice.getUsernameList();
-		logger.info("Request......getUsernameList......");
-		
+		List<String> udto = null;
+		try {
+			udto=userservice.getUsernameList();
+			logger.debug("Request......getUsernameList......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return udto;
-		
+	}
+	
+	@GetMapping(value="/getusersreport")
+	@ResponseBody
+	public List<UserDTO> getUsersReport()
+	{
+		List<UserDTO> udto = null;
+		try {
+			udto=userservice.getUsers();
+			logger.debug("Request......getUsersreport......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return udto;
+	}
+	
+	@PostMapping(value="/getuserdata")
+	public ResponseEntity<UserDTO> getUserData(@RequestBody UserVO uservo)
+	{
+		ResponseEntity resp = null;
+		try {
+			logger.debug("Request......getUserData......");
+			
+			UserDTO userdto=userservice.getUserData(uservo);
+			resp = new ResponseEntity<UserDTO>(userdto, HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return resp;
 	}
 
 }

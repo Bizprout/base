@@ -19,13 +19,17 @@ public class LoginServiceImpl implements LoginService<LoginDTO> {
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 	
 	public LoginDTO authenticate(LoginVO loginVO) {
-		
-		System.out.println("inside authenticate fetch method...");
-		logger.info("inside authenticate fetch method...");
-		LoginDTO fromDb = this.loginRepository.getLoginUser(loginVO.getUsername(),loginVO.getPassword());
-		System.out.println(fromDb);
+		LoginDTO fromDb = null;
+		try {
+			System.out.println("inside authenticate fetch method...");
+			logger.info("inside authenticate fetch method...");
+			fromDb= this.loginRepository.getLoginUser(loginVO.getUsername(),loginVO.getPassword());
+			System.out.println(fromDb);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return fromDb;
-		
 	}
 	
 	
