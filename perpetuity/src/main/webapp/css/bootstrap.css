@@ -3513,7 +3513,7 @@ fieldset[disabled] .btn-link:focus {
 }
 .btn-block {
   display: block;
-  width: 213%;
+  width: 351%;
   overflow:hidden;
 }
 .btn-block + .btn-block {

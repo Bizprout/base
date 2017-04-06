@@ -142,27 +142,27 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 	//*******DTO to store the form values for edit when populated**********
 	$scope.edituserDTO = {
-			"Username" : "",
-			"EditUsername" : "",
-			"Usertype" : "",
-			"Userstatus" : ""
+			"username" : "",
+			"editusername" : "",
+			"usertype" : "",
+			"userstatus" : ""
 	};	
 
 	$scope.populateuserdata=function(){
 
-		$scope.edituserDTO.EditUsername=$scope.edituserDTO.Username;
+		$scope.edituserDTO.editusername=$scope.edituserDTO.username;
 
 		$http({
 			method : "POST",
 			url : "user/getuserdata",
-			data: {"username":$scope.edituserDTO.Username},
+			data: {"username":$scope.edituserDTO.username},
 			headers : {
 				'Content-Type' : 'application/json'
 			}
 		}).success(function(data, status, headers, config){
 
-			$scope.edituserDTO.Usertype = $filter('filter')($scope.usertype, {id: data.usertype})[0];
-			$scope.edituserDTO.Userstatus = data.userstatus; 
+			$scope.edituserDTO.usertype = data.usertype;
+			$scope.edituserDTO.userstatus = data.userstatus; 
 
 		}).error(function(data, status, headers, config){
 			// called asynchronously if an error occurs
@@ -173,13 +173,13 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 			console.log("inside Edit User..");
 			
-			$scope.edituserDTO.Usertype=$scope.edituserDTO.Usertype.id;
+			//$scope.edituserDTO.usertype=$scope.usertype;
 			
 			console.log(edituserDTO);
 
 			//call user add service
 
-		if($scope.edituserDTO.Username.length!=0 && $scope.edituserDTO.EditUsername.length!=0 && $scope.edituserDTO.Usertype>=0 && $scope.edituserDTO.Userstatus>=0)
+		if($scope.edituserDTO.username.length!=0 && $scope.edituserDTO.editusername.length!=0 && $scope.edituserDTO.usertype!="null" && $scope.edituserDTO.userstatus>=0)
 			{
 				$http({
 					method : "POST",
@@ -188,31 +188,27 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 					headers : {
 						'Content-Type' : 'application/json'
 					}
-				}).then(
-						function mySucces(response) {
+				}).success(function(data, status, headers, config){
 
-							if(response.data==="success")
-							{
-								$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'User Updated!'};
-								$scope.showSuccessAlert = true;
+					if(data==="success")
+					{
+						$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'User Updated!'};
+						$scope.showSuccessAlert = true;
 
-								$scope.edituserDTO.Username='';
-								$scope.edituserDTO.EditUsername='';
-								$scope.edituserDTO.Usertype = $scope.usertype[0].id;
-								$scope.edituserDTO.Userstatus = $scope.userstatus[0].id;
-							}
+						$scope.edituserDTO.username='';
+						$scope.edituserDTO.editusername='';
+						$scope.edituserDTO.usertype = $scope.usertype[0].id;
+						$scope.edituserDTO.userstatus = $scope.userstatus[0].id;
+					}
+					
+				}).error(function(data, status, headers, config){
+					// called asynchronously if an error occurs
+					// or server returns response with an error status.	
 
-						},
-						function myError(response) {
-
-							if (response.statusText === "failure") {		
-
-								$scope.alerts = { type: 'failure', msgtype: 'Failure!' ,msg: 'User not Updated!'};
-								$scope.showSuccessAlert = true;
-
-							}
-
-						});		
+						$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'User not Updated!'};
+						$scope.showSuccessAlert = true;
+				});
+		
 			}
 			else
 			{

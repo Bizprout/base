@@ -10,7 +10,7 @@ baseApp.config(function($routeProvider){
     }).when("/newcompany",{templateUrl:"html/companymaster/CompanyMaster.html", controller:"AddEditController"
     }).when("/PPmasters",{templateUrl:"html/ppstandardmaster/CreatePPStandardMasters.html", controller:"AddEditController"
     }).when("/PPstandards",{templateUrl:"html/ppstandardmapping/MapPPStandardwithTally.html", controller:"AddEditController"
-    }).when("/mappingUsers",{templateUrl:"html/usermapping/UserMappingtoClients.html", controller:"AddEditController"
+    }).when("/mappingUsers",{templateUrl:"html/usermapping/UserMappingtoClients.html", controller:"UserMappingController"
     }).when("/changepassword",{templateUrl:"html/changepassword/ChangePassword.html", controller:"LoginController"
     }).when("/userreports",{templateUrl:"html/usercreation/UserReports.html", controller:"UserController"
     });   

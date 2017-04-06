@@ -64,26 +64,32 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 	public int UpdateUsers(UserEditVO usereditVO) {
 		
 		int result = 0;
+		Session session = null;
+		Transaction tx = null;
 
 		try {
 			logger.info("Inside getLoginUser method.......");
 
-			Session session = factory.getCurrentSession();
+			session = factory.getCurrentSession();
 			
-			session.getTransaction().begin();
+			tx=session.beginTransaction();
 
 			Query qry=session.createQuery("UPDATE UserDTO set username=:editusername, usertype=:usertyp, userstatus=:userstat WHERE username=:oldusername");
 
-			qry.setParameter("editusername",usereditVO.getEditUsername());
+			qry.setParameter("editusername",usereditVO.getEditusername());
 			qry.setParameter("usertyp", usereditVO.getUsertype());
 			qry.setParameter("userstat", usereditVO.getUserstatus());
 			qry.setParameter("oldusername", usereditVO.getUsername());
 
 			 result= qry.executeUpdate();
-			session.getTransaction().commit();
+			 tx.commit();
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			tx.rollback();
+		}
+		finally {
+			session.close();
 		}
 		return result;
 	}

@@ -50,7 +50,7 @@ public class UserResource {
 		try {
 			userservice.CreateUser(userDTO);
 			logger.debug("Request.......adduser method......");
-			
+						
 			if(userDTO.getUserid()>0)
 			{
 				resp= new ResponseEntity<String>("success", HttpStatus.OK);

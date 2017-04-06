@@ -2,35 +2,36 @@ package com.bizprout.web.app.dto;
 
 public class UserEditVO {
 	
-	private String Username;
-	private String EditUsername;
-	private int Usertype;
-	private int Userstatus;
+	private String username;
+	private String editusername;
+	private int usertype;
+	private int userstatus;
 	
 	public String getUsername() {
-		return Username;
+		return username;
 	}
 	public void setUsername(String username) {
-		Username = username;
+		this.username = username;
 	}
-	public String getEditUsername() {
-		return EditUsername;
+	public String getEditusername() {
+		return editusername;
 	}
-	public void setEditUsername(String editUsername) {
-		EditUsername = editUsername;
+	public void setEditusername(String editusername) {
+		this.editusername = editusername;
 	}
 	public int getUsertype() {
-		return Usertype;
+		return usertype;
 	}
 	public void setUsertype(int usertype) {
-		Usertype = usertype;
+		this.usertype = usertype;
 	}
 	public int getUserstatus() {
-		return Userstatus;
+		return userstatus;
 	}
 	public void setUserstatus(int userstatus) {
-		Userstatus = userstatus;
+		this.userstatus = userstatus;
 	}
+
 	
 	
 

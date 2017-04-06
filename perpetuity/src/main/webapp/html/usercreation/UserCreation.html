@@ -19,8 +19,6 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="cu-section-content">
-						<form id="cu-form" action="" name="usercreate"
-							enctype="multipart/form-data" novalidate>
 
 							<label class="radio-inline"><input type="radio"
 								name="change_screen" ng-model="adduser" value="Add"
@@ -28,7 +26,10 @@
 								User</label> <label class="radio-inline"><input type="radio"
 								name="change_screen" ng-model="edituser" value="Edit"
 								ng-click="routedirect('Edit')">Edit User</label> <br> <br>
-
+							
+							<form id="cu-form" action="" name="usercreate"
+							enctype="multipart/form-data" novalidate>
+							
 							<div id="add" ng-show="showadd">
 
 								<span>Username:</span> <input type="text" name="username"
@@ -77,7 +78,7 @@
 						</form>
 
 						<div id="edit" ng-show="showedit">
-							<form id="cu-form" action="" name="editusers"
+							<form id="cu-form1" action="" name=""
 								enctype="multipart/form-data" novalidate>
 								<span>Select Username:</span><br>
 								<!-- <select class="btn btn-default dropdown-toggle" ng-model="usernameselected" ng-options="usr.id as usr.name disable when usr.disable for usr in usernames" /> -->
@@ -85,22 +86,22 @@
 									custom-select="usr for usr in usernames | filter: $searchTerm track by $index"
 									custom-select-options="usernameselectOptions"
 									ng-change="populateuserdata()"
-									ng-model="edituserDTO.Username" autofocus></div>
+									ng-model="edituserDTO.username" autofocus></div>
 								<br> <br> <span>Edit Username:</span><br> <input
 									type="text" name="editusername" id="editusername"
-									ng-model="edituserDTO.EditUsername" class="form-control" required
+									ng-model="edituserDTO.editusername" class="form-control" required
 									placeholder="Edit Username" autofocus> <span>User
 									Type:</span><br>
 								<!-- <select class="btn btn-default dropdown-toggle" name="usertype" ng-model="usertype" ng-options="ut.id as ut.name disable when ut.disable for ut in usertypes" /> -->
 								<div
 									custom-select="ut.id as ut.name for ut in usertype | filter: { name: $searchTerm } track by ut.id"
-									ng-model="edituserDTO.Usertype" autofocus></div>
+									ng-model="edituserDTO.usertype" autofocus></div>
 								<br> <br> <span>User Status:</span><br>
 								<!-- <select class="btn btn-default dropdown-toggle" ng-model="userstatus" ng-options="ust.id as ust.name disable when ust.disable for ust in userstatus" /> -->
 								<div
 									custom-select="ust.id as ust.name for ust in userstatus | filter: { name: $searchTerm } track by ust.id"
 									custom-select-options="userstatusselectOptions"
-									ng-model="edituserDTO.Userstatus" autofocus></div>
+									ng-model="edituserDTO.userstatus" autofocus></div>
 
 								<br /> <br />
 

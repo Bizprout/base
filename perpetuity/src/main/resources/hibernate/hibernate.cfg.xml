@@ -13,5 +13,6 @@
 		<mapping class="com.bizprout.web.api.common.BaseDTO" />
 		<mapping class="com.bizprout.web.app.dto.LoginDTO" />
 		<mapping class="com.bizprout.web.app.dto.UserDTO" />
+		<mapping class="com.bizprout.web.app.dto.CompanyDTO" />
 	</session-factory>
 </hibernate-configuration>

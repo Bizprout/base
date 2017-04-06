@@ -1,24 +1,3 @@
-
-<script type="text/javascript">
-            $(document).ready(function () {			
-				
-                $('.submenu-button-open').click(function () {
-                    $('.submenu-container').animate({
-                        left: '0px'
-                    }, 700);
-                    $('body').css('overflow', 'hidden');
-                });
-
-                $('.submenu-button-close').click(function () {
-                    $('.submenu-container').animate({
-                        left: '-250px'
-                    }, 700);
-                    $('body').css('overflow', 'auto');
-                });
-
-            });
-        </script>
-
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
@@ -33,31 +12,33 @@
 						<div class="col-sm-12">
 							<div class="cu-section-content">
 
-								<span>Select User:</span><br> 
-								 <div bs-dropdown 
-									 bs-dropdown-items="usernames" 
-									 bs-dropdown-item-disabled="{{[0]}}" 
-									 ng-model="usernamesmodel" 
-									 bs-dropdown-display="Select Username" 
-									 ></div><br>
-								<!-- <select class="selectpicker"
-									id="userselect" name="userselect">
-									<option selected disabled>Select User</option>
-									<option>Rishwanth</option>
-									<option>Banesh</option>
-								</select>
- -->
+								<span>Select User:</span><br>
+								<div
+									custom-select="usr for usr in usernames | filter: $searchTerm track by $index"
+									custom-select-options="usernameselectOptions"
+									ng-model="usermappingDTO.username" autofocus></div>
+								<br> <br>
 								<div class="form-group">
 									<div class="col-md-4">
-										<span>Select&nbsp;Company:</span> <select class="selectpicker"
-											id="company_select" multiple
-											data-selected-text-format="count" data-actions-box="true"
-											title="Select Company">
-											<option value="cheese">Bizprout</option>
-											<option value="tomatoes">Tiramisu</option>
-											<option value="tomatoes">Perpetuity</option>
-											<option value="tomatoes">Cenduit</option>
-										</select>
+										<span>Select&nbsp;Company:</span>
+										<!-- <multiselect ng-model="selection" options="options"
+											show-select-all="true" show-unselect-all="true"
+											show-search="true"> </multiselect> -->
+
+										<md-input-container> <label>Select Company</label>
+										<md-select ng-model="selectedVegetables"
+											md-on-close="clearSearchTerm()"
+											data-md-container-class="selectdemoSelectHeader" multiple>
+										<md-select-header class="demo-select-header">
+										<input ng-model="searchTerm" type="search"
+											ng-keydown="$event.stopPropagation()"
+											placeholder="Search Company.."
+											class="demo-header-searchbox md-text"> </md-select-header> <md-optgroup
+											label="vegetables"> <md-option
+											ng-value="vegetable"
+											ng-repeat="vegetable in vegetables |
+              filter:searchTerm">{{vegetable}}</md-option>
+										</md-optgroup> </md-select> </md-input-container>
 									</div>
 								</div>
 							</div>
@@ -67,28 +48,23 @@
 							<div class="cu-section-content">
 								<div class="form-group">
 									<div class="col-md-4">
-										<span>Select&nbsp;Screen:</span> <select class="selectpicker"
-											id="screen_select" multiple data-selected-text-format="count"
-											data-actions-box="true" title="Select Screen">
-											<option value="cheese">Bizprout</option>
-											<option value="cheese">User Screen</option>
-											<option value="tomatoes">Mapping Screen</option>
-											<option value="tomatoes">Tally Mapping Screen</option>
-										</select>
+										<span>Select&nbsp;Screen:</span>
+										<multiselect ng-model="selection" options="options"
+											show-select-all="true" show-unselect-all="true"
+											show-search="true"> </multiselect>
 									</div>
 								</div>
 
-								<br />
-								<br />
+								<br /> <br /> <br />
 								<br />
 
-								<button type="button" class="btn btn-success">Add/
+								<button submit-button type="button" class="btn btn-success">Add/
 									Remove</button>
 
 								<button type="button" class="btn btn-success">Report</button>
 
-								<button type="button" class="btn btn-success">Cancel</button>
-								
+								<button type="reset" class="btn btn-success">Clear</button>
+
 								<a href="#mapping" class="btn btn-success">Back</a>
 							</div>
 
@@ -101,14 +77,22 @@
 	<div class="clearfix"></div>
 </div>
 <script type="text/javascript">
-var config = {
-'.chosen-select': {},
-'.chosen-select-deselect': {allow_single_deselect: true},
-'.chosen-select-no-single': {disable_search_threshold: 10},
-'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
-'.chosen-select-width': {width: "95%"}
-}
-for (var selector in config) {
-$(selector).chosen(config[selector]);
-}
-        </script>
+	var config = {
+		'.chosen-select' : {},
+		'.chosen-select-deselect' : {
+			allow_single_deselect : true
+		},
+		'.chosen-select-no-single' : {
+			disable_search_threshold : 10
+		},
+		'.chosen-select-no-results' : {
+			no_results_text : 'Oops, nothing found!'
+		},
+		'.chosen-select-width' : {
+			width : "95%"
+		}
+	}
+	for ( var selector in config) {
+		$(selector).chosen(config[selector]);
+	}
+</script>
