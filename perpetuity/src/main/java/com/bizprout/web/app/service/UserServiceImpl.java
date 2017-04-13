@@ -29,8 +29,8 @@ public class UserServiceImpl implements UserService<UserDTO> {
 
 	public void CreateUser(UserDTO t) {
 		try {
-			System.out.println("inside test service " + t);
-			logger.info("inside test service " + t);
+			System.out.println("inside CreateUser service " + t);
+			logger.info("inside CreateUser service " + t);
 			baseRepository.save(t);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -41,8 +41,8 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public int UpdateUser(UserEditVO usereditVO) {
 		
 		try {
-			System.out.println("inside updateservice " + usereditVO);
-			logger.info("inside Update service " + usereditVO);
+			System.out.println("inside UpdateUser service " + usereditVO);
+			logger.info("inside UpdateUser service " + usereditVO);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

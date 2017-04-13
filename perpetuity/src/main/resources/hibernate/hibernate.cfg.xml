@@ -6,13 +6,14 @@
 	<session-factory>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://192.168.3.99:3306/pptallydatabase</property>
-		<property name="hibernate.connection.username">epacc_hrms</property>
-		<property name="hibernate.connection.password">HTmNTVRqKqrBdVc6</property>
+		<property name="hibernate.connection.username"></property>
+		<property name="hibernate.connection.password"></property>
 		<property name="show_sql">true</property>
 		<property name="hbm2ddl.auto">update</property>
 		<mapping class="com.bizprout.web.api.common.BaseDTO" />
 		<mapping class="com.bizprout.web.app.dto.LoginDTO" />
 		<mapping class="com.bizprout.web.app.dto.UserDTO" />
 		<mapping class="com.bizprout.web.app.dto.CompanyDTO" />
+		<mapping class="com.bizprout.web.app.dto.PpMasterDTO" />
 	</session-factory>
 </hibernate-configuration>

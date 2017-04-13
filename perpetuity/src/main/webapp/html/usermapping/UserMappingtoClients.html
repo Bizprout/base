@@ -20,25 +20,25 @@
 								<br> <br>
 								<div class="form-group">
 									<div class="col-md-4">
-										<span>Select&nbsp;Company:</span>
 										<!-- <multiselect ng-model="selection" options="options"
 											show-select-all="true" show-unselect-all="true"
 											show-search="true"> </multiselect> -->
 
-										<md-input-container> <label>Select Company</label>
-										<md-select ng-model="selectedVegetables"
+										<md-input-container> <label>Select
+											Companies</label> <md-select ng-model="usermappingDTO.companyName"
 											md-on-close="clearSearchTerm()"
+											class="md-no-underline"
 											data-md-container-class="selectdemoSelectHeader" multiple>
 										<md-select-header class="demo-select-header">
 										<input ng-model="searchTerm" type="search"
-											ng-keydown="$event.stopPropagation()"
 											placeholder="Search Company.."
-											class="demo-header-searchbox md-text"> </md-select-header> <md-optgroup
-											label="vegetables"> <md-option
-											ng-value="vegetable"
-											ng-repeat="vegetable in vegetables |
-              filter:searchTerm">{{vegetable}}</md-option>
-										</md-optgroup> </md-select> </md-input-container>
+											ng-keydown="$event.stopPropagation()"
+											class="demo-header-searchbox md-text"> </md-select-header> <md-button
+											layout-fill value="companylist" ng-click="toggleSeleted()">{{selectText}}</md-button>
+										<md-optgroup label="Select Companies"> <md-option
+											ng-value="complst"
+											ng-repeat="complst in companylist | filter:searchTerm"
+											ng-selected="optionallnone">{{complst}}</md-option> </md-optgroup> </md-select> </md-input-container>
 									</div>
 								</div>
 							</div>
@@ -55,8 +55,7 @@
 									</div>
 								</div>
 
-								<br /> <br /> <br />
-								<br />
+								<br /> <br /> <br /> <br />
 
 								<button submit-button type="button" class="btn btn-success">Add/
 									Remove</button>

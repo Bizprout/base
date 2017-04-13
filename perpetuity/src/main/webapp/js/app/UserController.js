@@ -2,7 +2,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 	console.log("UserController loaded.....");
 
-	//**********By default add screen will be enabled and edit will be disabled**********
+/*	//**********By default add screen will be enabled and edit will be disabled**********
 	$scope.showadd = true;
 	$scope.showedit = false;
 
@@ -21,7 +21,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			$scope.showedit = true;
 			$scope.showadd = false;
 		}
-	};	
+	};	*/
 
 	// **********switch flag for success message**********
 	$scope.switchBool = function (value) {
@@ -147,6 +147,13 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			"usertype" : "",
 			"userstatus" : ""
 	};	
+	
+	$scope.eclear=function(){
+		$scope.edituserDTO.username='';
+		$scope.edituserDTO.editusername='';
+		$scope.edituserDTO.usertype = $scope.usertype[0].id;
+		$scope.edituserDTO.userstatus = $scope.userstatus[0].id;
+	}
 
 	$scope.populateuserdata=function(){
 
@@ -215,7 +222,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'All Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
-		}
+		};
 		
 	};
 
@@ -229,7 +236,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 	$scope.sort = function(keyname){
 		$scope.sortKey = keyname;   //set the sortKey to the param passed
 		$scope.reverse = !$scope.reverse; //if true make it false and vice versa
-	}
+	};
 
 
 	$scope.viewreport=function(){
@@ -254,7 +261,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			// or server returns response with an error status.
 		});
 
-	}
+	};
 
 	$scope.exportData = function () {
 		var blob = new Blob([document.getElementById('exportable').innerHTML], {
