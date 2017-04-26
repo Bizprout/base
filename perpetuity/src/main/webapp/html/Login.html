@@ -77,15 +77,15 @@
 														class="input-field" value="User Name"
 														placeholder="User Name"
 														onfocus="this.value != 'User Name' ? this.value = this.value : this.value = '';"
-														onblur="this.value = !this.value ? 'User Name' : this.value;" />
+														onblur="this.value = !this.value ? 'User Name' : this.value;" autofocus />
 
 													<input type="password" name="login_password"
 														id="login_password" ng-model="loginDTO.password"
 														class="input-field" value="Password"
 														placeholder="Password"
 														onfocus="this.value != 'Password' ? this.value = this.value : this.value = '';"
-														onblur="this.value = !this.value ? 'Password' : this.value;" />
-													<br /> <input type="button" name="login_button"
+														onblur="this.value = !this.value ? 'Password' : this.value;"  autofocus />
+													<br /> <input type="submit" name="login_button"
 														class="login_button" id="login_button" value="Login"
 														ng-click="login(loginDTO)" />
 													<div class="forgot-passowrd">

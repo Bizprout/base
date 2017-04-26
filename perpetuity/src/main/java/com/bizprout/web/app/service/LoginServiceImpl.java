@@ -26,7 +26,6 @@ public class LoginServiceImpl implements LoginService<LoginDTO> {
 			fromDb= this.loginRepository.getLoginUser(loginVO.getUsername(),loginVO.getPassword());
 			System.out.println(fromDb);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return fromDb;

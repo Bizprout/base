@@ -6,6 +6,7 @@ public class EditPpMasterDTO {
 	private String ppmastername;
 	private String editppmastername;
 	private String ppparentname;
+	private String costcategory;
 	
 	public String getMastertype() {
 		return mastertype;
@@ -30,6 +31,12 @@ public class EditPpMasterDTO {
 	}
 	public void setPpparentname(String ppparentname) {
 		this.ppparentname = ppparentname;
+	}
+	public String getCostcategory() {
+		return costcategory;
+	}
+	public void setCostcategory(String costcategory) {
+		this.costcategory = costcategory;
 	}
 
 }

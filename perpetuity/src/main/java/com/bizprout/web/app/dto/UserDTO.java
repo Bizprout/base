@@ -6,8 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.NotFound;
 
 @Entity
 @Table(name = "users")
@@ -15,9 +15,10 @@ public class UserDTO {
 
 	@Id
 	@Column(name = "user_id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userid;
-
+	
+	@NotNull(message="*Username is Required")
 	@Column(name = "username")
 	private String username;
 
@@ -25,10 +26,10 @@ public class UserDTO {
 	private String password;
 
 	@Column(name = "user_type")
-	private int usertype;
+	private String usertype;
 
 	@Column(name = "user_status")
-	private int userstatus;
+	private String userstatus;
 
 	public int getUserid() {
 		return userid;
@@ -54,19 +55,19 @@ public class UserDTO {
 		this.password = password;
 	}
 
-	public int getUsertype() {
+	public String getUsertype() {
 		return usertype;
 	}
 
-	public void setUsertype(int usertype) {
+	public void setUsertype(String usertype) {
 		this.usertype = usertype;
 	}
 
-	public int getUserstatus() {
+	public String getUserstatus() {
 		return userstatus;
 	}
 
-	public void setUserstatus(int userstatus) {
+	public void setUserstatus(String userstatus) {
 		this.userstatus = userstatus;
 	}
 

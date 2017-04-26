@@ -1,6 +1,5 @@
 package com.bizprout.web.app.service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bizprout.web.api.common.repository.BaseRepository;
-import com.bizprout.web.api.service.BaseService;
 import com.bizprout.web.api.service.UserService;
 import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
@@ -26,25 +24,24 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	private UserRepositoryImpl userRepository;
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
-
 	public void CreateUser(UserDTO t) {
 		try {
+			
 			System.out.println("inside CreateUser service " + t);
 			logger.info("inside CreateUser service " + t);
+			//t.setUsertype(UserConstant.PP_SUPER_ADMIN);
 			baseRepository.save(t);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public int UpdateUser(UserEditVO usereditVO) {
-		
+
 		try {
 			System.out.println("inside UpdateUser service " + usereditVO);
 			logger.info("inside UpdateUser service " + usereditVO);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return userRepository.UpdateUsers(usereditVO);
@@ -56,23 +53,21 @@ public class UserServiceImpl implements UserService<UserDTO> {
 			logger.info("inside getUsers method ");
 			user = userRepository.getusers();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in getUsers \t" + e.getMessage());
 		}
 		return user;
 	}
 
 	public List<String> getUsernameList() {
-		
+
 		List<String> userNameList = null;
 
 		try {
 			logger.info("inside getUsernameList method ");
 
-			userNameList = (List<String>) (Object) userRepository
-					.getListOfProperty(UserDTO.class,"username");
+			userNameList = userRepository.getUsernameList();
+					/*(List<String>) (Object) userRepository.getListOfProperty(UserDTO.class, "username");*/
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return userNameList;
@@ -82,12 +77,11 @@ public class UserServiceImpl implements UserService<UserDTO> {
 		UserDTO user = null;
 		try {
 			logger.info("inside getUserData method...");
-			user=userRepository.getUserData(uservo.getUsername());
+			user = userRepository.getUserData(uservo.getUsername());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return user;
 	}
-	
+
 }

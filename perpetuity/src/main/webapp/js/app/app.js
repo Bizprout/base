@@ -1,4 +1,4 @@
-var baseApp=angular.module("BaseApp",['ngRoute', 'AxelSoft', 'angularUtils.directives.dirPagination', 'btorfs.multiselect', 'ngMaterial']);
+var baseApp=angular.module("BaseApp",['ngRoute', 'AxelSoft', 'angularUtils.directives.dirPagination', 'btorfs.multiselect', 'ngMaterial', 'ngMessages', 'mdPickers']);
 
 
 //ngRoute for routing - navigating to pages

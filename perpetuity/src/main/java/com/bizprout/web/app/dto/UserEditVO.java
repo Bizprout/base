@@ -4,8 +4,8 @@ public class UserEditVO {
 	
 	private String username;
 	private String editusername;
-	private int usertype;
-	private int userstatus;
+	private String usertype;
+	private String userstatus;
 	
 	public String getUsername() {
 		return username;
@@ -19,16 +19,16 @@ public class UserEditVO {
 	public void setEditusername(String editusername) {
 		this.editusername = editusername;
 	}
-	public int getUsertype() {
+	public String getUsertype() {
 		return usertype;
 	}
-	public void setUsertype(int usertype) {
+	public void setUsertype(String usertype) {
 		this.usertype = usertype;
 	}
-	public int getUserstatus() {
+	public String getUserstatus() {
 		return userstatus;
 	}
-	public void setUserstatus(int userstatus) {
+	public void setUserstatus(String userstatus) {
 		this.userstatus = userstatus;
 	}
 

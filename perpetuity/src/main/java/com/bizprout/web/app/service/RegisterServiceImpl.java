@@ -17,7 +17,6 @@ public class RegisterServiceImpl implements RegisterService<RegisterDTO> {
 		try {
 			baseRepository.save(t);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

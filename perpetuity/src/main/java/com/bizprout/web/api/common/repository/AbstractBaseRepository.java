@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bizprout.web.app.dto.PpMasterDTO;
 import com.bizprout.web.app.dto.UserDTO;
 
 @Repository
@@ -85,7 +86,7 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 	public List<T> getList() {
 		
 		Session session = null;
-		
+
 		try {
 		session = factory.getCurrentSession();
 		

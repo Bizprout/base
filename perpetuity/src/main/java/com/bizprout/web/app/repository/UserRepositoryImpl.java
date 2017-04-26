@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
-import com.bizprout.web.app.dto.LoginDTO;
 import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
 
@@ -92,6 +91,26 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			session.close();
 		}
 		return result;
+	}
+	
+	public List<String> getUsernameList()
+	{
+		Session session;
+		Query qry=null;
+		List<String> usernamelist = null;
+		try {
+			logger.info("Inside UserRepositoryImpl......getUsernameList method.......");
+
+			session = factory.getCurrentSession();
+
+			qry=session.createQuery("select username from UserDTO where userstatus='Active'");
+			usernamelist=qry.list();
+
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return usernamelist;
 	}
 
 }

@@ -19,7 +19,7 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 	$scope.selectText = "Select All";
 	$scope.optionallnone!=$scope.companylist;
 
-	$scope.toggleSeleted = function() {
+	$scope.toggleSeletedcompany = function() {
 		$scope.allSelected = !$scope.allSelected;
 
 		$scope.optionallnone = $scope.allSelected;

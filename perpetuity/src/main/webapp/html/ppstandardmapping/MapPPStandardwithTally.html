@@ -1,176 +1,262 @@
-
-<script type="text/javascript">
-            $(document).ready(function () {
-            	
-                $('.submenu-button-open').click(function () {
-                    $('.submenu-container').animate({
-                        left: '0px'
-                    }, 700);
-                    $('body').css('overflow', 'hidden');
-                });
-
-                $('.submenu-button-close').click(function () {
-                    $('.submenu-container').animate({
-                        left: '-250px'
-                    }, 700);
-                    $('body').css('overflow', 'auto');
-                });
-
-            });
-        </script>
-
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<div class="path">Map PP Masters with Tally Masters</div>
 			<div class="text">Mapping PP Masters to Tally Masters</div>
 		</div>
 		<div class="cu-section">
-		
-		<div class="row">
-		<div class="col-xs-4">
-		<label class="radio-inline"><input type="radio" name="change_screen" ng-model="mappp" value="Add" ng-checked="(mappp == Add)" ng-click="routedirect('Add')">Map PP Masters</label>
-		<label class="radio-inline"><input type="radio" name="change_screen" ng-model="impexp_pp" value="Edit" ng-click="routedirect('Edit')">Import/Export PP Masters</label>							
-		</div>
-		</div>
-		<br><br>
-		
-		<div id="add" ng-show="showadd">
-			<div class="row">
-				<div class="col-xs-4">
-					<span>Select Client:</span> 
-					 <div bs-dropdown 
-					 bs-dropdown-items="clientnames"
-					 ng-model="clientmodel"
-					 bs-dropdown-item-disabled="{{[0]}}" 
-					 bs-dropdown-display="Select Client Name"></div><br>
-					<!-- <select class="selectpicker"
-						id="client_select" name="client_select">
-						<option selected disabled>Select Client</option>
-						<option>Bizprout</option>
-						<option>Tiramisu</option>
-						<option>Perpetuity</option>
-					</select> -->
-				</div>
-				<div class="col-xs-6">
-					<span>Select Company:</span><br> 
-					 <div bs-dropdown 
-					 bs-dropdown-items="companylist"
-					 ng-model="companymodel"
-					 bs-dropdown-item-disabled="{{[0]}}" 
-					 bs-dropdown-display="Select Company"></div><br>
-					<!-- <select class="selectpicker"
-						id="company_sel" name="company_sel">
-						<option selected disabled>Select Company</option>
-						<option>Bizprout_1</option>
-						<option>Tiramisu_4</option>
-						<option>Perpetuity_587</option>
-					</select> -->
+			<div class="container-fluid">
+				<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+					ng-show="showSuccessAlert">
+					<button type="button" class="close"
+						data-ng-click="switchBool('showSuccessAlert')">x</button>
+					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
 				</div>
 			</div>
-
-			<div class="row">
-				<div class="col-xs-3">
-					<span>Select Master Type:</span>
-					<div bs-dropdown 
-					 bs-dropdown-items="masteritems"
-					 ng-model="mastermodel"
-					 bs-dropdown-item-disabled="{{[0]}}" 
-					 bs-dropdown-display="Select Master Type"></div><br>
-					<!--  <select class="selectpicker"
-						id="master_type" name="master_type">
-						<option selected disabled>Select Master Type</option>
-						<option>Ledgers</option>
-						<option>Groups</option>
-						<option>Cost Categories</option>
-						<option>Cost Centers</option>
-						<option>Voucher Types</option>
-					</select> -->
-				</div>
-
-			</div>
-
-			<div class="row">
-				<div class="col-xs-4">
-					<span>Select Tally Master Name:</span> <select class="selectpicker"
-						id="tally_master_name" name="tally_master_name" multiple
-						data-selected-text-format="count" data-actions-box="true"
-						title="Select Tally Master Name">
-						<option>Bizprout</option>
-						<option>Tiramisu</option>
-						<option>Perpetuity</option>
-					</select>
-				</div>
-				<div class="col-xs-5">
-					<span>Map to PP Master:</span><br> 
-					<div bs-dropdown 
-					 bs-dropdown-items="mapppitems"
-					 ng-model="mapppmodel"
-					 bs-dropdown-item-disabled="{{[0]}}" 
-					 bs-dropdown-display="Map to PP Master"></div><br>
-					<!-- <select	class="selectpicker" id="map_pp_master" name="map_pp_master">
-						<option selected disabled>Map to PP Master</option>
-						<option>Bizprout_1</option>
-						<option>Tiramisu_4</option>
-						<option>Perpetuity_587</option>
-					</select> -->
-				</div>
-			</div>
-
-			<br />
-			<br />
-
-			<div class="row">
-				<div class="col-xs-5">
-					<button type="button" class="btn btn-success">Map/ Edit</button>
-					<button type="button" class="btn btn-success">Report</button>
-					<button type="cancel" class="btn btn-success">Clear</button>
-					<a href="#mapping" class="btn btn-success">Back</a>
-				</div>
-			</div>
-			</div>
-			
-			<div id="edit" ng-show="showedit">
-				 <div class="row">  
-				 <div class="col-xs-3">
-				  <div class="input-group" style="width:500px;">
-				  <span class="input-group-btn">
-				    <span class="btn btn-success" onclick="$(this).parent().find('input[type=file]').click();">Browse</span>
-				    <input name="uploaded_file" onchange="$(this).parent().parent().find('.form-control').html($(this).val().split(/[\\|/]/).pop());" style="display: none;" type="file">
-				  </span>
-				  <span class="form-control"></span>
-				</div>
-				</div>
-				</div>
-				
-				<br />
-				<br />
-				
+			<div ng-cloak>
+				<md-content> <md-tabs md-dynamic-height
+					md-border-bottom> <md-tab label="Map"
+					md-on-select="onmapclick()"> <md-content
+					class="md-padding"><!-- md-dynamic-height -->
 				<div class="row">
-				<div class="col-xs-5">
-					<button type="button" class="btn btn-success">Import</button>
-					<button type="button" class="btn btn-success">Export</button>
-					<button type="button" class="btn btn-success">Clear</button>
-					<a href="#mapping" class="btn btn-success">Back</a>
+					<div class="col-xs-4">
+						<span>Select Client:</span> <br>
+						<div
+							custom-select="clt.clientId as clt.clientName for clt in clientnames | filter: {clientName: $searchTerm} track by clt.clientId"
+							custom-select-options="clientselectOptions"
+							ng-change="clientchanged()" ng-model="ppmapDTO.client" autofocus></div>
+					</div>
+					<div class="col-xs-6">
+						<span>Select Company:</span><br>
+						<div
+							custom-select="comp.cmpId as comp.tallyCmpName for comp in companies | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
+							custom-select-options="companyselectOptions"
+							ng-change="companychanged()" ng-model="ppmapDTO.cmpId" autofocus></div>
+					</div>
 				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-3">
+						<span>Select Master Type:</span><br>
+						<div
+							custom-select="mt for mt in mastertypes | filter: $searchTerm"
+							custom-select-options="mastertypeselectOptions"
+							ng-change="masterchanged()" ng-model="ppmapDTO.mastertype"
+							autofocus></div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Map to PP Master:</span><br>
+						<div
+							custom-select="ppmn.masteridindex as ppmn.ppmastername for ppmn in ppmasternames | filter: {ppmastername: $searchTerm} track by ppmn.masteridindex"
+							custom-select-options="ppmasterselectOptions"
+							ng-change="ppmasternamechanged()" ng-model="ppmapDTO.ppId"
+							autofocus></div>
+					</div>
+					<div class="col-xs-5">
+						<!-- 						<span>Select Tally Master Name:</span>
+ -->
+						<!-- <div
+							custom-select="tmn.masterId as tmn.tallyMasterName for tmn in tallymasternames | filter: {tallyMasterName: $searchTerm} track by tmn.cmpId+tmn.masterId"
+							custom-select-options="tallymasterelectOptions"
+							ng-change="tallymasternamechange()"
+							ng-model="ppmapDTO.tallyMasterId" autofocus></div> -->
+						<md-input-container> <label>Select
+							Tally Master Names</label> <md-select ng-model="ppmapDTO.tallyMasterId"
+							md-on-close="clearSearchTerm()" class="md-no-underline"
+							data-md-container-class="selectdemoSelectHeader" multiple>
+						<md-select-header class="demo-select-header"> <input
+							ng-model="searchTerm" type="search"
+							placeholder="Search Tally Master Names.."
+							ng-keydown="$event.stopPropagation()"
+							class="demo-header-searchbox md-text"> </md-select-header> <md-button
+							layout-fill value="tallymasterlist"
+							ng-click="toggleSeletedcompany()">{{selectText}}</md-button> <md-optgroup
+							label="Select Tally Master Names"> <md-option
+							ng-value="tmn.masterId"
+							ng-repeat="tmn in tallymasternames | filter:searchTerm track by tmn.cmpId+tmn.masterId"
+							ng-selected="optionallnone">{{tmn.tallyMasterName}}</md-option> </md-optgroup>
+						</md-select> </md-input-container>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-5">
+						<button type="button" class="btn btn-success"
+							ng-click="mappingpp()">Map/ Edit</button>
+						<button type="reset" class="btn btn-success" ng-click="clear()">Clear</button>
+						<a href="#mapping" class="btn btn-success">Back</a>
+					</div>
+				</div>
+				</md-content> </md-tab> <md-tab label="Import/ Export" md-on-select="onimpexpclick()">
+				<md-content class="md-padding">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="fileupload fileupload-new" data-provides="fileupload">
+							<span class="btn btn-primary btn-file"><span
+								class="fileupload-new">Select file</span> <span
+								class="fileupload-exists">Change</span> <input type="file" /></span> <span
+								class="fileupload-preview"></span> <a href="#"
+								class="close fileupload-exists" data-dismiss="fileupload"
+								style="float: none">x</a>
+						</div>
+					</div>
+				</div>
+				<br />
+				<div class="row">
+					<div class="col-xs-5">
+						<button type="button" class="btn btn-success"
+							ng-click="onppmappingimport()">Import</button>
+						<button type="button" class="btn btn-success"
+							ng-click="onppmappingexport()">Export</button>
+						<a href="#mapping" class="btn btn-success">Back</a>
+					</div>
+				</div>
+				<div id="ppmappingexcelexport" ng-hide="true">
+					<h4>Upload Format for Mapping PP Masters:</h4>
+					<table border="1">
+						<tr>
+							<th>Client Name</th>
+							<th>Company Name</th>
+							<th>Master Type</th>
+							<th>Map to PP Master</th>
+							<th>Tally Master Names</th>
+						</tr>
+					</table>
+				</div>
+				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
+					class="md-padding">
+				<div class="row">
+					<div class="col-xs-4" style="padding-left: 32px;">
+						<span>Select Client:</span> <br>
+						<div
+							custom-select="clt.clientId as clt.clientName for clt in clientnames | filter: {clientName: $searchTerm} track by clt.clientId"
+							custom-select-options="clientselectOptions"
+							ng-change="reportclientchanged()" ng-model="reportclientid"
+							autofocus></div>
+					</div>
+					<div class="col-xs-6">
+						<span>Select Company:</span><br>
+						<div
+							custom-select="comp.cmpId as comp.tallyCmpName for comp in reportcompanies | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
+							custom-select-options="companyselectOptions"
+							ng-change="reportcompanychanged()" ng-model="reportcmpid"
+							autofocus></div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4" style="padding-left: 32px;">
+						<span>Select Master Type:</span><br>
+						<div
+							custom-select="mt for mt in mastertypes | filter: $searchTerm"
+							custom-select-options="mastertypeselectOptions"
+							ng-change="reportmasterchanged()" ng-model="reportmastertype"
+							autofocus></div>
+					</div>
+				</div>
+				<br>
+				<br>
+				<div class="col-lg-8">
+					<div class="bs-component">
+						<!-- 					<div class="alert alert-info">
+						<p>Sort key: {{sortKey}}</p>
+						<p>Reverse: {{reverse}}</p>
+						<p>Search String : {{search}}</p>
+					</div> -->
+						<form class="form-inline">
+							<div class="form-group">
+								<input type="text" ng-model="search" class="form-control"
+									placeholder="Search">
+							</div>
+						</form>
+						<div id="exportable">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th ng-click="sort('id')">Sl. No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='id'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('first_name')">Client Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('last_name')">Company Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Master Type<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">PP Master Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Tally Masters Mapped<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr
+										dir-paginate="mapping in tallyppmapdata | orderBy:sortKey:reverse | filter:search|itemsPerPage:5"
+										current-page="currentPage">
+										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
+										<td>{{user.username}}</td>
+										<td>{{user.usertype}}</td>
+										<td>{{user.userstatus}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div id="exportable" ng-hide="true">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th ng-click="sort('id')">Sl. No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='id'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('first_name')">Username<span
+											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('last_name')">User Type <span
+											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">User Status <span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="user in users">
+										<td>{{$index+1}}</td>
+										<td>{{user.username}}</td>
+										<td>{{user.usertype}}</td>
+										<td>{{user.userstatus}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<dir-pagination-controls max-size="5" direction-links="true"
+							boundary-links="true"> </dir-pagination-controls>
+						<button style="margin-left: 50px; margin-bottom: 65px;"
+							ng-click="exportData()" class="btn btn-success">Export</button>
+						<a style="margin-bottom: 65px;" href="#masters"
+							class="btn btn-success">Back</a>
+					</div>
+				</div>
+				</md-content> </md-tab> </md-tabs> </md-content>
 			</div>
-			</div>
-			
 		</div>
 	</div>
 </div>
 <div class="clearfix"></div>
 </div>
-
-<script type="text/javascript">
-var config = {
-'.chosen-select': {},
-'.chosen-select-deselect': {allow_single_deselect: true},
-'.chosen-select-no-single': {disable_search_threshold: 10},
-'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
-'.chosen-select-width': {width: "95%"}
-}
-for (var selector in config) {
-$(selector).chosen(config[selector]);
-}
-        </script>

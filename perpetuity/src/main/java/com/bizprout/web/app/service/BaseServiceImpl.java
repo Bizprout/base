@@ -45,9 +45,11 @@ public class BaseServiceImpl implements BaseService<BaseDTO> {
 		return fromDb;
 	}
 
-	public void updateservice(BaseDTO t) {
+	public int updateservice(BaseDTO t) {
 		// TODO Auto-generated method stub
-		
+		return 0;
 	}
+
+
 
 }

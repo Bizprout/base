@@ -2,19 +2,25 @@ package com.bizprout.web.app.repository;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
+import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.EditPpMasterDTO;
 import com.bizprout.web.app.dto.PpMasterDTO;
+import com.bizprout.web.app.dto.UserDTO;
 
 @Repository
 public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
@@ -44,19 +50,23 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		return ppmasterlist;
 	}
 	
-	public List<String> getPpParentName(String mastertype, String ppmastername) {
+	public List<PpMasterDTO> getPpParentName(String mastertype, String ppmastername) {
 		Session session;
 		Query qry=null;
-		List<String> ppparentname = null;
+		List<PpMasterDTO> ppparentname = null;
 		try {
 			logger.info("Inside PpMasterRepositoryImpl......getPpParentName method.......");
 
 			session = factory.getCurrentSession();
-
-			qry=session.createQuery("select ppparentname from PpMasterDTO where mastertype=:mastertyp and ppmastername=:ppmasternme");
-			qry.setParameter("mastertyp",mastertype);
-			qry.setParameter("ppmasternme",ppmastername);
-			ppparentname=qry.list();
+			
+			Criteria cr = session.createCriteria(PpMasterDTO.class)
+					.add(Restrictions.eq("mastertype", mastertype))
+					.add(Restrictions.eq("ppmastername", ppmastername))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("ppparentname"), "ppparentname")
+							.add(Projections.property("costcategory"), "costcategory"))
+							.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
+			ppparentname=cr.list();
 
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
@@ -78,10 +88,11 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			
 			tx=session.beginTransaction();
 
-			Query qry=session.createQuery("UPDATE PpMasterDTO set ppmastername=:editppmastername, ppparentname=:ppparentnme WHERE mastertype=:mastertyp and ppmastername=:ppmasternme");
+			Query qry=session.createQuery("UPDATE PpMasterDTO set ppmastername=:editppmastername, ppparentname=:ppparentnme, costcategory=:costcat WHERE mastertype=:mastertyp and ppmastername=:ppmasternme");
 			
 			qry.setParameter("editppmastername", editppmasterDTO.getEditppmastername());
 			qry.setParameter("ppparentnme", editppmasterDTO.getPpparentname());
+			qry.setParameter("costcat", editppmasterDTO.getCostcategory());
 			qry.setParameter("mastertyp", editppmasterDTO.getMastertype());
 			qry.setParameter("ppmasternme", editppmasterDTO.getPpmastername());
 
@@ -96,6 +107,22 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			session.close();
 		}
 		return result;
+	}
+	
+	public List<PpMasterDTO> getPpmasterData() {
+		List<PpMasterDTO> ppmasterdata = null;
+		try {
+			logger.info("Inside getPpmasterData method.......");
+
+			Session session = factory.getCurrentSession();
+
+			ppmasterdata= session.createQuery("from PpMasterDTO").list();
+
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmasterdata;
 	}
 
 }

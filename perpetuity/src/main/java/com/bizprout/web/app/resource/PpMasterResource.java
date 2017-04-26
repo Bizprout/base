@@ -8,14 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bizprout.web.api.service.PpMasterService;
 import com.bizprout.web.app.dto.EditPpMasterDTO;
 import com.bizprout.web.app.dto.PpMasterDTO;
+import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
 
 @RestController
@@ -75,14 +78,13 @@ public class PpMasterResource {
 	}
 	
 	@PostMapping(value="/getppparentname")
-	public List<String> getPpParentName(@RequestBody PpMasterDTO ppmasterDTO){
+	public List<PpMasterDTO> getPpParentName(@RequestBody PpMasterDTO ppmasterDTO){
 				
-		List<String> ppparentname = null;
+		List<PpMasterDTO> ppparentname = null;
 		try {
 			ppparentname=ppmasterservice.getPpParentName(ppmasterDTO.getMastertype(), ppmasterDTO.getPpmastername());
-			logger.debug("Request......getPpMastername List......");
+			logger.debug("Request......getPpParentName List......");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return ppparentname;
@@ -109,5 +111,20 @@ public class PpMasterResource {
 			e.printStackTrace();
 		}
 		return resp;		
+	}
+	
+	@GetMapping(value="/getppmasterdata")
+	@ResponseBody
+	public List<PpMasterDTO> getPpMasterData()
+	{
+		List<PpMasterDTO> ppmasterdata = null;
+		try {
+			ppmasterdata=ppmasterservice.getPpMasterdata();
+			logger.debug("Request......getPpMasterData......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmasterdata;
 	}
 }

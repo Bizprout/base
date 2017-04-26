@@ -1,163 +1,237 @@
-        <script type="text/javascript">
-            $(document).ready(function () {
 
-                $('.submenu-button-open').click(function () {
-                    $('.submenu-container').animate({
-                        left: '0px'
-                    }, 700);
-                    $('body').css('overflow', 'hidden');
-                });
-
-                $('.submenu-button-close').click(function () {
-                    $('.submenu-container').animate({
-                        left: '-250px'
-                    }, 700);
-                    $('body').css('overflow', 'auto');
-                });
-
-                $('#cu_user_type').selectpicker({
-                    style: 'btn-info'
-                });
-				
-				 var date_input=$('input[name="syncdatafrom"]'); //our date input has the name "date"
-				  var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-				  var options={
-					format: 'd-M-yyyy',
-					container: container,
-					todayHighlight: true,
-					autoclose: true,
-					todayBtn: "linked",
-					toggleActive: true,
-					clearBtn: true,
-				  };
-				  date_input.datepicker(options);
-				  
-
-            });
-        </script>
-
-        <div class="dashboard-page">
-           
-            <div class="right" style="margin-left:100px;">
-                <div class="heading">
-                    <div class="path">Tally Database Mapping to Company</div>
-                    <div class="text">New Company</div>
-                </div>
-                <div class="cu-section">
-					<div class="row">
-					  <div class="col-xs-3">
-						 <span>Select Client:</span>
-						 <div bs-dropdown 
-									 bs-dropdown-items="clientnames"
-									 ng-model="clientmodel" 
-									 bs-dropdown-item-disabled="{{[0]}}"
-									 bs-dropdown-display="Select Client Name"></div><br>
-						 <!-- <select class="selectpicker" id="company_select" name="company_select">
-									 <option selected disabled>Select Client</option>
-									  <option>Bizprout</option>
-									  <option>Tiramisu</option>
-									 </select> -->
-					  </div>
-					  </div>
-					  
-					  <div class="row">
-					  <div class="col-xs-3">
-						 <span>Company Name:</span>
-						<input type="text" name="company_name" id="company_name" class="form-control" placeholder="Company Name" required>
-					  </div>
-					  </div>
-					  
-					  <div class="row">
-					  
-					   <div class="col-xs-3">
-						 <span>Tally GUID:</span>
-						 <input type="text" name="tallyguid" id="tallyguid" class="form-control" placeholder="Tally GUID" required autofocus>
-					  </div>					   
-						 
-					  <div class="col-xs-3">
-						 <span>Sync Data From:</span>
-						 <input type="text" name="syncdatafrom" id="syncdatafrom" class="form-control" placeholder="Sync Data From" required>						 
-					  </div>
-					  
-					  
-					  </div>
-					
-					<div class="row">
-					  <div class="col-xs-3">
-						 <span>Mysql Username:</span>
-						 <input type="text" name="mysql_username" id="mysql_username" class="form-control" placeholder="Mysql Username" required autofocus>
-					  </div>
-					  <div class="col-xs-3">
-						 <span>Mysql Password:</span>
-						 <input type="password" name="mysql_password" id="mysql_password" class="form-control" placeholder="Mysql Password" required autofocus>
-					  </div>
-					 </div> 
-					
-					<div class="row">
-					  <div class="col-xs-3">
-						 <span>User Status:</span><br>
-						 <div bs-dropdown 
-						 bs-dropdown-items="userstatusses"
-						 ng-model="userstatusmodel" 
-						 bs-dropdown-display="User Status" 
-						 ></div>	
-						 <!-- <select class="selectpicker" id="userstatus" name="userstatus">
-									 <option selected disabled>User Status</option>
-									  <option selected>Active</option>
-									  <option>InActive</option>
-									 </select> -->
-					  </div>
-					  </div>
-
+<div class="dashboard-page">
+	<div class="right" style="margin-left: 100px;">
+		<div class="heading">
+			<!-- <div class="path">Tally Database Mapping to Company</div> -->
+			<div class="text">Tally Database Mapping to Company</div>
+		</div>
+		<div class="cu-section">
+			<div class="container-fluid">
+				<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+					ng-show="showSuccessAlert">
+					<button type="button" class="close"
+						data-ng-click="switchBool('showSuccessAlert')">x</button>
+					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
 				</div>
-				
-				 <div class="heading">
-                    <div class="text">Cron Job Details</div>
-                </div>			
-				
-				<div class="cu-section">
-					<div class="row">
-					  <div class="col-xs-8">
-						<div class="example1"></div>
-					  </div>
-					</div>
-					<br/>
-					
-					<div class="row">
-					  <div class="col-xs-3">
-					  <span>No. of Retrials:</span>
-						<input type="text" name="retrials" id="retrials" class="form-control" placeholder="No. Of Retrials" required autofocus>
-					  </div>
-					 </div> 
-					 
-					 <br/>
-				
+			</div>
+			<div ng-cloak>
+				<md-content> <md-tabs md-dynamic-height
+					md-border-bottom> <md-tab label="Update"
+					md-on-select="oncreateeditclick()"> <md-content
+					class="md-padding">
 				<div class="row">
-					  <div class="col-xs-5">
-				 <button type="button" class="btn btn-success">Create/ Edit</button>									
-				 <button type="button" class="btn btn-success">Report</button>									
-				 <button type="button" class="btn btn-success">Clear</button>
-				 <a href="#masters" class="btn btn-success">Back</a>
-				 </div>
-				 </div>
-
-				</div>				
-				
-                </div>
-            </div>
-            <div class="clearfix"></div>
-        </div>
-      
-        <script type="text/javascript">
-var config = {
-'.chosen-select': {},
-'.chosen-select-deselect': {allow_single_deselect: true},
-'.chosen-select-no-single': {disable_search_threshold: 10},
-'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
-'.chosen-select-width': {width: "95%"}
-}
-for (var selector in config) {
-$(selector).chosen(config[selector]);
-}
-        </script>
-
+					<div class="col-xs-3">
+						<span>Select Company:</span><br>
+						<div
+							custom-select="cmp for cmp in companylist |  filter: $searchTerm"
+							custom-select-options="companyselectOptions"
+							ng-change="onchangeselectcompany()"
+							ng-model="companyDTO.tallyCmpName" autofocus></div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-3">
+						<span>Select Client:</span><br>
+						<div
+							custom-select="clt.clientId as clt.clientName for clt in clientnames |  filter: {clientName: $searchTerm} track by clt.clientId"
+							custom-select-options="clientselectOptions"
+							ng-change="clientselected()" ng-model="companyDTO.clientId"
+							autofocus></div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Tally GUID:</span><br>
+						<input type="text" ng-model="companyDTO.tallyGUID"
+							class="form-control" ng-copy="$event.preventDefault()" required
+							placeholder="Tally GUID" style="width: 104%;" disabled autofocus>
+					</div>
+					<div class="col-xs-5">
+						<span>Sync Date From:</span><br>
+						<md-datepicker ng-model="companyDTO.appFromDate"
+							md-placeholder="Sync Date From" md-open-on-focus></md-datepicker>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Upload Timer:</span>
+						<mdp-time-picker mdp-auto-switch="true"
+							ng-model="companyDTO.uploadTimer"></mdp-time-picker>
+					</div>
+					<div class="col-xs-5" style="width: 25%;">
+						<span>Download Timer:</span>
+						<mdp-time-picker mdp-auto-switch="true"
+							ng-model="companyDTO.dnldTimer"></mdp-time-picker>
+					</div>
+					<div class="col-xs-3">
+						<span>No. of Retrials:</span>
+						<input class="form-control" min="1" max="99"
+							onKeyDown="if(this.value.length==2) return false;"
+							ng-model="companyDTO.maxRetrial" type="number"
+							id="example-number-input" style="width: 40%;" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3" style="margin-top: -20px;">
+						<span>Company Status:</span><br>
+						<div custom-select="stat for stat in stats |  filter: $searchTerm"
+							custom-select-options="companystatusOptions" ng-change=""
+							ng-model="companyDTO.status" autofocus></div>
+					</div>
+				</div>
+				<br />
+				<div class="row">
+					<div class="col-xs-5">
+						<button type="button" class="btn btn-success"
+							ng-click="updatecompany(companyDTO)">Update</button>
+						<button type="reset" class="btn btn-success" ng-click="clear()">Clear</button>
+						<a href="#masters" class="btn btn-success">Back</a>
+					</div>
+				</div>
+				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
+					class="md-padding">
+				<div class="col-lg-8">
+					<div class="bs-component">
+						<!-- 					<div class="alert alert-info">
+						<p>Sort key: {{sortKey}}</p>
+						<p>Reverse: {{reverse}}</p>
+						<p>Search String : {{search}}</p>
+					</div> -->
+						<form class="form-inline">
+							<div class="form-group">
+								<input type="text" ng-model="search" class="form-control"
+									placeholder="Search">
+							</div>
+						</form>
+						<div id="exportable">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th ng-click="sort('id')">Sl.&nbsp;No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='id'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('first_name')">Client&nbsp;Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th ng-click="sort('last_name')">Tally&nbsp;Company&nbsp;Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th ng-click="sort('hobby')">Sync&nbsp;Applicable&nbsp;Date<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Upload&nbsp;Timer<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Download&nbsp;Timer<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Max&nbsp;Retrials<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Status<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr
+										dir-paginate="comp in company|orderBy:sortKey:reverse|filter:search|itemsPerPage:5"
+										current-page="currentPage">
+										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
+										<td colspan="5">{{comp.client.clientName}}</td>
+										<td colspan="4">{{comp.tallyCmpName}}</td>
+										<td style="width: 200px;"">{{comp.appFromDate}}</td>
+										<td>{{comp.uploadTimer}}</td>
+										<td>{{comp.dnldTimer}}</td>
+										<td>{{comp.maxRetrial}}</td>
+										<td>{{comp.status}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div id="exportableall" ng-hide="true">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th ng-click="sort('id')">Sl.&nbsp;No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='id'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('first_name')">Client&nbsp;Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('last_name')">Tally&nbsp;Company&nbsp;Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Sync&nbsp;Applicable&nbsp;Date<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Upload&nbsp;Timer<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Download&nbsp;Timer<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Max&nbsp;Retrials<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('hobby')">Status<span
+											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr
+										ng-repeat="comp in company">
+										<td>{{$index+1}}</td>
+										<td>{{comp.clientId}}</td>
+										<td>{{comp.tallyCmpName}}</td>
+										<td style="width: 200px;"">{{comp.appFromDate}}</td>
+										<td>{{comp.uploadTimer}}</td>
+										<td>{{comp.dnldTimer}}</td>
+										<td>{{comp.maxRetrial}}</td>
+										<td>{{comp.status}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<dir-pagination-controls max-size="5" direction-links="true"
+							boundary-links="true"> </dir-pagination-controls>
+						<button style="margin-left: 50px; margin-bottom: 65px;"
+							ng-click="exportData()" class="btn btn-success">Export</button>
+						<a style="margin-bottom: 65px;" href="#masters"
+							class="btn btn-success">Back</a>
+					</div>
+				</div>
+				</md-content> </md-tab> </md-tabs> </md-content>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="clearfix"></div>
+</div>

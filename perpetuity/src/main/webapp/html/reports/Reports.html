@@ -1,118 +1,59 @@
-
-<script type="text/javascript">
-            $(document).ready(function () {
-            	$("#menu").show();
-            	
-                $('.submenu-button-open').click(function () {
-                    $('.submenu-container').animate({
-                        left: '0px'
-                    }, 700);
-                    $('body').css('overflow', 'hidden');
-                });
-
-                $('.submenu-button-close').click(function () {
-                    $('.submenu-container').animate({
-                        left: '-250px'
-                    }, 700);
-                    $('body').css('overflow', 'auto');
-                });
-
-                $('#cu_user_type').selectpicker({
-                    style: 'btn-info'
-                });
-
-            });
-        </script>
-
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<div class="path">Reports</div>
-			<div class="text">Generate Reports</div>
+			<div class="text">Reports</div>
 		</div>
 		<div class="cu-section">
-
-			<div class="row">
-				<div class="col-xs-4">
-					<span>Select Client:</span><br> 
-					 <div bs-dropdown 
-					 bs-dropdown-items="clientnames"
-					 ng-model="clientmodel" 
-					 bs-dropdown-item-disabled="{{[0]}}"
-					 bs-dropdown-display="Select Client Name"></div><br>
-					<!-- <select class="selectpicker"
-						id="client_sel" name="client_sel">
-						<option selected disabled>Select Client</option>
-						<option>Bizprout</option>
-						<option>Tiramisu</option>
-						<option>Perpetuity</option>
-					</select> -->
-				</div>
-				<div class="col-xs-5">
-					<span>Select Company:</span><br> 
-					 <div bs-dropdown 
-					 bs-dropdown-items="companylist"
-					 ng-model="companymodel"
-					 bs-dropdown-item-disabled="{{[0]}}" 
-					 bs-dropdown-display="Select Company"></div><br>
-					<!-- <select class="selectpicker"
-						id="company_select" name="company_select">
-						<option selected disabled>Select Company</option>
-						<option>Bizprout-Payroll</option>
-						<option>Bizprout-Accounting</option>
-						<option>Bizprout-Consulting</option>
-						<option>Bizprout-Compliance</option>
-						<option>Tiramisu-1</option>
-						<option>Perpetuity-4</option>
-					</select> -->
+			<div class="container-fluid">
+				<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+					ng-show="showSuccessAlert">
+					<button type="button" class="close"
+						data-ng-click="switchBool('showSuccessAlert')">x</button>
+					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
 				</div>
 			</div>
-
-			<div class="row">
-				<div class="col-xs-3">
-					<span>Select Report:</span> 
-					 <div bs-dropdown 
-					 bs-dropdown-items="reportitems"
-					 ng-model="reportmodel"
-					 bs-dropdown-item-disabled="{{[0]}}" 
-					 bs-dropdown-display="Select Reports"></div><br>
-					<!-- <select class="selectpicker"
-						id="report_select" name="report_select">
-						<option selected disabled>Select Report</option>
-						<option>Bizprout</option>
-						<option>Tiramisu</option>
-						<option>Perpetuity</option>
-					</select> -->
+			<div ng-cloak>
+				<md-content> <md-tabs md-dynamic-height md-border-bottom> <md-tab
+					label="Generate Reports" md-on-select="onreportclick()"> <md-content
+					class="md-padding">
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Select Client:</span><br>
+						<div
+							custom-select="clt.clientId as clt.clientName for clt in clientnames | filter: {clientName: $searchTerm} track by clt.clientId"
+							custom-select-options="clientselectOptions"
+							ng-change="clientchanged()" ng-model="reportDTO.client" autofocus></div>
+					</div>
+					<div class="col-xs-5">
+						<span>Select Company:</span><br>
+						<div
+							custom-select="comp.cmpId as comp.tallyCmpName for comp in companies | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
+							custom-select-options="companyselectOptions" ng-change=""
+							ng-model="reportDTO.cmpId" autofocus></div>
+					</div>
 				</div>
-			</div>
-
-			<br />
-			<br />
-
-			<div class="row">
-				<div class="col-xs-5">
-					<button type="button" class="btn btn-success">Generate</button>
-					<button type="cancel" class="btn btn-success">Clear</button>
-					<a href="#home" class="btn btn-success">Back</a>
+				<br>
+				<div class="row">
+					<div class="col-xs-3">
+						<span>Select Report:</span>
+						<div custom-select="rep for rep in reports | filter: $searchTerm"
+							custom-select-options="reportselectOptions" ng-change=""
+							ng-model="reportDTO.reportname" autofocus></div>
+					</div>
 				</div>
+				<br />
+				<br />
+				<div class="row">
+					<div class="col-xs-5">
+						<button type="button" class="btn btn-success" ng-click="generatereport(reportDTO)">Generate</button>
+						<button type="cancel" class="btn btn-success" ng-click="clear()">Clear</button>
+						<a href="#home" class="btn btn-success">Back</a>
+					</div>
+				</div>
+				</md-content> </md-tab> </md-tabs> </md-content>
 			</div>
-
 		</div>
-
 	</div>
 </div>
 <div class="clearfix"></div>
 </div>
-
-<script type="text/javascript">
-var config = {
-'.chosen-select': {},
-'.chosen-select-deselect': {allow_single_deselect: true},
-'.chosen-select-no-single': {disable_search_threshold: 10},
-'.chosen-select-no-results': {no_results_text: 'Oops, nothing found!'},
-'.chosen-select-width': {width: "95%"}
-}
-for (var selector in config) {
-$(selector).chosen(config[selector]);
-}
-</script>

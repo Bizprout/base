@@ -2,6 +2,8 @@ package com.bizprout.web.app.resource;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bizprout.web.api.common.constants.CommonConstants;
 import com.bizprout.web.api.service.BaseService;
 import com.bizprout.web.api.service.UserService;
 import com.bizprout.web.app.dto.UserDTO;
@@ -44,16 +48,16 @@ public class UserResource {
 	}
 	
 	@PostMapping(value="/add", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity adduser(@RequestBody UserDTO userDTO)
+	public ResponseEntity<String> adduser(@RequestBody @Valid UserDTO userDTO, BindingResult result)
 	{
-		ResponseEntity resp = null;
+		ResponseEntity<String> resp = null;
 		try {
 			userservice.CreateUser(userDTO);
 			logger.debug("Request.......adduser method......");
 						
 			if(userDTO.getUserid()>0)
 			{
-				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+				resp= new ResponseEntity<String>(CommonConstants.SUCCESS_MESSAGE, HttpStatus.OK);
 			}
 			else
 			{

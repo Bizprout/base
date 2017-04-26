@@ -96,7 +96,7 @@ a {
 :placeholder-shown {
     color: #1f2021;
     font-weight: 300;
-	margin-bottom:15px;
+	margin-bottom:0px;
 }
 /* Chrome, Safari */
 ::-webkit-scrollbar {

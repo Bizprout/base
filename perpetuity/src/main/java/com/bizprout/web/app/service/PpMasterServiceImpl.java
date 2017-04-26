@@ -34,7 +34,6 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 			logger.info("inside CreatePpMaster service " + t);
 			baseRepository.save(t);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -46,20 +45,18 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 			logger.info("inside getPpMastersName service method ");
 			ppmasterlist = PpRepository.getPpMasterList(mastertype);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return ppmasterlist;
 	}
 
-	public List<String> getPpParentName(String mastertype, String ppmastername) {
+	public List<PpMasterDTO> getPpParentName(String mastertype, String ppmastername) {
 		
-		List<String> ppparentname = null;
+		List<PpMasterDTO> ppparentname = null;
 		try {
 			logger.info("inside getPpMastersName service method ");
 			ppparentname = PpRepository.getPpParentName(mastertype, ppmastername);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return ppparentname;
@@ -71,10 +68,21 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 			System.out.println("inside UpdatePpMasters service " + editppmasterDTO);
 			logger.info("inside UpdatePpMasters service " + editppmasterDTO);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return PpRepository.UpdatePpMaster(editppmasterDTO);
+	}
+
+	public List<PpMasterDTO> getPpMasterdata() {
+		
+		List<PpMasterDTO> ppmasterdata = null;
+		try {
+			logger.info("inside getPpMasterdata method ");
+			ppmasterdata = PpRepository.getPpmasterData();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ppmasterdata;
 	}
 	
 	

@@ -1,13 +1,27 @@
 package com.bizprout.web.app.dto;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="company_master")
@@ -28,12 +42,15 @@ public class CompanyDTO {
 	private String tallyCmpName;
 	
 	@Column(name="appl_from_date")
+	@Type(type="date")
 	private Date appFromDate;
 	
 	@Column(name="upload_timer")
+	@Type(type="time")
 	private Date uploadTimer;
 	
 	@Column(name="download_timer")
+	@Type(type="time")
 	private Date dnldTimer;
 	
 	@Column(name="max_retrial")
@@ -42,6 +59,10 @@ public class CompanyDTO {
 	@Column(name="status")
 	private String status;
 	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinColumn(name="client_id", nullable=false, insertable=false, updatable=false)
+	private ClientDTO client;
+		
 	public int getCmpId() {
 		return cmpId;
 	}
@@ -96,7 +117,10 @@ public class CompanyDTO {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	
-
+	public ClientDTO getClient() {
+		return client;
+	}
+	public void setClient(ClientDTO client) {
+		this.client = client;
+	}
 }

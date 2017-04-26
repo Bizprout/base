@@ -11,8 +11,10 @@ public interface PpMasterService<T> {
 	
 	public List<String> getPpMastersName(String ppmasterlist);
 	
-	public List<String> getPpParentName(String mastertype, String ppmastername);
+	public List<PpMasterDTO> getPpParentName(String mastertype, String ppmastername);
 	
 	public int UpdatePpMasters(EditPpMasterDTO t);
+	
+	public List<PpMasterDTO> getPpMasterdata();
 
 }
