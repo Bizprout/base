@@ -95,17 +95,30 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		return result;
 	}
 	
-	public List<TallyMappingDTO> getTallyPpMappingData(int cmpid)
+	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype)
 	{
-		List<TallyMappingDTO> tallyppmappingdata=null;
+		List<TallyMastersDTO> tallyppmappingdata=null;
 		
 		try {
 			logger.info("inside getTallyPpMappingData method ");
-			tallyppmappingdata = tallymappingrepo.getTallyPpMappingData(cmpid);
+			tallyppmappingdata = tallymappingrepo.getTallyPpMappingData(cmpid, mastertype);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return tallyppmappingdata;
+	}
+	
+	public int savePpMasterMapping(List<TallyMastersDTO> tallymasterdto) {
+		
+		int result=0;
+		try {
+			logger.info("inside savePpMasterMapping method ");
+			result=tallymappingrepo.savePpMasterMapping(tallymasterdto);
+		} catch (Exception e) {
+			logger.error("Exception in savePpMasterMapping method \t" + e.getMessage());
+		}
+		
+		return result;
 	}
 
 }

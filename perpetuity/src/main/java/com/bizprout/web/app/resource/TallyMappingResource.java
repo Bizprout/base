@@ -105,7 +105,7 @@ public class TallyMappingResource {
 
 		return resp;
 	}
-	
+
 	@PostMapping(value="/update", produces = MediaType.TEXT_PLAIN_VALUE)
 	public ResponseEntity<String> updateTallyMapping(@RequestBody TallyMappingDTO tallymappingdto)
 	{
@@ -144,17 +144,43 @@ public class TallyMappingResource {
 		}
 		return ppmapping;
 	}
-	
+
 	@PostMapping(value="/gettallyppmappingdata")
-	public List<TallyMappingDTO> getPpMasterData(@RequestBody TallyMappingDTO tallymappingdto)
+	public List<TallyMastersDTO> getPpMasterData(@RequestBody TallyMastersDTO tallymasterdto)
 	{
-		List<TallyMappingDTO> tallyppmapdata = null;
+		List<TallyMastersDTO> tallymasterdata = null;
 		try {
-			tallyppmapdata=tallymappingservice.getTallyPpMappingData(tallymappingdto.getCmpId());
+			tallymasterdata=tallymappingservice.getTallyPpMappingData(tallymasterdto.getCmpId(), tallymasterdto.getMasterType());
 			logger.debug("Request......getPpMasterData......");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return tallyppmapdata;
+		return tallymasterdata;
+	}
+
+
+	@PostMapping(value="/saveppmapping", produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<String> updatePpMasterMapping(@RequestBody List<TallyMastersDTO> tallymasterdto)
+	{
+		int result=0;
+		ResponseEntity<String> resp = null;
+		try {
+
+			result=tallymappingservice.savePpMasterMapping(tallymasterdto);
+
+			if(result>0)
+			{
+				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+			}
+			else
+			{
+				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+			}
+
+			logger.debug("Request......getPpMasterData......");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return resp;
 	}
 }

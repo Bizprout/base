@@ -141,17 +141,18 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		return ppmapping;
 	}
 	
-	public List<TallyMappingDTO> getTallyPpMappingData(int cmpid)
+	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype)
 	{
-		List<TallyMappingDTO> tallyppmappingdata = null;
+		List<TallyMastersDTO> tallyppmappingdata = null;
 		Query qry=null;
 		try {
 			logger.info("Inside getTallyPpMappingData method.......");
 
 			Session session = factory.getCurrentSession();
 
-			qry= session.createQuery("from TallyMappingDTO where cmpId=:companyid");
+			qry= session.createQuery("from TallyMastersDTO where cmpId=:companyid and masterType=:mastertyp");
 			qry.setParameter("companyid", cmpid);
+			qry.setParameter("mastertyp", mastertype);
 			
 			tallyppmappingdata=qry.list();
 
@@ -159,6 +160,41 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 			e.printStackTrace();
 		}
 		return tallyppmappingdata;
+	}
+	
+	public int savePpMasterMapping(List<TallyMastersDTO> tallymasterdto)
+	{
+		int result = 0;
+		Session session = null;
+		Transaction tx = null;
+
+		try {
+			logger.info("Inside savePpMasterMapping method.......");
+
+			session = factory.getCurrentSession();
+
+			tx=session.beginTransaction();
+			
+			for (TallyMastersDTO temp : tallymasterdto) {
+				
+				Query qry=session.createQuery("UPDATE TallyMastersDTO set ppid=:pp WHERE cmpId=:cmpid and masterId=:tallymasterid");
+				qry.setParameter("pp", temp.getPpid());
+				qry.setParameter("cmpid", temp.getCmpId());
+				qry.setParameter("tallymasterid", temp.getMasterId());
+				result= qry.executeUpdate();
+			}	
+			
+			tx.commit();
+			
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			tx.rollback();
+		}
+		finally {
+			session.close();
+		}
+		return result;
 	}
 	
 }

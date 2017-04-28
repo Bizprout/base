@@ -308,7 +308,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 	};
 
 	$scope.currentPage=1;
-	$scope.itemsPerPage=5;
+	$scope.itemsPerPage=10;
 
 	$scope.onreportclick=function(){
 		console.log("Report clicked....");
@@ -316,6 +316,8 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 		//View tally pp mapping - Report================================================================================================
 
 		$scope.reportclientchanged=function(){
+			
+			$scope.reportmastertype='';
 
 			$http({
 				method : "POST",
@@ -335,10 +337,17 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 				// or server returns response with an error status.
 			});
 		};
-
+		
+		$scope.reportcompanychanged=function(){
+			$scope.reportmastertype='';
+		};
+		
 		$scope.reportmasterchanged=function(){
+			
+			$scope.clientname=$scope.clientnames[0].clientName;
+			$scope.companyname=$scope.reportcompanies[0].tallyCmpName;
 
-			if($scope.reportcmpid.length>0 && $scope.reportmastertype.length!=0)
+			if($scope.reportcmpid>0 && $scope.reportmastertype.length!=0)
 			{
 				$http({
 					method : "POST",
@@ -352,22 +361,88 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 					//*******options for client Names*********
 
 					$scope.tallyppmapdata=reportdata;
+					
+					$http({
+						method : "POST",
+						url : "pptallymapping/getppmasternames",
+						data: {"mastertype":$scope.reportmastertype, "cmpid":$scope.reportcmpid},
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(reportdatappmasternames, status, headers, config){
+
+						//*******options for client Names*********
+
+						$scope.reportppmasternames=reportdatappmasternames;
+						
+						//$scope.reportppmasterid[4917]="rishwanth";
+												
+
+					}).error(function(data, status, headers, config){
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
 
 				}).error(function(data, status, headers, config){
 					// called asynchronously if an error occurs
 					// or server returns response with an error status.
 				});
+				
+				
+				$scope.savereportdata=function(){				
+					
+					$scope.datapushed = [];
+					angular.forEach($scope.tallyppmapdata, function (mainobj) {
+					    						
+						if(mainobj.ppid!=null)
+						{
+							$scope.datapushed.push({'cmpId':mainobj.cmpId, 'masterId':mainobj.masterId, 'ppid':mainobj.ppid});
+						}						
+					});
+					
+					$http({
+						method : "POST",
+						url : "pptallymapping/saveppmapping",
+						data: $scope.datapushed,
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(successdata, status, headers, config){
+
+						//*******options for client Names*********
+						
+						console.log(successdata);
+
+						if(successdata==='success')
+						{
+							$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'PP Masters to tally Mapped'};
+							$scope.showSuccessAlert = true;
+							
+							$scope.reportclientid='';
+							$scope.reportcmpid='';
+							$scope.reportmastertype='';
+							$scope.tallyppmapdata=[];
+						}
+						else
+						{
+							$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'PP Masters to tally not Mapped'};
+							$scope.showSuccessAlert = true;
+						}
+												
+
+					}).error(function(data, status, headers, config){
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
+				};
+				
+				
 			}
 			else
 			{
 				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'All Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
-
-			/*	$scope.tallyppmapdata = []; //declare an empty array
-			$http.get("pptallymapping/gettallyppmappingdata").success(function(response){ 
-				$scope.tallyppmapdata = response;  //ajax request to fetch data into $scope.data
-			});*/
 		};		
 
 		$scope.sort = function(keyname){
@@ -377,7 +452,8 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 
 		$scope.exportData = function () {
-			var blob = new Blob([document.getElementById('exportable').innerHTML], {
+			
+			var blob = new Blob([document.getElementById('exportableall').innerHTML], {
 				type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
 			});
 			saveAs(blob, "Tally_PP_Mapping_Report.xls");

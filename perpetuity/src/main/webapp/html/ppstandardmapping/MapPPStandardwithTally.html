@@ -13,9 +13,8 @@
 				</div>
 			</div>
 			<div ng-cloak>
-				<md-content> <md-tabs md-dynamic-height
-					md-border-bottom> <md-tab label="Map"
-					md-on-select="onmapclick()"> <md-content
+				<md-content> <md-tabs md-border-bottom> <md-tab
+					label="Map" md-on-select="onmapclick()"> <md-content
 					class="md-padding"><!-- md-dynamic-height -->
 				<div class="row">
 					<div class="col-xs-4">
@@ -136,7 +135,7 @@
 							ng-change="reportclientchanged()" ng-model="reportclientid"
 							autofocus></div>
 					</div>
-					<div class="col-xs-6">
+					<div class="col-xs-4">
 						<span>Select Company:</span><br>
 						<div
 							custom-select="comp.cmpId as comp.tallyCmpName for comp in reportcompanies | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
@@ -144,16 +143,13 @@
 							ng-change="reportcompanychanged()" ng-model="reportcmpid"
 							autofocus></div>
 					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-4" style="padding-left: 32px;">
+					<div class="col-xs-3" style="padding-left: 32px;">
 						<span>Select Master Type:</span><br>
 						<div
 							custom-select="mt for mt in mastertypes | filter: $searchTerm"
 							custom-select-options="mastertypeselectOptions"
 							ng-change="reportmasterchanged()" ng-model="reportmastertype"
-							autofocus></div>
+							autofocus style="width: 140px;"></div>
 					</div>
 				</div>
 				<br>
@@ -179,15 +175,7 @@
 											class="glyphicon sort-icon" ng-show="sortKey=='id'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('first_name')">Client Name<span
-											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('last_name')">Company Name<span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">Master Type<span
+										<th ng-click="sort('hobby')">Tally Masters Mapped<span
 											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
@@ -195,52 +183,44 @@
 											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">Tally Masters Mapped<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr
-										dir-paginate="mapping in tallyppmapdata | orderBy:sortKey:reverse | filter:search|itemsPerPage:5"
+										dir-paginate="(key, value) in tallyppmapdata | orderBy:sortKey:reverse |filter:search|itemsPerPage:10"
 										current-page="currentPage">
 										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
-										<td>{{user.username}}</td>
-										<td>{{user.usertype}}</td>
-										<td>{{user.userstatus}}</td>
+										<td>{{tallyppmapdata[itemsPerPage *
+											(currentPage-1)+key].tallyMasterName}}</td>
+										<td ng-hide="true"
+											ng-model="tallyppmapdata[itemsPerPage * (currentPage-1)+key].masterId">{{tallyppmapdata[key].masterId}}</td>
+										<td><div
+												custom-select="reppmn.masteridindex as reppmn.ppmastername for reppmn in reportppmasternames | filter: {ppmastername: $searchTerm} track by reppmn.masterId"
+												custom-select-options="ppmasterselectOptions"
+												ng-model="tallyppmapdata[itemsPerPage * (currentPage-1)+key].ppid"
+												style="width: 140px;"></div></td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
-						<div id="exportable" ng-hide="true">
-							<table class="table table-striped table-hover">
+						<div id="exportableall" ng-hide="true">
+							<table class="table table-striped table-hover" border="1">
 								<thead>
+									<tr><th colspan="3">Client Name: {{clientname}}</th></tr>
+									<tr><th colspan="3">Company Name: {{companyname}}</th></tr>
+									<tr><th colspan="3">Master Type: {{reportmastertype}}</th></tr>
 									<tr>
-										<th ng-click="sort('id')">Sl. No.<span
-											class="glyphicon sort-icon" ng-show="sortKey=='id'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('first_name')">Username<span
-											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('last_name')">User Type <span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">User Status <span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
+										<th style="text-align: left;">Sl. No.</th>
+										<th style="text-align: left;">Tally Masters Mapped</th>
+										<th style="text-align: left;">PP Master Name</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="user in users">
-										<td>{{$index+1}}</td>
-										<td>{{user.username}}</td>
-										<td>{{user.usertype}}</td>
-										<td>{{user.userstatus}}</td>
+									<tr
+										ng-repeat="(key, value) in tallyppmapdata">
+										<td>{{key+1}}</td>
+										<td>{{tallyppmapdata[key].tallyMasterName}}</td>
+										<td>{{tallyppmapdata[key].ppmasterdto.ppmastername}}</td>
 									</tr>
 								</tbody>
 							</table>
@@ -248,7 +228,9 @@
 						<dir-pagination-controls max-size="5" direction-links="true"
 							boundary-links="true"> </dir-pagination-controls>
 						<button style="margin-left: 50px; margin-bottom: 65px;"
-							ng-click="exportData()" class="btn btn-success">Export</button>
+							ng-click="savereportdata()" class="btn btn-success">Save</button>
+						<button style="margin-bottom: 65px;" ng-click="exportData()"
+							class="btn btn-success">Export</button>
 						<a style="margin-bottom: 65px;" href="#masters"
 							class="btn btn-success">Back</a>
 					</div>

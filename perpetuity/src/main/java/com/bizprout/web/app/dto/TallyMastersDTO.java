@@ -1,10 +1,14 @@
 package com.bizprout.web.app.dto;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -27,6 +31,13 @@ public class TallyMastersDTO {
 	
 	@Column(name="name")
 	private String tallyMasterName;
+	
+	@Column(name="pp_id")
+	private Integer ppid;
+	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinColumn(name="pp_id", nullable=false, insertable=false, updatable=false)
+	private PpMasterDTO ppmasterdto;
 
 	public int getMasterIdIndex() {
 		return masterIdIndex;
@@ -66,6 +77,22 @@ public class TallyMastersDTO {
 
 	public void setCmpId(int cmpId) {
 		this.cmpId = cmpId;
+	}
+
+	public Integer getPpid() {
+		return ppid;
+	}
+
+	public void setPpid(Integer ppid) {
+		this.ppid = ppid;
+	}
+
+	public PpMasterDTO getPpmasterdto() {
+		return ppmasterdto;
+	}
+
+	public void setPpmasterdto(PpMasterDTO ppmasterdto) {
+		this.ppmasterdto = ppmasterdto;
 	}
 	
 	
