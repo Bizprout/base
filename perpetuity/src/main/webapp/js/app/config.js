@@ -1,9 +1,9 @@
 baseApp.config(function($routeProvider){
     
     $routeProvider.when("/",{templateUrl: "html/Login.html", controller:"LoginController"
-    }).when("/home",{templateUrl:"html/LandingPage.html", controller:"LoginController"
-    }).when("/masters",{templateUrl:"html/MasterPage.html", controller:"LoginController"
-    }).when("/mapping",{templateUrl:"html/MappingPage.html", controller:"LoginController"
+    }).when("/home",{templateUrl:"html/LandingPage.html", controller:"LandingController"
+    }).when("/masters",{templateUrl:"html/MasterPage.html", controller:"MasterPageController"
+    }).when("/mapping",{templateUrl:"html/MappingPage.html", controller:"MappingPageController"
     }).when("/reports",{templateUrl:"html/reports/Reports.html", controller:"ReportController"
     }).when("/newuser",{templateUrl:"html/usercreation/UserCreation.html", controller:"UserController"
     }).when("/newclient",{templateUrl:"html/clientmaster/ClientMaster.html", controller:"ClientController"

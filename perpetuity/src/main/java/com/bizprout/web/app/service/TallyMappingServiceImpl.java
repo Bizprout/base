@@ -120,5 +120,31 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		
 		return result;
 	}
+	
+	public List<PpMasterDTO> getPpMasterIdNames(String mastertype, int cmpid, String ppmastername)
+	{
+		List<PpMasterDTO> ppmasteridname=null;
+		
+		try {
+			logger.info("inside getTallyPpMappingData method ");
+			ppmasteridname = tallymappingrepo.getPpMasterIdNames(cmpid, mastertype, ppmastername);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ppmasteridname;
+	}
+	
+	public List<TallyMastersDTO> getTallyMasterIdNames(String mastertype, int cmpid, String tallymastername)
+	{
+		List<TallyMastersDTO> tallymasters = null;
+		try {
+			logger.info("inside getTallyMasterIdNames method ");
+			tallymasters = tallymappingrepo.getTallyMasterIdNames(mastertype, cmpid, tallymastername);
+		} catch (Exception e) {
+			logger.error("Exception in getTallyMasterIdNames method \t" + e.getMessage());
+		}
+		return tallymasters;
+	}
+
 
 }

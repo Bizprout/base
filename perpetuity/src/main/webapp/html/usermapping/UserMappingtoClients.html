@@ -1,7 +1,10 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<div class="text">User Mapping to Clients/ Role Creation</div>
+			<p style="text-align: center;">
+				<b>Company:</b> {{cmpname}}
+			</p>
+			<div class="text">User Mapping to Company/ Role Creation</div>
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
@@ -40,8 +43,9 @@
 									placeholder="Search Company.."
 									ng-keydown="$event.stopPropagation()"
 									class="demo-header-searchbox md-text"> </md-select-header> <md-button
-									layout-fill value="companylist" ng-click="toggleSeletedcompany()">{{selectText}}</md-button>
-								<md-optgroup label="Select Companies"> <md-option
+									layout-fill value="companylist"
+									ng-click="toggleSeletedcompany()">{{selectText}}</md-button> <md-optgroup
+									label="Select Companies"> <md-option
 									ng-value="complst"
 									ng-repeat="complst in companylist | filter:searchTerm"
 									ng-selected="optionallnone">{{complst}}</md-option> </md-optgroup> </md-select> </md-input-container>

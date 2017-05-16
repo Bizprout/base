@@ -1,7 +1,6 @@
 package com.bizprout.web.app.dto;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,17 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.NotBlank;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="company_master")
@@ -32,30 +28,36 @@ public class CompanyDTO {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int cmpId;
 	
-	@Column(name="client_id")
-	private int clientId;
+	@Column(name="client_id", nullable=true)
+	private Integer clientId;
 	
 	@Column(name="tally_guid")
 	private String tallyGUID;
 	
+	@NotBlank(message="Company cannot be Blank!")
 	@Column(name="tally_cmpname")
 	private String tallyCmpName;
 	
+	@NotNull(message="Sync date cannot be Blank!")
 	@Column(name="appl_from_date")
 	@Type(type="date")
 	private Date appFromDate;
 	
+	@NotNull(message="Upload Timer cannot be Blank!")
 	@Column(name="upload_timer")
 	@Type(type="time")
 	private Date uploadTimer;
 	
+	@NotNull(message="Download Timer cannot be Blank!")
 	@Column(name="download_timer")
 	@Type(type="time")
 	private Date dnldTimer;
 	
-	@Column(name="max_retrial")
-	private int maxRetrial;
+	@Min(value=1, message="Retrials value cannot be 0!")
+	@Column(name="max_retrial", nullable=true)
+	private Integer maxRetrial;
 	
+	@NotBlank(message="Company Status cannot be Blank!")
 	@Column(name="status")
 	private String status;
 	
@@ -69,10 +71,10 @@ public class CompanyDTO {
 	public void setCmpId(int cmpId) {
 		this.cmpId = cmpId;
 	}
-	public int getClientId() {
+	public Integer getClientId() {
 		return clientId;
 	}
-	public void setClientId(int clientId) {
+	public void setClientId(Integer clientId) {
 		this.clientId = clientId;
 	}
 	public String getTallyGUID() {
@@ -105,10 +107,10 @@ public class CompanyDTO {
 	public void setDnldTimer(Date dnldTimer) {
 		this.dnldTimer = dnldTimer;
 	}
-	public int getMaxRetrial() {
+	public Integer getMaxRetrial() {
 		return maxRetrial;
 	}
-	public void setMaxRetrial(int maxRetrial) {
+	public void setMaxRetrial(Integer maxRetrial) {
 		this.maxRetrial = maxRetrial;
 	}
 	public String getStatus() {

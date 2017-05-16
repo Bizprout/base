@@ -1,14 +1,21 @@
 package com.bizprout.web.app.resource;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,27 +60,35 @@ public class CompanyResource {
 		return compDTO;
 	}
 	
-	@PostMapping(value="/update", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> updateCompany(@RequestBody CompanyDTO companydto)
+	@PostMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> updateCompany(@RequestBody @Valid CompanyDTO companydto, BindingResult result, Model model)
 	{
-		ResponseEntity<String> resp = null;
+		List<Object> jsonresponse=new ArrayList<Object>();
+		
+		if(result.hasErrors())
+		{
+			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList()));
+			return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);
+		}
+		
 		try {
-			int result=companyservice.updateCompany(companydto);
+			int res=companyservice.updateCompany(companydto);
 			logger.debug("Request.......updateCompany method......");
 			
-			if(result>0)
+			if(res>0)
 			{
-				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+				jsonresponse.add("success");
 			}
 			else
 			{
-				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return resp;		
+		return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);		
 	}
 	
 	@GetMapping(value="/getcompanydata")
@@ -112,6 +127,21 @@ public class CompanyResource {
 			e.printStackTrace();
 		}
 		return resp;		
+	}
+	
+	@GetMapping(value="/getcompanyidname")
+	@ResponseBody
+	public List<CompanyDTO> getCompanyIdName()
+	{
+		List<CompanyDTO> compdto = null;
+		try {
+			compdto=companyservice.getCompanyIdName();
+			logger.debug("Request......getCompanyIdName......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return compdto;
 	}
 
 }

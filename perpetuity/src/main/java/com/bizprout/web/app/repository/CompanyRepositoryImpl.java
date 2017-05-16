@@ -2,11 +2,15 @@ package com.bizprout.web.app.repository;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,5 +133,22 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 			session.close();
 		}
 		return result;
+	}
+	
+	public List<CompanyDTO> getCompanyIdName()
+	{
+		logger.info("Inside getCompanyIdName method.......");
+		
+		Session session = factory.getCurrentSession();
+
+		Criteria cr = session.createCriteria(CompanyDTO.class)
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("cmpId"), "cmpId")
+						.add(Projections.property("tallyCmpName"), "tallyCmpName"))
+						.setResultTransformer(Transformers.aliasToBean(CompanyDTO.class));
+
+		List<CompanyDTO> comp=cr.list();
+
+		return comp;
 	}
 }

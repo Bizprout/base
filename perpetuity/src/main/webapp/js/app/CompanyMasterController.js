@@ -3,10 +3,23 @@ baseApp.config(function($mdDateLocaleProvider) {
 		return moment(date).format('DD-MMM-YYYY');
 	};
 });
-baseApp.controller("CompanyMasterController", function($scope, $location, $http, $timeout, $q, $filter, $mdpTimePicker) {
+baseApp.controller("CompanyMasterController", function($scope, $location, $http, $timeout, $q, $filter, $mdpTimePicker, $localStorage) {
 
 	console.log("CompanyMasterController loaded.....");
+
+	$scope.cmpname=$localStorage.cmpname;
 	
+	if($localStorage.usertype==='PPAdmin')
+	{
+		$scope.compdisable=true;
+		$scope.clientdisable=true;
+	}
+	else
+	{
+		$scope.compdisable=false;
+		$scope.clientdisable=false;
+	}
+
 	// **********switch flag for success message**********
 	$scope.switchBool = function (value) {
 		$scope[value] = !$scope[value];
@@ -52,7 +65,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 		$scope.companyDTO.appFromDate = new Date();
 		$scope.companyDTO.uploadTimer = new Date();
 		$scope.companyDTO.dnldTimer = new Date();
-		
+
 		this.showTimePicker = function(ev) {
 			$mdpTimePicker($scope.companyDTO.uploadTimer, {
 				targetEvent: ev
@@ -68,13 +81,13 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 				$scope.companyDTO.dnldTimer = selectedDate;
 			});;
 		}
-		
+
 		$scope.stats=["Active", "Inactive"];
 
 		//******************to get Company List for Company dropdown**********************************
 		$http({
 			method : "GET",
-			url : "usermapping/getcompanylist",
+			url : "company/getcompanyidname",
 			headers : {
 				'Content-Type' : 'application/json'
 			}
@@ -83,28 +96,22 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 			//*******options for company names********************************
 			$scope.companylist=data;
 
-		}).error(function(data, status, headers, config){
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-		});		
-		
-		$scope.onchangeselectcompany=function(){
-			console.log("company selected");
+			$scope.companyDTO.tallyCmpName=$localStorage.cmpid;
 			
 			$http({
 				method : "POST",
 				url : "company/getclientstatus",
-				data : {"tallyCmpName":$scope.companyDTO.tallyCmpName},
+				data : {"tallyCmpName":$localStorage.cmpname},
 				headers : {
 					'Content-Type' : 'application/json'
 				}
 			}).success(function(data, status, headers, config){
 
 				//*******options for company names********************************
-
+				
 				$scope.clientid=data.clientId;
 				$scope.status=data.status;
-				
+
 				if($scope.clientid===0 && $scope.status==="Inactive")
 				{
 					$http({
@@ -118,20 +125,17 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 						//*******options for user names and default selected option*********
 
 						$scope.clientnames=dataclientnames;
-												
-						$scope.clientselected=function(){
-														
-							$scope.companyDTO.tallyGUID=data.tallyGUID;
-							$scope.companyDTO.appFromDate=new Date(data.appFromDate);
-							$scope.companyDTO.uploadTimer=new Date(data.appFromDate+" "+data.uploadTimer);
-							$scope.companyDTO.dnldTimer=new Date(data.appFromDate+" "+data.dnldTimer);
-							$scope.companyDTO.maxRetrial=data.maxRetrial;
-							$scope.companyDTO.status=data.status;
-							
-							if(data.appFromDate===null){$scope.companyDTO.appFromDate='';}
-							if(data.uploadTimer===null){$scope.companyDTO.uploadTimer='';}
-							if(data.dnldTimer===null){$scope.companyDTO.dnldTimer='';}
-						};
+
+						$scope.companyDTO.tallyGUID=data.tallyGUID;
+						$scope.companyDTO.appFromDate=new Date(data.appFromDate);
+						$scope.companyDTO.uploadTimer=new Date(data.appFromDate+" "+data.uploadTimer);
+						$scope.companyDTO.dnldTimer=new Date(data.appFromDate+" "+data.dnldTimer);
+						$scope.companyDTO.maxRetrial=data.maxRetrial;
+						$scope.companyDTO.status=data.status;
+
+						if(data.appFromDate===null){$scope.companyDTO.appFromDate='';}
+						if(data.uploadTimer===null){$scope.companyDTO.uploadTimer='';}
+						if(data.dnldTimer===null){$scope.companyDTO.dnldTimer='';}
 
 					}).error(function(data, status, headers, config){
 						// called asynchronously if an error occurs
@@ -147,9 +151,8 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 							'Content-Type' : 'application/json'
 						}
 					}).success(function(dataclientnames, status, headers, config){
-						
+
 						$scope.clientnames=dataclientnames;
-												
 						$scope.companyDTO.clientId=data.clientId;
 						$scope.companyDTO.tallyGUID=data.tallyGUID;
 						$scope.companyDTO.appFromDate=new Date(data.appFromDate);
@@ -157,38 +160,42 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 						$scope.companyDTO.dnldTimer=new Date(data.appFromDate+" "+data.dnldTimer);
 						$scope.companyDTO.maxRetrial=data.maxRetrial;
 						$scope.companyDTO.status=data.status;
-						
+
 						if(data.appFromDate===null){$scope.companyDTO.appFromDate='';}
 						if(data.uploadTimer===null){$scope.companyDTO.uploadTimer='';}
 						if(data.dnldTimer===null){$scope.companyDTO.dnldTimer='';}
-												
+
 					}).error(function(data, status, headers, config){
 						// called asynchronously if an error occurs
 						// or server returns response with an error status.
 					});
-					
+
 				}
 
 			}).error(function(data, status, headers, config){
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});		
-			
-		};
-		
+
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});	
+
+
 		$scope.updatecompany=function(companyDTO)
 		{			
 			console.log("inside updatecompany..");
-			
+
 			if($scope.companyDTO.clientId!=0 && 
-				$scope.companyDTO.tallyCmpName.length!=0 && 
-				$scope.companyDTO.appFromDate.length!=0 &&
-				$scope.companyDTO.uploadTimer!='' && 
-				$scope.companyDTO.dnldTimer!='' &&
-				$scope.companyDTO.maxRetrial.length!=0 &&
-				$scope.companyDTO.status.length!=0) 
+					$scope.companyDTO.tallyCmpName.length!=0 && 
+					$scope.companyDTO.appFromDate!=null &&
+					$scope.companyDTO.uploadTimer!=null && 
+					$scope.companyDTO.dnldTimer!=null &&
+					$scope.companyDTO.maxRetrial!=null &&
+					$scope.companyDTO.status.length!=0) 
 			{	
-				
+
 				$http({
 					method : "POST",
 					url : "company/update",
@@ -197,11 +204,12 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 						'Content-Type' : 'application/json'
 					}
 				}).success(function(data, status, headers, config){
-					
-					if(data==="success")
+
+					if(data[0]==="success")
 					{
 						$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'Company Updated'};
 						$scope.showSuccessAlert = true;
+						$scope.showerror=false;
 
 						$scope.companyDTO.clientId='';
 						$scope.companyDTO.tallyCmpName='';
@@ -212,11 +220,22 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 						$scope.companyDTO.maxRetrial=''; 
 						$scope.companyDTO.status='';
 					}
-					
+					else if(data[0]==="failure")
+					{
+						$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'Company not Updated'};
+						$scope.showSuccessAlert = true;
+					}
+					else
+					{
+						$scope.alerts = { type: 'danger', msgtype: 'Error!'};
+						$scope.errdata=data[0];
+						$scope.showerror=true;
+					}
+
 				}).error(function(data, status, headers, config){
 					if (data === "failure") {		
-						
-						$scope.alerts = { type: 'failure', msgtype: 'Failure!' ,msg: 'Company not Updated'};
+
+						$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'Company not Updated'};
 						$scope.showSuccessAlert = true;
 					}
 				});
@@ -226,11 +245,10 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'All Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
-
 		};
-		
+
 		$scope.clear=function(){
-			
+
 			$scope.companyDTO.clientId='';
 			$scope.companyDTO.tallyCmpName='';
 			$scope.companyDTO.tallyGUID='';
@@ -241,14 +259,14 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 			$scope.companyDTO.status='';
 		};
 	};
-	
+
 	$scope.onreportclick=function(){
-		
+
 		console.log("Report clicked...");
-		
+
 		$scope.currentPage=1;
 		$scope.itemsPerPage=5;
-		
+
 		//View Company - Report================================================================================================
 
 		$scope.company = []; //declare an empty array

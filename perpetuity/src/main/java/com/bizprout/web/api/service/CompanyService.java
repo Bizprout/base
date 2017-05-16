@@ -13,4 +13,6 @@ public interface CompanyService<T> {
 	public List<CompanyDTO> getCompanyData();
 
 	public int updateCompanyStatus(CompanyDTO t);
+	
+	public List<CompanyDTO> getCompanyIdName();
 }

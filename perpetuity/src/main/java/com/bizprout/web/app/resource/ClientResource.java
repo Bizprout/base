@@ -2,13 +2,19 @@ package com.bizprout.web.app.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,36 +43,63 @@ public class ClientResource {
 		logger.debug(this.getClass().getSimpleName() + "Created...");
 	}
 
-	@PostMapping(value="/add", produces=MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> addClient(@RequestBody ClientDTO clientdto)    
+	@PostMapping(value="/add", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> addClient(@RequestBody @Valid ClientDTO clientdto, BindingResult result, Model model)    
 	{
-		baseService.testService(clientdto);
-		logger.info("Request.......adduser method......");
-
-		if(clientdto.getClientId()>0)
+		List<Object> jsonresponse=new ArrayList<Object>();
+		
+		if(result.hasErrors())
 		{
-			return new ResponseEntity<String>("success", HttpStatus.OK);
+			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList()));
+			return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 		}
-		else
-		{
-			return new ResponseEntity<String>("failure", HttpStatus.OK);
-		}		
+		
+		try {
+			baseService.testService(clientdto);
+			logger.info("Request.......adduser method......");
+			
+			if(clientdto.getClientId()>0)
+			{
+				jsonresponse.add("success");
+			}
+			else
+			{
+				jsonresponse.add("failure");
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
 
-	@PostMapping(value="/edit", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> editClient(@RequestBody ClientDTO clientdto)
+	@PostMapping(value="/edit", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> editClient(@RequestBody @Valid ClientDTO clientdto, BindingResult result, Model model)
 	{
-		int result=clientService.updateservice(clientdto);
-		logger.info("Request.......Edit client method......");
+		List<Object> jsonresponse=new ArrayList<Object>();
+		try {
+			int res=clientService.updateservice(clientdto);
+			logger.info("Request.......Edit client method......");
 
-		if(result>0)
-		{
-			return new ResponseEntity<String>("success", HttpStatus.OK);
+			if(result.hasErrors())
+			{
+				jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+						.collect(Collectors.toList()));
+				return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+			}
+			else if(res>0)
+			{
+				jsonresponse.add("success");
+			}
+			else
+			{
+				jsonresponse.add("failure");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		else
-		{
-			return new ResponseEntity<String>("failure", HttpStatus.OK);
-		}
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
 
 	@GetMapping(value="/getclientnames")
@@ -83,7 +116,7 @@ public class ClientResource {
 		}
 		return cdto;
 	}
-	
+
 	@GetMapping(value="/getclientidname")
 	@ResponseBody
 	public List<ClientDTO> getClientIdName()

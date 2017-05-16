@@ -197,4 +197,41 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		return result;
 	}
 	
+	public List<PpMasterDTO> getPpMasterIdNames(int cmpid, String mastertype, String ppmastername)
+	{
+	logger.info("Inside getPpMasterIdNames method.......");
+		
+		Session session = factory.getCurrentSession();
+
+		Criteria cr = session.createCriteria(PpMasterDTO.class)
+				.add(Restrictions.eq("mastertype", mastertype))
+				.add(Restrictions.eq("cmpid", cmpid))
+				.add(Restrictions.eq("ppmastername", ppmastername))
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("masteridindex"), "masteridindex"))
+						.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
+
+		List<PpMasterDTO> ppmasternames=cr.list();
+
+		return ppmasternames;
+	}
+	
+	public List<TallyMastersDTO> getTallyMasterIdNames(String mastertype, int cmpid, String tallymastername)
+	{
+	logger.info("Inside getTallyMasterIdNames method.......");
+		
+		Session session = factory.getCurrentSession();
+
+		Criteria cr = session.createCriteria(TallyMastersDTO.class)
+				.add(Restrictions.eq("masterType", mastertype))
+				.add(Restrictions.eq("cmpId", cmpid))
+				.add(Restrictions.eq("tallyMasterName", tallymastername))
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("masterId"), "masterId"))
+						.setResultTransformer(Transformers.aliasToBean(TallyMastersDTO.class));
+
+		List<TallyMastersDTO> tallymasters=cr.list();
+
+		return tallymasters;
+	}
 }

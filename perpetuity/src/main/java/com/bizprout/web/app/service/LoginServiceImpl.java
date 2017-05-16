@@ -8,23 +8,23 @@ import org.springframework.stereotype.Service;
 import com.bizprout.web.api.service.LoginService;
 import com.bizprout.web.app.dto.LoginDTO;
 import com.bizprout.web.app.dto.LoginVO;
+import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.repository.LoginRepositoryImpl;
+import com.bizprout.web.app.repository.UserRepositoryImpl;
 
 @Service
-public class LoginServiceImpl implements LoginService<LoginDTO> {
+public class LoginServiceImpl implements LoginService<UserDTO> {
 	
 	@Autowired
-	private LoginRepositoryImpl loginRepository;
+	private UserRepositoryImpl userrepository;
 	
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 	
-	public LoginDTO authenticate(LoginVO loginVO) {
-		LoginDTO fromDb = null;
+	public UserDTO authenticate(LoginVO loginVO) {
+		UserDTO fromDb = null;
 		try {
-			System.out.println("inside authenticate fetch method...");
 			logger.info("inside authenticate fetch method...");
-			fromDb= this.loginRepository.getLoginUser(loginVO.getUsername(),loginVO.getPassword());
-			System.out.println(fromDb);
+			fromDb= this.userrepository.getLoginUser(loginVO.getUsername(),loginVO.getPassword());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

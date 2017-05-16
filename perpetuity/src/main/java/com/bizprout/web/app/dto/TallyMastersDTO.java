@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name="tally_masters")
@@ -20,18 +23,22 @@ public class TallyMastersDTO {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int masterIdIndex;
 	
+	@NotNull(message="Company cannot be Blank!")
 	@Column(name="cmp_id")
 	private int cmpId;
 	
 	@Column(name="master_id")
 	private int masterId;
 	
+	@NotBlank(message="Master Type cannot be Blank!")
 	@Column(name="master_type")
 	private String masterType;
 	
+	@NotBlank(message="Tally Master Name cannot be Blank!")
 	@Column(name="name")
 	private String tallyMasterName;
 	
+	@NotNull(message="PP Master Name cannot be Blank!")
 	@Column(name="pp_id")
 	private Integer ppid;
 	

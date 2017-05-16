@@ -2,6 +2,9 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
+			<p style="text-align: center; margin-bottom: -24px;">
+				<b>Company:</b> {{cmpname}}
+			</p>
 			<div class="text">Client</div>
 		</div>
 		<div class="cu-section">
@@ -10,81 +13,151 @@
 					ng-show="showSuccessAlert">
 					<button type="button" class="close"
 						data-ng-click="switchBool('showSuccessAlert')">x</button>
-					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
+					<strong>{{alerts.msg}}</strong> 
 				</div>
 			</div>
+			<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+				ng-show="showerror">
+				<button type="button" class="close"
+					data-ng-click="switchBool('showerror')">x</button>
+				<ul>
+					<strong><li ng-repeat="err in errdata">{{err}}</li></strong>
+					
+				</ul>
+			</div>
 			<div ng-cloak>
-				<md-content> <md-tabs md-dynamic-height
-					md-border-bottom> <md-tab label="Add"
-					md-on-select="oncreateclick()"> <md-content
+				<md-content> <md-tabs md-border-bottom> <md-tab
+					label="Add" md-on-select="oncreateclick()"> <md-content
 					class="md-padding">
 				<div class="row">
-					<div class="col-sm-12">
-						<div class="cu-section-content">
-							<span>Client Name:</span>
-							<input type="text" ng-model="clientDTO.clientName"
-								class="form-control" placeholder="Client Name" required
-								autofocus>
-							<br> <span>Contact Person:</span>
-							<input type="text" ng-model="clientDTO.contactPerson"
-								class="form-control" placeholder="Contact Person" required
-								autofocus>
-							<br> <span>E-mail Address:</span>
-							<input type="Email" ng-model="clientDTO.contactEmail"
-								class="form-control" placeholder="E-mail Address" required
-								autofocus>
-							<br> <span>Telephone No.:</span>
-							<input type="text" ng-model="clientDTO.contactTelPhone"
-								class="form-control" maxlength="10" placeholder="Telephone No."
-								required autofocus>
-							<br> <span>Client Status:</span> <br>
-							<div
-								custom-select="clt for clt in clientstatus | filter: $searchTerm "
-								ng-model="clientDTO.status" autofocus></div>
-							<br /> <br /> <br>
-							<button type="button" class="btn btn-success"
-								ng-click="createclient(clientDTO)">Create</button>
-							<button type="reset" class="btn btn-success" ng-click="clear()">Clear</button>
-							<a href="#masters" class="btn btn-success">Back</a>
-						</div>
+					<div class="col-xs-4">
+						<span>Client Name:</span>
+						<input type="text" ng-model="clientDTO.clientName"
+							class="form-control" placeholder="Client Name" required autofocus>
+					</div>
+					<div class="col-xs-4">
+						<span>Contact Person:</span>
+						<input type="text" ng-model="clientDTO.contactPerson"
+							class="form-control" placeholder="Contact Person" required
+							autofocus>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>E-mail Address:</span>
+						<input type="text" ng-model="clientDTO.contactEmail"
+							class="form-control" placeholder="E-mail Address" required
+							autofocus>
+					</div>
+					<div class="col-xs-4">
+						<span>Telephone No.:</span>
+						<input type="text" ng-model="clientDTO.contactTelPhone"
+							class="form-control" maxlength="10"
+							onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+							placeholder="Telephone No." required autofocus>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Client Status:</span> <br>
+						<div
+							custom-select="clt for clt in clientstatus | filter: $searchTerm "
+							ng-model="clientDTO.status" autofocus></div>
+					</div>
+				</div>
+				<br />
+				<br />
+				<div class="row">
+					<div class="col-xs-4">
+						<button type="button" class="btn btn-success"
+							ng-click="createclient(clientDTO)">Create</button>
+						<button type="reset" class="btn btn-success" ng-click="clear()">Clear</button>
+						<a href="#masters" class="btn btn-success">Back</a>
 					</div>
 				</div>
 				</md-content> </md-tab> <md-tab label="Edit" md-on-select="oneditclick()"> <md-content
 					class="md-padding">
 				<div class="row">
-					<div class="col-sm-12">
-						<div class="cu-section-content">
-							<span>Select Client Name:</span> <br>
-							<div
-								custom-select="clt.clientId as clt.clientName for clt in clientnames | filter: $searchTerm"
-								custom-select-options="clientnameselectOptions"
-								ng-model="eclientDTO.clientId" ng-change="populateeditclient()" autofocus></div>
-							<br> <br>
-							<span>Edit Client Name:</span>
-							<input type="text" ng-model="eclientDTO.clientName"
-								class="form-control" placeholder="Edit Client Name" required
-								autofocus><br>
-							<span>Contact Person:</span>
-							<input type="text" ng-model="eclientDTO.contactPerson"
-								class="form-control" placeholder="Contact Person" required
-								autofocus><br>
-							<span>E-mail Address:</span>
-							<input type="Email" ng-model="eclientDTO.contactEmail" class="form-control"
-								placeholder="E-mail Address" required autofocus><br>
-							<span>Telephone No.:</span>
-							<input type="text" ng-model="eclientDTO.contactTelPhone" class="form-control"
-								placeholder="Telephone No." required autofocus><br>
-							<span>Client Status:</span> <br>
-							<div
-								custom-select="clt for clt in clientstatus | filter: $searchTerm "
-								custom-select-options="clientstatusselectOptions"
-								ng-model="eclientDTO.status" autofocus></div>
-							
-							<br /> <br />
-							<button type="button" class="btn btn-success" ng-click="editclient(eclientDTO)">Edit</button>
-							<button type="button" class="btn btn-success">Clear</button>
-							<a href="#masters" class="btn btn-success">Back</a>
+					<div class="col-xs-4">
+						<span>Select Client Name:</span> <br>
+						<div
+							custom-select="clt.clientId as clt.clientName for clt in clientnames | filter: $searchTerm"
+							custom-select-options="clientnameselectOptions"
+							ng-model="eclientDTO.clientId" ng-change="populateeditclient()"
+							autofocus></div>
+					</div>
+					<div class="col-xs-1">
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingclientname"></md-progress-circular>
 						</div>
+					<div class="col-xs-4">
+						<span>Edit Client Name:</span>
+						<input type="text" ng-model="eclientDTO.clientName"
+							class="form-control" placeholder="Edit Client Name" required
+							autofocus>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Contact Person:</span>
+						<input type="text" ng-model="eclientDTO.contactPerson"
+							class="form-control" placeholder="Contact Person" required
+							autofocus>
+					</div>
+						<div class="col-xs-1">
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingcontactperson"></md-progress-circular>
+						</div>
+					<div class="col-xs-4">
+						<span>E-mail Address:</span>
+						<input type="text" ng-model="eclientDTO.contactEmail"
+							class="form-control" placeholder="E-mail Address" required
+							autofocus>
+					</div>
+					<div class="col-xs-1">
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingemail"></md-progress-circular>
+						</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Telephone No.:</span>
+						<input type="text" ng-model="eclientDTO.contactTelPhone"
+							class="form-control" maxlength="10"
+							onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+							placeholder="Telephone No." required autofocus>
+					</div>
+					<div class="col-xs-1">
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingphone"></md-progress-circular>
+						</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-4">
+						<span>Client Status:</span> <br>
+						<div
+							custom-select="clt for clt in clientstatus | filter: $searchTerm "
+							custom-select-options="clientstatusselectOptions"
+							ng-model="eclientDTO.status" autofocus></div>
+					</div>
+					<div class="col-xs-1">
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingclientstatus"></md-progress-circular>
+						</div>
+				</div>
+				<br />
+				<br />
+				<div class="row">
+					<div class="col-xs-4">
+						<button type="button" class="btn btn-success"
+							ng-click="editclient(eclientDTO)">Edit</button>
+						<button type="button" class="btn btn-success">Clear</button>
+						<a href="#masters" class="btn btn-success">Back</a>
 					</div>
 				</div>
 				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
@@ -101,7 +174,10 @@
 								<input type="text" ng-model="search" class="form-control"
 									placeholder="Search">
 							</div>
+							<button style="margin-left: 50px;"
+							ng-click="exportData()" class="btn btn-success">Export</button>
 						</form>
+						<br>
 						<div id="exportable">
 							<table class="table table-striped table-hover">
 								<thead>
@@ -134,7 +210,8 @@
 								</thead>
 								<tbody>
 									<tr
-										dir-paginate="client in clientalldata | orderBy:sortKey:reverse | filter:search|itemsPerPage:5" current-page="currentPage">
+										dir-paginate="client in clientalldata | orderBy:sortKey:reverse | filter:search|itemsPerPage:5"
+										current-page="currentPage">
 										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
 										<td>{{client.clientName}}</td>
 										<td>{{client.contactPerson}}</td>
@@ -143,6 +220,8 @@
 										<td>{{client.status}}</td>
 									</tr>
 								</tbody>
+								<md-progress-circular md-mode="indeterminate" md-diameter="40px"
+									ng-show="isLoading"></md-progress-circular>
 							</table>
 						</div>
 						<div id="exportableall" ng-hide="true">
@@ -176,7 +255,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr	ng-repeat="client in clientalldata">
+									<tr ng-repeat="client in clientalldata">
 										<td>{{$index+1}}</td>
 										<td>{{client.clientName}}</td>
 										<td>{{client.contactPerson}}</td>
@@ -189,8 +268,7 @@
 						</div>
 						<dir-pagination-controls max-size="5" direction-links="true"
 							boundary-links="true"> </dir-pagination-controls>
-						<button style="margin-left: 50px; margin-bottom: 65px;"
-							ng-click="exportData()" class="btn btn-success">Export</button>
+						<br>
 						<a style="margin-bottom: 65px;" href="#masters"
 							class="btn btn-success">Back</a>
 					</div>

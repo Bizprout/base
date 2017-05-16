@@ -1,7 +1,5 @@
 package com.bizprout.web.api.common.repository;
 
-import com.bizprout.web.app.dto.PpMasterDTO;
-
 
 public interface BaseRepository<T> {
 

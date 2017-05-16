@@ -6,7 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 
 @Entity
@@ -18,18 +21,29 @@ public class UserDTO {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userid;
 	
-	@NotNull(message="*Username is Required")
+	@NotBlank(message="Username Cannot be Blank!")
 	@Column(name = "username")
+	@Size(min=6, message="Username must be min 6 char!")
 	private String username;
-
+	
 	@Column(name = "password")
 	private String password;
-
+	
+	@NotBlank(message="Usertype Cannot be Blank!")
 	@Column(name = "user_type")
 	private String usertype;
 
+	@NotBlank(message="Userstatus Cannot be Blank!")
 	@Column(name = "user_status")
 	private String userstatus;
+	
+	@NotBlank(message="Email Cannot be Blank!")
+	@Email(message="Email ID is not Valid!")
+	@Column(name = "email_id")
+	private String emailid;
+	
+	@Column(name = "mobile_no")
+	private String mobile;
 
 	public int getUserid() {
 		return userid;
@@ -69,6 +83,22 @@ public class UserDTO {
 
 	public void setUserstatus(String userstatus) {
 		this.userstatus = userstatus;
+	}
+
+	public String getEmailid() {
+		return emailid;
+	}
+
+	public void setEmailid(String emailid) {
+		this.emailid = emailid;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 }

@@ -1,8 +1,10 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<div class="path">Create PP Standard Masters</div>
-			<div class="text">Standard Masters</div>
+			<p style="text-align: center;margin-bottom:-24px;">
+				<b>Company:</b> {{cmpname}}
+			</p>
+			<div class="text">PP Masters</div>
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
@@ -13,9 +15,18 @@
 					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
 				</div>
 			</div>
+			<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+				ng-show="showerror">
+				<button type="button" class="close"
+					data-ng-click="switchBool('showerror')">x</button>
+				<ul>
+					<strong>{{alerts.msgtype}}</strong>
+					<li ng-repeat="err in errdata">{{err}}</li>
+				</ul>
+			</div>
 			<div ng-cloak>
-				<md-content> <md-tabs md-dynamic-height
-					md-border-bottom> <md-tab label="Create"
+				<md-content> <md-tabs md-border-bottom
+					style="min-height:410px;"> <md-tab label="Create"
 					md-on-select="oncreateclick()"> <md-content
 					class="md-padding">
 				<div class="row">
@@ -85,10 +96,14 @@
 					<div class="col-xs-4">
 						<span>Select PP Master Name:</span><br>
 						<div
-							custom-select="emt for emt in eppmasternames |  filter: $searchTerm"
+							custom-select="emt for emt in eppmasternames |  filter: $searchTerm track by $index"
 							custom-select-options="ppmasternameselectOptions"
 							ng-change="ppmasternamechange()"
 							ng-model="editppmasterDTO.ppmastername" autofocus></div>
+					</div>
+					<div class="col-xs-5">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoading"></md-progress-circular>
 					</div>
 				</div>
 				<br>
@@ -100,25 +115,37 @@
 							placeholder="PP Master Name" required autofocus
 							style="width: 360px;">
 					</div>
+					<div class="col-xs-5">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoading"></md-progress-circular>
+					</div>
 				</div>
 				<div class="row" ng-hide="hidecostcat">
 					<br>
-					<div class="col-xs-5">
+					<div class="col-xs-4">
 						<span>Select Cost Category:</span><br>
 						<div
 							custom-select="ccat for ccat in costcategories |  filter: $searchTerm"
 							custom-select-options="costcatselectOptions" ng-change=""
 							ng-model="editppmasterDTO.costcategory" autofocus></div>
 					</div>
+					<div class="col-xs-5">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoading"></md-progress-circular>
+					</div>
 				</div>
 				<br>
 				<div class="row">
-					<div class="col-xs-5">
+					<div class="col-xs-4">
 						<span>PP Parent Name:</span><br>
 						<div
 							custom-select="pppn for pppn in ppparentnames |  filter: $searchTerm"
 							custom-select-options="ppparentnameselectOptions" ng-change=""
 							ng-model="editppmasterDTO.ppparentname" autofocus></div>
+					</div>
+					<div class="col-xs-5">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoading"></md-progress-circular>
 					</div>
 				</div>
 				<br />
@@ -132,16 +159,18 @@
 					</div>
 				</div>
 				</md-content> </md-tab> <md-tab label="Import/ Export" md-on-select="onimpexpclick()">
-				<md-content class="md-padding">
+				<md-content class="md-padding"> <!-- <form method="POST" action="ppmaster/ppmasteruploadfile" enctype="multipart/form-data"> -->
 				<div class="row">
 					<div class="col-xs-12">
 						<div class="fileupload fileupload-new" data-provides="fileupload">
 							<span class="btn btn-primary btn-file"><span
 								class="fileupload-new">Select file</span> <span
-								class="fileupload-exists">Change</span> <input type="file" /></span> <span
-								class="fileupload-preview"></span> <a href="#"
-								class="close fileupload-exists" data-dismiss="fileupload"
-								style="float: none">x</a>
+								class="fileupload-exists">Change</span> <input type="file"
+									file-model="myFile"
+									accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+									name="file" /></span> <span class="fileupload-preview"></span> <a
+								href="#" class="close fileupload-exists"
+								data-dismiss="fileupload" style="float: none">x</a>
 						</div>
 					</div>
 				</div>
@@ -149,12 +178,13 @@
 				<div class="row">
 					<div class="col-xs-5">
 						<button type="button" class="btn btn-success"
-							ng-click="ppimport()">Import</button>
+							ng-click="ppmasterimport(ppfile)">Upload</button>
 						<button type="button" class="btn btn-success"
 							ng-click="exportppformat()">Export</button>
 						<a href="#masters" class="btn btn-success">Back</a>
 					</div>
 				</div>
+				<!-- </form> -->
 				<div id="ppexcelexport" ng-hide="true">
 					<h4>Upload Format for Creating PP Masters:</h4>
 					<i>Category to be entered only for Master Type: Cost Center</i>
@@ -189,10 +219,13 @@
 										class="glyphicon sort-icon" ng-show="sortKey=='id'"
 										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 									</th>
-									<th ng-click="sort('first_name')" style="width:200px;">Company&nbsp;Name<span
+									<th ng-click="sort('first_name')" style="width: 200px;">Company&nbsp;Name<span
 										class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
 										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 									</th>
+									<th></th>
+									<th></th>
+									<th></th>
 									<th></th>
 									<th></th>
 									<th ng-click="sort('last_name')">Master&nbsp;Type<span
@@ -218,7 +251,7 @@
 									dir-paginate="ppdata in ppmasterdata|orderBy:sortKey:reverse|filter:search|itemsPerPage:5"
 									current-page="currentPage">
 									<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
-									<td colspan="3">{{ppdata.companydto.tallyCmpName}}</td>
+									<td colspan="6">{{ppdata.companydto.tallyCmpName}}</td>
 									<td>{{ppdata.mastertype}}</td>
 									<!-- ng-bind="(user.usertype ? 'PP SuperAdmin' : 'PP Admin')" -->
 									<td>{{ppdata.ppmastername}}</td>
@@ -226,6 +259,8 @@
 									<td>{{ppdata.costcategory}}</td>
 								</tr>
 							</tbody>
+							<md-progress-circular md-mode="indeterminate" md-diameter="40px"
+								ng-show="isLoading"></md-progress-circular>
 						</table>
 					</div>
 					<dir-pagination-controls max-size="5" direction-links="true"

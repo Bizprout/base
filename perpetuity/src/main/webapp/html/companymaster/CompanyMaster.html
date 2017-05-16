@@ -3,7 +3,10 @@
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
 			<!-- <div class="path">Tally Database Mapping to Company</div> -->
-			<div class="text">Tally Database Mapping to Company</div>
+			<p style="text-align: center; margin-bottom: -24px;">
+				<b>Company:</b> {{cmpname}}
+			</p>
+			<div class="text">Company</div>
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
@@ -14,54 +17,57 @@
 					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
 				</div>
 			</div>
+			<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+				ng-show="showerror">
+				<button type="button" class="close"
+					data-ng-click="switchBool('showerror')">x</button>
+				<ul>
+					<strong>{{alerts.msgtype}}</strong>
+					<li ng-repeat="err in errdata">{{err}}</li>
+				</ul>
+			</div>
 			<div ng-cloak>
-				<md-content> <md-tabs md-dynamic-height
-					md-border-bottom> <md-tab label="Update"
-					md-on-select="oncreateeditclick()"> <md-content
+				<md-content> <md-tabs md-border-bottom> <md-tab
+					label="Update" md-on-select="oncreateeditclick()"> <md-content
 					class="md-padding">
 				<div class="row">
-					<div class="col-xs-3">
+					<div class="col-xs-4">
 						<span>Select Company:</span><br>
 						<div
-							custom-select="cmp for cmp in companylist |  filter: $searchTerm"
+							custom-select="cmp.cmpId as cmp.tallyCmpName for cmp in companylist |  filter: $searchTerm"
 							custom-select-options="companyselectOptions"
-							ng-change="onchangeselectcompany()"
-							ng-model="companyDTO.tallyCmpName" autofocus></div>
+							ng-model="companyDTO.tallyCmpName" disabled="compdisable" autofocus></div>
 					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-3">
-						<span>Select Client:</span><br>
-						<div
-							custom-select="clt.clientId as clt.clientName for clt in clientnames |  filter: {clientName: $searchTerm} track by clt.clientId"
-							custom-select-options="clientselectOptions"
-							ng-change="clientselected()" ng-model="companyDTO.clientId"
-							autofocus></div>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-4">
+					<div class="col-xs-5">
 						<span>Tally GUID:</span><br>
 						<input type="text" ng-model="companyDTO.tallyGUID"
 							class="form-control" ng-copy="$event.preventDefault()" required
 							placeholder="Tally GUID" style="width: 104%;" disabled autofocus>
 					</div>
-					<div class="col-xs-5">
-						<span>Sync Date From:</span><br>
-						<md-datepicker ng-model="companyDTO.appFromDate"
-							md-placeholder="Sync Date From" md-open-on-focus></md-datepicker>
-					</div>
 				</div>
 				<br>
 				<div class="row">
 					<div class="col-xs-4">
+						<span>Select Client:</span><br>
+						<div
+							custom-select="clt.clientId as clt.clientName for clt in clientnames |  filter: {clientName: $searchTerm} track by clt.clientId"
+							custom-select-options="clientselectOptions"
+							ng-model="companyDTO.clientId" disabled="clientdisable" autofocus></div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-xs-3">
+						<span>Sync Date From:</span><br>
+						<md-datepicker ng-model="companyDTO.appFromDate"
+							md-placeholder="Sync Date From" md-open-on-focus></md-datepicker>
+					</div>
+					<div class="col-xs-3">
 						<span>Upload Timer:</span>
 						<mdp-time-picker mdp-auto-switch="true"
 							ng-model="companyDTO.uploadTimer"></mdp-time-picker>
 					</div>
-					<div class="col-xs-5" style="width: 25%;">
+					<div class="col-xs-4" style="width: 25%;">
 						<span>Download Timer:</span>
 						<mdp-time-picker mdp-auto-switch="true"
 							ng-model="companyDTO.dnldTimer"></mdp-time-picker>
@@ -71,7 +77,7 @@
 						<input class="form-control" min="1" max="99"
 							onKeyDown="if(this.value.length==2) return false;"
 							ng-model="companyDTO.maxRetrial" type="number"
-							id="example-number-input" style="width: 40%;" />
+							id="example-number-input" style="width: 40%;">
 					</div>
 				</div>
 				<div class="row">
@@ -82,6 +88,7 @@
 							ng-model="companyDTO.status" autofocus></div>
 					</div>
 				</div>
+				<br />
 				<br />
 				<div class="row">
 					<div class="col-xs-5">
@@ -206,8 +213,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr
-										ng-repeat="comp in company">
+									<tr ng-repeat="comp in company">
 										<td>{{$index+1}}</td>
 										<td>{{comp.clientId}}</td>
 										<td>{{comp.tallyCmpName}}</td>

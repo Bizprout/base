@@ -1,6 +1,9 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
+			<p style="text-align: center;">
+				<b>Company:</b> {{cmpname}}
+			</p>
 			<div class="text">Mapping PP Masters to Tally Masters</div>
 		</div>
 		<div class="cu-section">
@@ -11,6 +14,15 @@
 						data-ng-click="switchBool('showSuccessAlert')">x</button>
 					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
 				</div>
+			</div>
+			<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+				ng-show="showerror">
+				<button type="button" class="close"
+					data-ng-click="switchBool('showerror')">x</button>
+				<ul>
+					<strong>{{alerts.msgtype}}</strong>
+					<li ng-repeat="err in errdata track by $index">{{err}}</li>
+				</ul>
 			</div>
 			<div ng-cloak>
 				<md-content> <md-tabs md-border-bottom> <md-tab
@@ -95,10 +107,12 @@
 						<div class="fileupload fileupload-new" data-provides="fileupload">
 							<span class="btn btn-primary btn-file"><span
 								class="fileupload-new">Select file</span> <span
-								class="fileupload-exists">Change</span> <input type="file" /></span> <span
-								class="fileupload-preview"></span> <a href="#"
-								class="close fileupload-exists" data-dismiss="fileupload"
-								style="float: none">x</a>
+								class="fileupload-exists">Change</span> <input type="file"
+									file-model="myFile"
+									accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+									name="file" /></span> <span class="fileupload-preview"></span> <a
+								href="#" class="close fileupload-exists"
+								data-dismiss="fileupload" style="float: none">x</a>
 						</div>
 					</div>
 				</div>
@@ -106,18 +120,19 @@
 				<div class="row">
 					<div class="col-xs-5">
 						<button type="button" class="btn btn-success"
-							ng-click="onppmappingimport()">Import</button>
+							ng-click="onppmappingimport(ppfile)">Upload</button>
 						<button type="button" class="btn btn-success"
 							ng-click="onppmappingexport()">Export</button>
 						<a href="#mapping" class="btn btn-success">Back</a>
 					</div>
 				</div>
 				<div id="ppmappingexcelexport" ng-hide="true">
-					<h4>Upload Format for Mapping PP Masters:</h4>
+					<b><font style="font-size: 16px;">Upload Format for
+							Mapping PP Masters:</font></b><br /> <b><font style="font-size: 16px;">Client
+							Name: {{clientname}}</font></b><br /> <b><font style="font-size: 16px;">Company
+							Name: {{cmpname}}</font></b><br />
 					<table border="1">
 						<tr>
-							<th>Client Name</th>
-							<th>Company Name</th>
 							<th>Master Type</th>
 							<th>Map to PP Master</th>
 							<th>Tally Master Names</th>
@@ -206,9 +221,15 @@
 						<div id="exportableall" ng-hide="true">
 							<table class="table table-striped table-hover" border="1">
 								<thead>
-									<tr><th colspan="3">Client Name: {{clientname}}</th></tr>
-									<tr><th colspan="3">Company Name: {{companyname}}</th></tr>
-									<tr><th colspan="3">Master Type: {{reportmastertype}}</th></tr>
+									<tr>
+										<th colspan="3">Client Name: {{clientname}}</th>
+									</tr>
+									<tr>
+										<th colspan="3">Company Name: {{companyname}}</th>
+									</tr>
+									<tr>
+										<th colspan="3">Master Type: {{reportmastertype}}</th>
+									</tr>
 									<tr>
 										<th style="text-align: left;">Sl. No.</th>
 										<th style="text-align: left;">Tally Masters Mapped</th>
@@ -216,8 +237,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr
-										ng-repeat="(key, value) in tallyppmapdata">
+									<tr ng-repeat="(key, value) in tallyppmapdata">
 										<td>{{key+1}}</td>
 										<td>{{tallyppmapdata[key].tallyMasterName}}</td>
 										<td>{{tallyppmapdata[key].ppmasterdto.ppmastername}}</td>

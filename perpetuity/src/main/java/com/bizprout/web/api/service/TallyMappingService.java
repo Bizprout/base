@@ -26,4 +26,10 @@ public interface TallyMappingService<T> {
 	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype);
 	
 	public int savePpMasterMapping(List<TallyMastersDTO> tallymasterdto);
+
+	public List<PpMasterDTO> getPpMasterIdNames(String mastertype, int cmpid,
+			String ppmastername);
+
+	public List<TallyMastersDTO> getTallyMasterIdNames(String masterType,
+			int cmpId, String tallyMasterName);
 }

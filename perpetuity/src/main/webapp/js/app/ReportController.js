@@ -1,7 +1,9 @@
-baseApp.controller("ReportController", function($scope, $location, $http, $timeout, $q, $filter) {
+baseApp.controller("ReportController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage) {
 
 	console.log("ReportController loaded...");
 	//TODO angular constants
+	
+	$scope.cmpname=$localStorage.cmpname;
 
 	// **********switch flag for success message**********
 	$scope.switchBool = function (value) {

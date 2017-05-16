@@ -1,19 +1,32 @@
 package com.bizprout.web.app.resource;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bizprout.web.api.service.TallyMappingService;
 import com.bizprout.web.app.dto.CompanyDTO;
@@ -82,53 +95,69 @@ public class TallyMappingResource {
 		return ppmasternames;
 	}
 
-	@PostMapping(value="/insert", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> insertTallyMapping(@RequestBody TallyMappingDTO tallymappingdto)
+	@PostMapping(value="/insert", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> insertTallyMapping(@RequestBody @Valid TallyMappingDTO tallymappingdto, BindingResult result, Model model)
 	{
-		ResponseEntity<String> resp = null;
+		List<Object> jsonresponse=new ArrayList<Object>();
+
+		if(result.hasErrors())
+		{
+			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList()));
+			return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);
+		}
+		
 		try {
 			logger.info("inside insertTallyMapping method ");
 			tallymappingservice.insertTallyMapping(tallymappingdto);
 
 			if(tallymappingdto.getMappingId()!=0)
 			{
-				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+				jsonresponse.add("success");
 			}
 			else
 			{
-				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("Exception in insertTallyMapping method \t" + e.getMessage());
 		}
 
-		return resp;
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
 
-	@PostMapping(value="/update", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> updateTallyMapping(@RequestBody TallyMappingDTO tallymappingdto)
+	@PostMapping(value="/update", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> updateTallyMapping(@RequestBody @Valid TallyMappingDTO tallymappingdto, BindingResult result, Model model)
 	{
-		ResponseEntity<String> resp = null;
-		int result=0;
+		List<Object> jsonresponse=new ArrayList<Object>();
+
+		if(result.hasErrors())
+		{
+			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList()));
+			return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);
+		}
+		
+		int res=0;
 		try {
 			logger.info("inside updateTallyMapping method ");
-			result=tallymappingservice.updateTallyMapping(tallymappingdto);
+			res=tallymappingservice.updateTallyMapping(tallymappingdto);
 
-			if(result>0)
+			if(res>0)
 			{
-				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+				jsonresponse.add("success");
 			}
 			else
 			{
-				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("Exception in updateTallyMapping method \t" + e.getMessage());
 		}
 
-		return resp;
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
 
 	@PostMapping(value="/gettallymasterids")
@@ -182,5 +211,84 @@ public class TallyMappingResource {
 			e.printStackTrace();
 		}
 		return resp;
+	}
+	
+	@RequestMapping(value="/ppmastermappinguploadfile", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<Object> pPmastermappingFileUpload(@RequestParam("file") MultipartFile file){
+		
+		String response;
+		List<Object> jsonresponse=new ArrayList<Object>();
+
+		if(!file.isEmpty())
+		{
+			try {				
+				byte[] bytes=file.getBytes();
+				
+				// Creating the directory to store file
+				String rootPath = System.getProperty("catalina.home");
+				File dir = new File(rootPath + File.separator + "tmpFiles");
+				if (!dir.exists())
+					dir.mkdirs();
+
+				// Create the file on server
+				File serverFile = new File(dir.getAbsolutePath()
+						+ File.separator + file.getOriginalFilename());
+				BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(serverFile));
+				stream.write(bytes);
+				stream.close();
+
+				logger.info("Server File Location="
+						+ serverFile.getAbsolutePath());
+				
+				ExcelReadData excel= new ExcelReadData();
+				response=excel.excelReadDatamapping(file.getOriginalFilename());
+								
+				if(response.contains("success"))
+				{
+					jsonresponse.add("success");
+				}
+				else
+				{
+					jsonresponse.add("failure");
+				}
+				
+			} catch (Exception e) {
+				logger.error(e.getMessage()+"..."+this.getClass());
+			}
+		}
+		else 
+		{
+			return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+		}
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+	}
+	
+	@PostMapping(value="/getppmasteridnames")
+	public List<PpMasterDTO> getPpMasterIdNames(@RequestBody PpMasterDTO ppmasterdto)
+	{
+		List<PpMasterDTO> ppmasternames = null;
+		try {
+			ppmasternames=tallymappingservice.getPpMasterIdNames(ppmasterdto.getMastertype(), ppmasterdto.getCmpid(), ppmasterdto.getPpmastername());
+			logger.debug("Request......getPpMasterIdNames List......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmasternames;
+	}
+	
+	@PostMapping(value="/gettallymasteridnames")
+	public List<TallyMastersDTO> getTallyMasterIdNames(@RequestBody TallyMastersDTO tallymasterdto)
+	{
+		List<TallyMastersDTO> tallymasters = null;
+		try {
+			tallymasters=tallymappingservice.getTallyMasterIdNames(tallymasterdto.getMasterType(), tallymasterdto.getCmpId(), tallymasterdto.getTallyMasterName());
+			logger.debug("Request......getTallyMasterIdNames List......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tallymasters;
 	}
 }

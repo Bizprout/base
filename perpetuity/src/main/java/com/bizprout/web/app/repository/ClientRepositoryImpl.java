@@ -109,8 +109,9 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 
 			tx=session.beginTransaction();
 
-			Query qry=session.createQuery("UPDATE ClientDTO set contactPerson=:contactper, contactEmail=:email, contactTelPhone=:phone, status=:stat WHERE clientId=:clientid");
-
+			Query qry=session.createQuery("UPDATE ClientDTO set clientName=:editclientname, contactPerson=:contactper, contactEmail=:email, contactTelPhone=:phone, status=:stat WHERE clientId=:clientid");
+			
+			qry.setParameter("editclientname", clientdto.getClientName());
 			qry.setParameter("contactper",clientdto.getContactPerson());
 			qry.setParameter("email", clientdto.getContactEmail());
 			qry.setParameter("phone", clientdto.getContactTelPhone());

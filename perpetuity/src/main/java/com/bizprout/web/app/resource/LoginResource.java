@@ -18,16 +18,17 @@ import com.bizprout.web.api.service.BaseService;
 import com.bizprout.web.api.service.LoginService;
 import com.bizprout.web.app.dto.LoginDTO;
 import com.bizprout.web.app.dto.LoginVO;
+import com.bizprout.web.app.dto.UserDTO;
 
 @RestController
 @RequestMapping("/login")
 public class LoginResource {
-	
+
 	@Autowired
-	private LoginService<LoginDTO> loginService;
-	
+	private LoginService<UserDTO> loginService;
+
 	Logger logger=LoggerFactory.getLogger(this.getClass());
-	
+
 	public LoginResource()
 	{
 		try {
@@ -38,29 +39,23 @@ public class LoginResource {
 			e.printStackTrace();
 		}
 	}
-	
-	@RequestMapping(value="/authe")
-	public ResponseEntity authenticate(@RequestBody LoginVO loginVO)
+
+	@PostMapping(value="/authe")
+	public ResponseEntity<Object> authenticate(@RequestBody LoginVO loginVO)
 	{	
-		ResponseEntity resp = null;
+		ResponseEntity<Object> resp = null;
 		try {
 			logger.debug("before calling authenticate with details {}",loginVO);
 			logger.info("calling authenticate with details {}",loginVO.getUsername());
-			LoginDTO loginDTO=loginService.authenticate(loginVO);
-			logger.debug("after service call in  authenticate with details {}",loginDTO);
-			
-			if(loginService.authenticate(loginVO)!=null)
-			{
-				logger.debug("Checking if the DTO is not null",loginDTO);
-				logger.debug("Sending HTTP status 200 - ok",loginDTO);
-				resp= new ResponseEntity<LoginDTO>(loginDTO, HttpStatus.OK);
-			}
-			else
-			{
-				logger.debug("Sending HTTP status - Forbidden",loginDTO);
-				logger.error("Error: Forbidden Access",loginDTO);
-				resp= new ResponseEntity<String>("Error1!", HttpStatus.FORBIDDEN);
-			}
+			UserDTO userDTO=loginService.authenticate(loginVO);
+			String password=AESencrp.decrypt(userDTO.getPassword());
+			userDTO.setPassword(password);
+			logger.debug("after service call in  authenticate with details {}",userDTO);
+
+			logger.debug("Checking if the DTO is not null",userDTO);
+			logger.debug("Sending HTTP status 200 - ok",userDTO);
+			resp= new ResponseEntity<Object>(userDTO, HttpStatus.OK);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

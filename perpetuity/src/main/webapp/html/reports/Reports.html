@@ -1,6 +1,9 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
+			<p style="text-align: center;">
+				<b>Company:</b> {{cmpname}}
+			</p>
 			<div class="text">Reports</div>
 		</div>
 		<div class="cu-section">
@@ -13,8 +16,9 @@
 				</div>
 			</div>
 			<div ng-cloak>
-				<md-content> <md-tabs md-dynamic-height md-border-bottom> <md-tab
-					label="Generate Reports" md-on-select="onreportclick()"> <md-content
+				<md-content> <md-tabs md-dynamic-height
+					md-border-bottom> <md-tab label="Generate Reports"
+					md-on-select="onreportclick()"> <md-content
 					class="md-padding">
 				<div class="row">
 					<div class="col-xs-4">
@@ -45,7 +49,8 @@
 				<br />
 				<div class="row">
 					<div class="col-xs-5">
-						<button type="button" class="btn btn-success" ng-click="generatereport(reportDTO)">Generate</button>
+						<button type="button" class="btn btn-success"
+							ng-click="generatereport(reportDTO)">Generate</button>
 						<button type="cancel" class="btn btn-success" ng-click="clear()">Clear</button>
 						<a href="#home" class="btn btn-success">Back</a>
 					</div>

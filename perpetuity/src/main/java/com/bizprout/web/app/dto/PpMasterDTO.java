@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,12 +31,15 @@ public class PpMasterDTO {
 	@Column(name="cmp_id")
 	private int cmpid;
 	
+	@NotBlank(message="Master Type cannot be Blank!")
 	@Column(name="master_type")
 	private String mastertype;
 	
+	@NotBlank(message="PP Master Name cannot be Blank!")
 	@Column(name="name")
 	private String ppmastername;
 	
+	@NotBlank(message="PP Parent Name cannot be Blank!")
 	@Column(name="group_name")
 	private String ppparentname;
 	

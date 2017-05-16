@@ -60,4 +60,14 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 		}
 		return companyrepository.updateCompanyStatus(companyDTO);
 	}
+	
+	public List<CompanyDTO> getCompanyIdName()
+	{
+		try {
+			logger.info("inside getCompanyIdName service ");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return companyrepository.getCompanyIdName();
+	}
 }

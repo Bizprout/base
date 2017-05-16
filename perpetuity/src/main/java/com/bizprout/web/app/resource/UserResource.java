@@ -1,16 +1,21 @@
 package com.bizprout.web.app.resource;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bizprout.web.api.common.constants.CommonConstants;
-import com.bizprout.web.api.service.BaseService;
 import com.bizprout.web.api.service.UserService;
 import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
@@ -30,12 +33,12 @@ import com.bizprout.web.app.dto.UserVO;
 @RestController
 @RequestMapping("/user")
 public class UserResource {
-	
+
 	@Autowired
 	private UserService<UserDTO> userservice;
-	
+
 	Logger logger=LoggerFactory.getLogger(this.getClass());
-	
+
 	public UserResource()
 	{
 		try {
@@ -46,53 +49,82 @@ public class UserResource {
 			e.printStackTrace();
 		}
 	}
-	
-	@PostMapping(value="/add", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> adduser(@RequestBody @Valid UserDTO userDTO, BindingResult result)
+
+	@PostMapping(value="/add", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> adduser(@RequestBody @Valid UserDTO userDTO, BindingResult result, Model model)
 	{
-		ResponseEntity<String> resp = null;
+		List<Object> jsonresponse = new ArrayList<Object>();
+
+		if(result.hasErrors())
+		{
+			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList()));
+			return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+		}
+
 		try {
+
+			//for password auto generation - 10 char
+
+			UUID uuid = UUID.randomUUID();
+			long l = ByteBuffer.wrap(uuid.toString().getBytes()).getLong();
+
+			String password=AESencrp.encrypt(Long.toString(l, Character.MAX_RADIX).subSequence(0, 9).toString());
+
+			userDTO.setPassword(password);
+
 			userservice.CreateUser(userDTO);
 			logger.debug("Request.......adduser method......");
-						
+
+
 			if(userDTO.getUserid()>0)
 			{
-				resp= new ResponseEntity<String>(CommonConstants.SUCCESS_MESSAGE, HttpStatus.OK);
+				jsonresponse.add("success");
+
+				String decryptedpassword=AESencrp.decrypt(userDTO.getPassword());
+
+				Email email=new Email();
+				email.sendEmail(userDTO.getEmailid(), userDTO.getUsername(), decryptedpassword);			
 			}
 			else
 			{
-				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-		return resp;
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
-	
-	@PostMapping(value="/edit", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity edituser(@RequestBody UserEditVO usereditVO)
+
+	@PostMapping(value="/edit", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> edituser(@RequestBody @Valid UserEditVO usereditVO, BindingResult result, Model model)
 	{
-		ResponseEntity resp = null;
+		List<Object> jsonresponse = new ArrayList<Object>();
 		try {
-			int result=userservice.UpdateUser(usereditVO);
+			int res=userservice.UpdateUser(usereditVO);
 			logger.debug("Request.......Edit user method......");
-			
-			if(result>0)
+
+
+			if(result.hasErrors())
 			{
-				resp= new ResponseEntity<String>("success", HttpStatus.OK);
+				jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+						.collect(Collectors.toList()));
+			}
+			else if(res>0)
+			{
+				jsonresponse.add("success");
 			}
 			else
 			{
-				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
+				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return resp;		
+		return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);		
 	}
-	
+
 	@GetMapping(value="/getusernames")
 	@ResponseBody
 	public List<String> getUsers()
@@ -107,7 +139,7 @@ public class UserResource {
 		}
 		return udto;
 	}
-	
+
 	@GetMapping(value="/getusersreport")
 	@ResponseBody
 	public List<UserDTO> getUsersReport()
@@ -122,14 +154,14 @@ public class UserResource {
 		}
 		return udto;
 	}
-	
+
 	@PostMapping(value="/getuserdata")
 	public ResponseEntity<UserDTO> getUserData(@RequestBody UserVO uservo)
 	{
-		ResponseEntity resp = null;
+		ResponseEntity<UserDTO> resp = null;
 		try {
 			logger.debug("Request......getUserData......");
-			
+
 			UserDTO userdto=userservice.getUserData(uservo);
 			resp = new ResponseEntity<UserDTO>(userdto, HttpStatus.OK);
 		} catch (Exception e) {

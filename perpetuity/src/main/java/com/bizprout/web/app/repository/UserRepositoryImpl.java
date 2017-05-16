@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
 import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
+import com.bizprout.web.app.resource.AESencrp;
 
 @Repository
 @Transactional
@@ -73,11 +74,13 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			
 			tx=session.beginTransaction();
 
-			Query qry=session.createQuery("UPDATE UserDTO set username=:editusername, usertype=:usertyp, userstatus=:userstat WHERE username=:oldusername");
+			Query qry=session.createQuery("UPDATE UserDTO set username=:editusername, usertype=:usertyp, userstatus=:userstat, emailid=:email, mobile=:phone WHERE username=:oldusername");
 
 			qry.setParameter("editusername",usereditVO.getEditusername());
 			qry.setParameter("usertyp", usereditVO.getUsertype());
 			qry.setParameter("userstat", usereditVO.getUserstatus());
+			qry.setParameter("email", usereditVO.getEmailid());
+			qry.setParameter("phone", usereditVO.getMobile());
 			qry.setParameter("oldusername", usereditVO.getUsername());
 
 			 result= qry.executeUpdate();
@@ -111,6 +114,30 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			e.printStackTrace();
 		}
 		return usernamelist;
+	}
+	
+	public UserDTO getLoginUser(String username,String password) {
+
+		Session session;
+		Query qry = null;
+		
+		try {
+			logger.info("Inside getLoginUser method.......");
+
+			session = factory.getCurrentSession();
+			
+			//encrypt the password to match db value
+			password=AESencrp.encrypt(password);
+
+			qry=session.createQuery("from UserDTO where username=:user and password=:pwd and userstatus='Active'");
+
+			qry.setParameter("user",username);
+			qry.setParameter("pwd",password);
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return (UserDTO) qry.uniqueResult();
 	}
 
 }

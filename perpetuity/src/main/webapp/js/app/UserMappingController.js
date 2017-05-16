@@ -1,6 +1,8 @@
-baseApp.controller("UserMappingController", function($scope, $location, $http, $timeout, $q, $filter) {
-
+baseApp.controller("UserMappingController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage) {
+	
 	console.log("UserMappingController loaded.....");
+		
+	$scope.cmpname=$localStorage.cmpname;
 
 	//*******DTO to store the form values for add when populated*******************************
 	$scope.usermappingDTO = {

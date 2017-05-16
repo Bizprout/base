@@ -32,6 +32,7 @@
                         $oldForm.fadeToggle($modalAnimateTime, function () {
                             $divForms.animate({height: $newH}, $modalAnimateTime, function () {
                                 $newForm.fadeToggle($modalAnimateTime);
+                                
                             });
                         });
                     }
@@ -47,7 +48,6 @@
 				data-target="#login-modal">Login</div>
 		</div>
 		<div class="login-section">
-
 			<div class="modal fade" id="login-modal" tabindex="-1" role="dialog"
 				aria-labelledby="myModalLabel" aria-hidden="true"
 				style="display: none;">
@@ -66,6 +66,14 @@
 								<div class="modal-header" align="center">
 									<div class="heading">Welcome</div>
 									<div class="text">Enter Username to proceed</div>
+									<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+										ng-show="showSuccessAlert">
+										<button type="button" class="close"
+											data-ng-click="switchBool('showSuccessAlert')">x</button>
+										{{alerts.msg}}
+									</div>
+									<md-progress-circular md-mode="indeterminate"
+										md-diameter="20px" ng-show="isLoading"></md-progress-circular>
 								</div>
 								<div class="modal-body">
 									<div class="user-login-details">
@@ -74,18 +82,13 @@
 												<div class="col-sm-12">
 													<input type="text" name="login_username"
 														id="login_username" ng-model="loginDTO.username"
-														class="input-field" value="User Name"
-														placeholder="User Name"
-														onfocus="this.value != 'User Name' ? this.value = this.value : this.value = '';"
-														onblur="this.value = !this.value ? 'User Name' : this.value;" autofocus />
-
+														class="input-field" value="" placeholder="User Name*"
+														autofocus />
 													<input type="password" name="login_password"
 														id="login_password" ng-model="loginDTO.password"
-														class="input-field" value="Password"
-														placeholder="Password"
-														onfocus="this.value != 'Password' ? this.value = this.value : this.value = '';"
-														onblur="this.value = !this.value ? 'Password' : this.value;"  autofocus />
-													<br /> <input type="submit" name="login_button"
+														class="input-field" value="" placeholder="Password*" />
+													<br />
+													<input type="submit" name="login_button"
 														class="login_button" id="login_button" value="Login"
 														ng-click="login(loginDTO)" />
 													<div class="forgot-passowrd">
@@ -99,7 +102,6 @@
 								</div>
 							</form>
 							<!-- End # Login Form -->
-
 							<!-- Begin | Forgot Password Form -->
 							<form id="forgot-form" style="display: none;">
 								<div class="modal-header" align="center">
@@ -114,9 +116,9 @@
 													<div class="radio">
 														<input type="radio" name="login_forgot_pwd_pick_any"
 															id="login_forgot_pwd_pick_any1"
-															value="Send OTP to my email address" checked> <label
-															for="login_forgot_pwd_pick_any1"> Send OTP to my
-															email address </label>
+															value="Send OTP to my email address" checked>
+														<label for="login_forgot_pwd_pick_any1"> Send OTP
+															to my email address </label>
 													</div>
 													<input type="button" id="forgot_otp_btn"
 														name="forgot_otp_btn" class="login_button"
@@ -125,11 +127,9 @@
 											</div>
 										</div>
 									</div>
-
 								</div>
 							</form>
 							<!-- End | Forgot Password Form -->
-
 							<!-- Begin | OTP Form -->
 							<form id="otp-form" style="display: none;">
 								<div class="modal-header" align="center">
@@ -157,14 +157,11 @@
 								</div>
 							</form>
 							<!-- End | OTP Form -->
-
 						</div>
 						<!-- End # DIV Form -->
-
 					</div>
 				</div>
 			</div>
-
 		</div>
 		<!-- END LOGIN Section-->
 	</div>

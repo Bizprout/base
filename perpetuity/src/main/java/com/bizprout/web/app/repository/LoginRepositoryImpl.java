@@ -12,35 +12,11 @@ import org.springframework.stereotype.Repository;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
 import com.bizprout.web.app.dto.LoginDTO;
+import com.bizprout.web.app.dto.UserDTO;
 
 @Repository
 public class LoginRepositoryImpl extends AbstractBaseRepository<LoginDTO> {
 
-	@Autowired
-	private SessionFactory factory;
 
-	Logger logger=LoggerFactory.getLogger(this.getClass());	
-
-	public LoginDTO getLoginUser(String username,String password) {
-
-		Session session;
-		Query qry = null;
-		
-		try {
-			logger.info("Inside getLoginUser method.......");
-
-			session = factory.getCurrentSession();
-
-			qry=session.createQuery("from LoginDTO where UserName=:username and Password=:pwd and ActiveStatus=0");
-
-			qry.setParameter("username",username);
-			qry.setParameter("pwd",password);
-			
-		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return (LoginDTO) qry.uniqueResult();
-	}
 
 }

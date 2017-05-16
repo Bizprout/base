@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="tally_master_mapping")
@@ -21,12 +22,15 @@ public class TallyMappingDTO {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int mappingId;
 	
+	@NotNull(message="Company cannot be Blank!")
 	@Column(name="cmp_id")
 	private int cmpId;
 	
+	@NotNull(message="PP Masters cannot be Blank!")
 	@Column(name="pp_id")
 	private int ppId;
 	
+	@NotNull(message="Tally Masters cannot be Blank!")
 	@Column(name="tally_mster_id")
 	private int tallyMasterId;
 	
