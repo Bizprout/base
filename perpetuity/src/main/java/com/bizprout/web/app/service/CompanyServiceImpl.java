@@ -41,14 +41,14 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 		return companyrepository.updateCompany(companyDTO);
 	}
 	
-	public List<CompanyDTO> getCompanyData()
+	public List<CompanyDTO> getCompanyData(int cmpid)
 	{
 		try {
 			logger.info("inside getCompanyData service ");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return companyrepository.getCompanyData();
+		return companyrepository.getCompanyData(cmpid);
 	}
 	
 	public int updateCompanyStatus(CompanyDTO companyDTO)

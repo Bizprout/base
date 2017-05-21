@@ -73,11 +73,12 @@ public class UserResource {
 
 			userDTO.setPassword(password);
 
-			userservice.CreateUser(userDTO);
+			int id= userservice.CreateUser(userDTO);
 			logger.debug("Request.......adduser method......");
+			
+			System.out.println(id);
 
-
-			if(userDTO.getUserid()>0)
+			if(id > 0)
 			{
 				jsonresponse.add("success");
 
@@ -100,18 +101,21 @@ public class UserResource {
 	@PostMapping(value="/edit", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> edituser(@RequestBody @Valid UserEditVO usereditVO, BindingResult result, Model model)
 	{
+
 		List<Object> jsonresponse = new ArrayList<Object>();
+
+		if(result.hasErrors())
+		{
+			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList()));
+			return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+		}
+
 		try {
 			int res=userservice.UpdateUser(usereditVO);
 			logger.debug("Request.......Edit user method......");
 
-
-			if(result.hasErrors())
-			{
-				jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
-						.collect(Collectors.toList()));
-			}
-			else if(res>0)
+			if(res>0)
 			{
 				jsonresponse.add("success");
 			}
@@ -169,6 +173,54 @@ public class UserResource {
 			e.printStackTrace();
 		}
 		return resp;
+	}
+	
+	@PostMapping(value="/getuserdatabyid")
+	public UserDTO getUserDataById(@RequestBody UserDTO userDTO)
+	{
+		UserDTO userdto = null;
+		try {
+			logger.debug("Request......getUserDataById......");
+
+			userdto=userservice.getUserDataById(userDTO.getUserid());
+			
+			String password=AESencrp.decrypt(userdto.getPassword());
+			
+			userdto.setPassword(password);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userdto;
+	}
+
+	@PostMapping(value="/changepassword", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> updatePassword(@RequestBody UserDTO userdto)
+	{
+		List<Object> jsonresponse = new ArrayList<Object>();
+
+		try {
+			logger.debug("Request......updatePassword......");
+
+			String passwordencrypted=AESencrp.encrypt(userdto.getPassword());
+
+			int res=userservice.updatePassword(passwordencrypted, userdto.getUserid());
+
+			if(res > 0)
+			{
+				jsonresponse.add("success");
+			}
+			else
+			{
+				jsonresponse.add("failure");
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
 
 }

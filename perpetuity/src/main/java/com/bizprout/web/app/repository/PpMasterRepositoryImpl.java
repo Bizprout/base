@@ -30,7 +30,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	public List<String> getPpMasterList(String mastertype) {
+	public List<String> getPpMasterList(String mastertype, String category, int cmpid, String ppmastername) {
 		Session session;
 		Query qry=null;
 		List<String> ppmasterlist = null;
@@ -39,8 +39,11 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 
 			session = factory.getCurrentSession();
 
-			qry=session.createQuery("select ppmastername from PpMasterDTO where mastertype=:mastertyp");
+			qry=session.createQuery("select ppmastername from PpMasterDTO where mastertype=:mastertyp and category=:cate and cmpid=:cmp and ppmastername<>:ppmasname");
 			qry.setParameter("mastertyp",mastertype);
+			qry.setParameter("cate",category);
+			qry.setParameter("cmp",cmpid);
+			qry.setParameter("ppmasname", ppmastername);
 			ppmasterlist=qry.list();
 
 		} catch (HibernateException e) {
@@ -50,7 +53,72 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		return ppmasterlist;
 	}
 	
-	public List<PpMasterDTO> getPpParentName(String mastertype, String ppmastername) {
+	public List<String> getPpMasterListall(String mastertype, String category, int cmpid) {
+		Session session;
+		Query qry=null;
+		List<String> ppmasterlist = null;
+		try {
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method.......");
+
+			session = factory.getCurrentSession();
+
+			qry=session.createQuery("select ppmastername from PpMasterDTO where mastertype=:mastertyp and category=:cate and cmpid=:cmp");
+			qry.setParameter("mastertyp",mastertype);
+			qry.setParameter("cate",category);
+			qry.setParameter("cmp",cmpid);
+			ppmasterlist=qry.list();
+
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmasterlist;
+	}
+	
+	public List<String> getPpMasterbyCostCategory(String mastertype, int cmpid, String ppmastername) {
+		Session session;
+		Query qry=null;
+		List<String> ppmasterlist = null;
+		try {
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method.......");
+
+			session = factory.getCurrentSession();
+
+			qry=session.createQuery("select ppmastername from PpMasterDTO where mastertype=:mastertyp and cmpid=:cmp and ppmastername<>:ppmasname");
+			qry.setParameter("mastertyp",mastertype);
+			qry.setParameter("cmp",cmpid);
+			qry.setParameter("ppmasname", ppmastername);
+			ppmasterlist=qry.list();
+
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmasterlist;
+	}
+	
+	public List<String> getPpMasterListByCompany(String mastertype, int cmpid) {
+		Session session;
+		Query qry=null;
+		List<String> ppmasterlist = null;
+		try {
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method.......");
+
+			session = factory.getCurrentSession();
+
+			qry=session.createQuery("select ppmastername from PpMasterDTO where mastertype=:mastertyp and cmpid=:cmp");
+			qry.setParameter("mastertyp",mastertype);
+			qry.setParameter("cmp",cmpid);
+			ppmasterlist=qry.list();
+
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmasterlist;
+	}
+	
+	public List<PpMasterDTO> getPpParentName(String mastertype, String ppmastername, int cmpid) {
 		Session session;
 		Query qry=null;
 		List<PpMasterDTO> ppparentname = null;
@@ -62,9 +130,10 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			Criteria cr = session.createCriteria(PpMasterDTO.class)
 					.add(Restrictions.eq("mastertype", mastertype))
 					.add(Restrictions.eq("ppmastername", ppmastername))
+					.add(Restrictions.eq("cmpid", cmpid))
 					.setProjection(Projections.projectionList()
 							.add(Projections.property("ppparentname"), "ppparentname")
-							.add(Projections.property("costcategory"), "costcategory"))
+							.add(Projections.property("category"), "category"))
 							.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
 			ppparentname=cr.list();
 
@@ -88,11 +157,11 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			
 			tx=session.beginTransaction();
 
-			Query qry=session.createQuery("UPDATE PpMasterDTO set ppmastername=:editppmastername, ppparentname=:ppparentnme, costcategory=:costcat WHERE mastertype=:mastertyp and ppmastername=:ppmasternme");
+			Query qry=session.createQuery("UPDATE PpMasterDTO set ppmastername=:editppmastername, ppparentname=:ppparentnme, category=:cat WHERE mastertype=:mastertyp and ppmastername=:ppmasternme");
 			
 			qry.setParameter("editppmastername", editppmasterDTO.getEditppmastername());
 			qry.setParameter("ppparentnme", editppmasterDTO.getPpparentname());
-			qry.setParameter("costcat", editppmasterDTO.getCostcategory());
+			qry.setParameter("cat", editppmasterDTO.getCategory());
 			qry.setParameter("mastertyp", editppmasterDTO.getMastertype());
 			qry.setParameter("ppmasternme", editppmasterDTO.getPpmastername());
 
@@ -109,14 +178,16 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		return result;
 	}
 	
-	public List<PpMasterDTO> getPpmasterData() {
+	public List<PpMasterDTO> getPpmasterData(int cmpid) {
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
 			logger.info("Inside getPpmasterData method.......");
 
 			Session session = factory.getCurrentSession();
 
-			ppmasterdata= session.createQuery("from PpMasterDTO").list();
+			Query q= session.createQuery("from PpMasterDTO where cmpid=:cmp");
+			q.setParameter("cmp", cmpid);
+			ppmasterdata=q.list();
 
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block

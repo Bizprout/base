@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
@@ -21,9 +23,10 @@ public class UserDTO {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userid;
 	
-	@NotBlank(message="Username Cannot be Blank!")
+	@Pattern(regexp="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message="Username Should be a Valid Email ID!")
+	@NotBlank(message="Username cannot be Empty!")
 	@Column(name = "username")
-	@Size(min=6, message="Username must be min 6 char!")
+	@Email
 	private String username;
 	
 	@Column(name = "password")
@@ -37,8 +40,6 @@ public class UserDTO {
 	@Column(name = "user_status")
 	private String userstatus;
 	
-	@NotBlank(message="Email Cannot be Blank!")
-	@Email(message="Email ID is not Valid!")
 	@Column(name = "email_id")
 	private String emailid;
 	

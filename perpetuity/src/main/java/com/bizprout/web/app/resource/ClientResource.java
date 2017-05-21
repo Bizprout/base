@@ -47,18 +47,18 @@ public class ClientResource {
 	public ResponseEntity<Object> addClient(@RequestBody @Valid ClientDTO clientdto, BindingResult result, Model model)    
 	{
 		List<Object> jsonresponse=new ArrayList<Object>();
-		
+
 		if(result.hasErrors())
 		{
 			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
 					.collect(Collectors.toList()));
 			return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 		}
-		
+
 		try {
 			baseService.testService(clientdto);
 			logger.info("Request.......adduser method......");
-			
+
 			if(clientdto.getClientId()>0)
 			{
 				jsonresponse.add("success");
@@ -78,17 +78,20 @@ public class ClientResource {
 	public ResponseEntity<Object> editClient(@RequestBody @Valid ClientDTO clientdto, BindingResult result, Model model)
 	{
 		List<Object> jsonresponse=new ArrayList<Object>();
+
+		if(result.hasErrors())
+		{
+			jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+					.collect(Collectors.toList()));
+			return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+		}
+
 		try {
 			int res=clientService.updateservice(clientdto);
 			logger.info("Request.......Edit client method......");
 
-			if(result.hasErrors())
-			{
-				jsonresponse.add(result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
-						.collect(Collectors.toList()));
-				return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
-			}
-			else if(res>0)
+
+			if(res>0)
 			{
 				jsonresponse.add("success");
 			}

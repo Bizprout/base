@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.web.bind.annotation.MatrixVariable;
 
 
 @Entity
@@ -34,7 +35,6 @@ public class CompanyDTO {
 	@Column(name="tally_guid")
 	private String tallyGUID;
 	
-	@NotBlank(message="Company cannot be Blank!")
 	@Column(name="tally_cmpname")
 	private String tallyCmpName;
 	
@@ -52,6 +52,10 @@ public class CompanyDTO {
 	@Column(name="download_timer")
 	@Type(type="time")
 	private Date dnldTimer;
+	
+	@Column(name="book_from")
+	@Type(type="date")
+	private Date bookfrom;
 	
 	@Min(value=1, message="Retrials value cannot be 0!")
 	@Column(name="max_retrial", nullable=true)
@@ -124,5 +128,11 @@ public class CompanyDTO {
 	}
 	public void setClient(ClientDTO client) {
 		this.client = client;
+	}
+	public Date getBookfrom() {
+		return bookfrom;
+	}
+	public void setBookfrom(Date bookfrom) {
+		this.bookfrom = bookfrom;
 	}
 }

@@ -33,6 +33,9 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 	$scope.onaddclick=function(){
 
 		console.log("Add Clicked...");
+		
+		$scope.userDTO.username='';
+		$scope.userDTO.mobile='';
 
 		//******Autocomplete dropdown default options for Select Username********
 		$scope.usernameselectOptions = {
@@ -58,7 +61,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 			$scope.userDTO.username='';
 			//$scope.userDTO.usertype = $scope.usertype[0].id;
-			$scope.userDTO.emailid='';
+			//$scope.userDTO.emailid='';
 			$scope.userDTO.mobile='';
 		}
 
@@ -68,23 +71,19 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 		$scope.createuser=function(userDTO){
 
 			console.log("inside Create User..");
-
-			if($scope.userDTO.username.length!=0 || $scope.userDTO.emailid.length!=0)
+			
+			if($scope.userDTO.username!="")
 			{
 				//call user add service
-				if($scope.userDTO.username.length===0) //&& $scope.userDTO.usertype!="null"
+				if($scope.userDTO.username==="") //&& $scope.userDTO.usertype!="null"
 				{
 					$scope.alerts = { type: 'danger' ,msg: 'Username is Required!'};
 					$scope.showSuccessAlert = true;
 				}
-
-				if($scope.userDTO.emailid.length===0)
-				{
-					$scope.alerts = { type: 'danger' ,msg: 'Email ID is Required!'};
-					$scope.showSuccessAlert = true;
-				}
 				else
 				{
+					$scope.userDTO.emailid=$scope.userDTO.username;
+
 					$http({
 						method : "POST",
 						url : "user/add",
@@ -94,8 +93,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 						}
 					}).success(function(data, status, headers, config){
 
-						console.log(data);
-
 						if(data[0]==="success")
 						{
 							$scope.alerts = { type: 'success', msg: 'User Created'};
@@ -103,7 +100,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 							$scope.userDTO.username='';
 							//$scope.userDTO.usertype = $scope.usertype[0].id;
-							$scope.userDTO.emailid='';
+							//$scope.userDTO.emailid='';
 							$scope.userDTO.mobile='';
 						}
 						else if (data[0] === "failure") {		
@@ -140,6 +137,13 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 	$scope.oneditclick=function(){
 
 		console.log("Edit Clicked....");
+		
+		$scope.edituserDTO.username='';
+		$scope.edituserDTO.editusername='';
+		//$scope.edituserDTO.usertype = $scope.usertype[0].id;
+		$scope.edituserDTO.userstatus = '';
+		//$scope.edituserDTO.emailid='';
+		$scope.edituserDTO.mobile='';
 
 		//******Autocomplete dropdown default options for Select user status********
 		$scope.userstatusselectOptions = {
@@ -161,7 +165,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			//*******options for user names and default selected option*********
 
 			$scope.usernames=data;
-			
+
 			$scope.isLoadingusername = false;
 
 		}).error(function(data, status, headers, config){
@@ -171,7 +175,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 		$scope.edituser=function(edituserDTO){
 
-			if($scope.edituserDTO.username===undefined && $scope.edituserDTO.editusername===undefined && $scope.edituserDTO.userstatus===undefined && $scope.edituserDTO.emailid===undefined)
+			if($scope.edituserDTO.username==="" && $scope.edituserDTO.editusername==="" && $scope.edituserDTO.userstatus==="")
 			{
 				$scope.alerts = { type: 'danger', msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
@@ -183,11 +187,10 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 		$scope.populateuserdata=function(){
 
 			$scope.edituserDTO.editusername=$scope.edituserDTO.username;
-			
-			$scope.isLoadingemailid = true;
+
 			$scope.isLoadingmobile = true;
 			$scope.isLoadinguserstatus = true;
-			
+
 			$http({
 				method : "POST",
 				url : "user/getuserdata",
@@ -201,8 +204,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 				$scope.edituserDTO.emailid=data.emailid;
 				$scope.edituserDTO.mobile=data.mobile;
 				$scope.edituserDTO.userstatus = data.userstatus; 
-				
-				$scope.isLoadingemailid = false;
+
 				$scope.isLoadingmobile = false;
 				$scope.isLoadinguserstatus = false;
 
@@ -218,33 +220,27 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 				//$scope.edituserDTO.usertype=$scope.usertype;
 
 				//call user add service
-				if($scope.edituserDTO.username!=undefined || $scope.edituserDTO.editusername!=undefined || $scope.edituserDTO.emailid!=undefined || $scope.edituserDTO.userstatus!=undefined)
+				if($scope.edituserDTO.username!=undefined || $scope.edituserDTO.editusername!=undefined || $scope.edituserDTO.userstatus!=undefined)
 				{
 					if($scope.edituserDTO.username===undefined)//&& $scope.edituserDTO.usertype!="null"
 					{
 						$scope.alerts = { type: 'danger', msg: 'Username is Mandatory!'};
 						$scope.showSuccessAlert = true;
 					}
-
-					if($scope.edituserDTO.editusername===undefined)
+					else if($scope.edituserDTO.editusername===undefined)
 					{
-						$scope.alerts = { type: 'danger', msg: 'Edit Username is Mandatory!'};
+						$scope.alerts = { type: 'danger', msg: 'Edit Username Should be a Valid Email ID!'};
 						$scope.showSuccessAlert = true;
 					}
-
-					if($scope.edituserDTO.emailid===undefined)
-					{
-						$scope.alerts = { type: 'danger', msg: 'Email ID is Mandatory!'};
-						$scope.showSuccessAlert = true;
-					}
-
-					if($scope.edituserDTO.userstatus===undefined)
+					else if($scope.edituserDTO.userstatus===undefined)
 					{
 						$scope.alerts = { type: 'danger', msg: 'User Status is Mandatory!'};
 						$scope.showSuccessAlert = true;
 					}
 					else
 					{
+						$scope.edituserDTO.emailid=$scope.edituserDTO.editusername;
+
 						$http({
 							method : "POST",
 							url : "user/edit",
@@ -263,8 +259,10 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 								$scope.edituserDTO.editusername='';
 								//$scope.edituserDTO.usertype = $scope.usertype[0].id;
 								$scope.edituserDTO.userstatus = '';
-								$scope.edituserDTO.emailid='';
+								//$scope.edituserDTO.emailid='';
 								$scope.edituserDTO.mobile='';
+
+								$scope.oneditclick();
 							}
 							else if(data[0]==="failure")
 							{
@@ -302,20 +300,22 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			$scope.edituserDTO.editusername='';
 			//$scope.edituserDTO.usertype = $scope.usertype[0].id;
 			$scope.edituserDTO.userstatus = '';
-			$scope.edituserDTO.emailid='';
+			//$scope.edituserDTO.emailid='';
 			$scope.edituserDTO.mobile='';
 		}
 
 	};
 
 	//*******when Report tab is clicked********************
-	
+
 	$scope.currentPage=1;
 	$scope.itemsPerPage=5;
 
 	$scope.onreportclick=function(){
 
 		console.log("Report Clicked......");
+		
+		$scope.search='';
 
 		//View Users - Report================================================================================================
 
@@ -333,7 +333,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 
 		$scope.exportData = function () {
-			
+
 			var confirm = $mdDialog.confirm()
 			.title('Would you like to Export Table data to Excel?')
 			.ok('OK')

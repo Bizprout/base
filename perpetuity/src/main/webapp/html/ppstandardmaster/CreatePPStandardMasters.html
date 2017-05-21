@@ -1,7 +1,7 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<p style="text-align: center;margin-bottom:-24px;">
+			<p style="text-align: center; margin-bottom: -24px;">
 				<b>Company:</b> {{cmpname}}
 			</p>
 			<div class="text">PP Masters</div>
@@ -12,7 +12,7 @@
 					ng-show="showSuccessAlert">
 					<button type="button" class="close"
 						data-ng-click="switchBool('showSuccessAlert')">x</button>
-					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
+					<strong>{{alerts.msg}}</strong>
 				</div>
 			</div>
 			<div ng-class="'alert alert-' + (alerts.type || 'warning')"
@@ -20,53 +20,68 @@
 				<button type="button" class="close"
 					data-ng-click="switchBool('showerror')">x</button>
 				<ul>
-					<strong>{{alerts.msgtype}}</strong>
-					<li ng-repeat="err in errdata">{{err}}</li>
+					<strong><li ng-repeat="err in errdata">{{err}}</li></strong>
 				</ul>
 			</div>
 			<div ng-cloak>
 				<md-content> <md-tabs md-border-bottom
 					style="min-height:410px;"> <md-tab label="Create"
 					md-on-select="oncreateclick()"> <md-content
-					class="md-padding">
+					class="md-padding"> <md-progress-circular
+					md-mode="indeterminate" md-diameter="20px"
+					ng-show="isLoadingmastertype"></md-progress-circular>
 				<div class="row">
 					<div class="col-xs-3">
-						<span>Master Type:</span><br>
+						<span>Master Type:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div
 							custom-select="mt for mt in mastertypes |  filter: $searchTerm"
 							custom-select-options="mastertypeselectOptions"
 							ng-change="mastertypechanged()" ng-model="ppmasterDTO.mastertype"
 							autofocus></div>
 					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-4">
-						<span>PP Master Name:</span>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingmastertype"></md-progress-circular>
+					</div>
+					<div class="col-xs-3">
+						<span>{{ppmasternamelabel}} Name:</span><span
+							style="color: red; font-size: 20px;">*</span>
 						<input type="text" name="pp_mastername" id="pp_mastername"
 							ng-model="ppmasterDTO.ppmastername" class="form-control"
 							placeholder="PP Master Name" required autofocus
-							style="width: 360px;">
+							style="width: 346px;">
 					</div>
 				</div>
 				<div class="row" ng-hide="hidecostcat">
 					<br>
 					<div class="col-xs-5">
-						<span>Select Cost Category:</span><br>
+						<span>Select Category:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div
-							custom-select="ccat for ccat in costcategories |  filter: $searchTerm"
-							custom-select-options="costcatselectOptions" ng-change=""
-							ng-model="ppmasterDTO.costcategory" autofocus></div>
+							custom-select="ccat for ccat in categories |  filter: $searchTerm"
+							custom-select-options="catselectOptions"
+							ng-change="oncategorychange()" ng-model="ppmasterDTO.category"
+							autofocus></div>
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingcostcat"></md-progress-circular>
 					</div>
 				</div>
 				<br>
 				<div class="row">
-					<div class="col-xs-6">
-						<span>PP Parent Name:</span><br>
+					<div class="col-xs-3">
+						<span>PP Parent Name:</span> <span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div
 							custom-select="pppn for pppn in ppparentnames |  filter: $searchTerm"
 							custom-select-options="ppparentnameselectOptions" ng-change=""
 							ng-model="ppmasterDTO.ppparentname" autofocus></div>
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingppparentname"></md-progress-circular>
 					</div>
 				</div>
 				<br />
@@ -82,70 +97,72 @@
 				</md-content> </md-tab> <md-tab label="Edit" md-on-select="oneditclick()"> <md-content
 					class="md-padding">
 				<div class="row">
-					<div class="col-xs-3">
-						<span>Master Type:</span><br>
+					<div class="col-xs-4">
+						<span>Master Type:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div
 							custom-select="mt for mt in mastertypes |  filter: $searchTerm"
 							custom-select-options="mastertypeselectOptions"
 							ng-model="editppmasterDTO.mastertype"
 							ng-change="getppmasternamelist()" autofocus></div>
 					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-4">
-						<span>Select PP Master Name:</span><br>
+					<div class="col-xs-3">
+						<span>Select {{editppmasternamelabel}} Name:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div
 							custom-select="emt for emt in eppmasternames |  filter: $searchTerm track by $index"
 							custom-select-options="ppmasternameselectOptions"
 							ng-change="ppmasternamechange()"
 							ng-model="editppmasterDTO.ppmastername" autofocus></div>
 					</div>
-					<div class="col-xs-5">
+					<div class="col-xs-1">
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
-							ng-show="isLoading"></md-progress-circular>
+							ng-show="isLoadingeditselectppmastername"></md-progress-circular>
 					</div>
 				</div>
 				<br>
 				<div class="row">
-					<div class="col-xs-4">
-						<span>Edit PP Master Name:</span>
+					<div class="col-xs-3">
+						<span>Edit {{editppmasternamelabel}} Name:</span><span
+							style="color: red; font-size: 20px;">*</span>
 						<input type="text" name="pp_mastername" id="pp_mastername"
 							ng-model="editppmasterDTO.editppmastername" class="form-control"
 							placeholder="PP Master Name" required autofocus
-							style="width: 360px;">
+							style="width: 346px;">
 					</div>
-					<div class="col-xs-5">
+					<div class="col-xs-1">
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
-							ng-show="isLoading"></md-progress-circular>
+							ng-show="isLoadingeditppmastername"></md-progress-circular>
 					</div>
-				</div>
-				<div class="row" ng-hide="hidecostcat">
-					<br>
-					<div class="col-xs-4">
-						<span>Select Cost Category:</span><br>
+					
+					<div ng-hide="hidecostcat">
+					<div class="col-xs-3">
+						<span>Select Category:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div
-							custom-select="ccat for ccat in costcategories |  filter: $searchTerm"
-							custom-select-options="costcatselectOptions" ng-change=""
-							ng-model="editppmasterDTO.costcategory" autofocus></div>
+							custom-select="ccat for ccat in categories |  filter: $searchTerm"
+							custom-select-options="catselectOptions" ng-change="oneditcategorychange()"
+							ng-model="editppmasterDTO.category" autofocus></div>
 					</div>
-					<div class="col-xs-5">
+					<div class="col-xs-1">
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
-							ng-show="isLoading"></md-progress-circular>
+							ng-show="isLoadingselecteditcategory"></md-progress-circular>
+					</div>
 					</div>
 				</div>
 				<br>
 				<div class="row">
 					<div class="col-xs-4">
-						<span>PP Parent Name:</span><br>
+						<span>PP Parent Name:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div
-							custom-select="pppn for pppn in ppparentnames |  filter: $searchTerm"
+							custom-select="pppn for pppn in ppparentnames |  filter: $searchTerm track by $index"
 							custom-select-options="ppparentnameselectOptions" ng-change=""
 							ng-model="editppmasterDTO.ppparentname" autofocus></div>
 					</div>
-					<div class="col-xs-5">
+					<div class="col-xs-1">
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
-							ng-show="isLoading"></md-progress-circular>
+							ng-show="isLoadingeditppparentname"></md-progress-circular>
 					</div>
 				</div>
 				<br />
@@ -209,39 +226,33 @@
 						<div class="form-group">
 							<input type="text" ng-model="search" class="form-control"
 								placeholder="Search">
+							<button style="margin-left: 50px;" ng-click="exportData()"
+								class="btn btn-success">Export</button>
 						</div>
 					</form>
+					<br>
 					<div id="exportable">
 						<table class="table table-striped table-hover">
 							<thead>
 								<tr>
-									<th ng-click="sort('id')">Sl.&nbsp;No.<span
-										class="glyphicon sort-icon" ng-show="sortKey=='id'"
+									<th ng-click="sort('slno')">Sl.&nbsp;No.<span
+										class="glyphicon sort-icon" ng-show="sortKey=='slno'"
 										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 									</th>
-									<th ng-click="sort('first_name')" style="width: 200px;">Company&nbsp;Name<span
-										class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
+									<th ng-click="sort('mastertype')">Master&nbsp;Type<span
+										class="glyphicon sort-icon" ng-show="sortKey=='mastertype'"
 										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 									</th>
-									<th></th>
-									<th></th>
-									<th></th>
-									<th></th>
-									<th></th>
-									<th ng-click="sort('last_name')">Master&nbsp;Type<span
-										class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+									<th ng-click="sort('ppmastername')">PP&nbsp;Master&nbsp;Name<span
+										class="glyphicon sort-icon" ng-show="sortKey=='ppmastername'"
 										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 									</th>
-									<th ng-click="sort('hobby')">PP&nbsp;Master&nbsp;Name<span
-										class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+									<th ng-click="sort('ppparentname')">PP&nbsp;Parent&nbsp;Name<span
+										class="glyphicon sort-icon" ng-show="sortKey=='ppparentname'"
 										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 									</th>
-									<th ng-click="sort('hobby')">PP&nbsp;Parent&nbsp;Name<span
-										class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-									</th>
-									<th ng-click="sort('hobby')">Cost&nbsp;Category<span
-										class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+									<th ng-click="sort('category')">Category<span
+										class="glyphicon sort-icon" ng-show="sortKey=='category'"
 										ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 									</th>
 								</tr>
@@ -251,23 +262,48 @@
 									dir-paginate="ppdata in ppmasterdata|orderBy:sortKey:reverse|filter:search|itemsPerPage:5"
 									current-page="currentPage">
 									<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
-									<td colspan="6">{{ppdata.companydto.tallyCmpName}}</td>
 									<td>{{ppdata.mastertype}}</td>
-									<!-- ng-bind="(user.usertype ? 'PP SuperAdmin' : 'PP Admin')" -->
 									<td>{{ppdata.ppmastername}}</td>
 									<td>{{ppdata.ppparentname}}</td>
-									<td>{{ppdata.costcategory}}</td>
+									<td>{{ppdata.category}}</td>
 								</tr>
 							</tbody>
 							<md-progress-circular md-mode="indeterminate" md-diameter="40px"
 								ng-show="isLoading"></md-progress-circular>
 						</table>
 					</div>
+					<div id="exportableall" ng-hide="true">
+						<table border="1">
+							<b>Perpetuity - PP Masters Report</b>
+							<br>
+							<b>Company: {{cmpname}}</b>
+							<br>
+							<b>List of PP Masters</b>
+							<br />
+							<br>
+							<thead>
+								<tr>
+									<th style="text-align: left;">Sl.&nbsp;No.</th>
+									<th style="text-align: left;">Master&nbsp;Type</th>
+									<th style="text-align: left;">PP&nbsp;Master&nbsp;Name</th>
+									<th style="text-align: left;">PP&nbsp;Parent&nbsp;Name</th>
+									<th style="text-align: left;">Category</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="ppdata in ppmasterdata">
+									<td style="text-align: left;">{{$index+1}}</td>
+									<td style="text-align: left;">{{ppdata.mastertype}}</td>
+									<td style="text-align: left;">{{ppdata.ppmastername}}</td>
+									<td style="text-align: left;">{{ppdata.ppparentname}}</td>
+									<td style="text-align: left;">{{ppdata.category}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 					<dir-pagination-controls max-size="5" direction-links="true"
 						boundary-links="true"> </dir-pagination-controls>
-					<button style="margin-left: 50px; margin-bottom: 65px;"
-						ng-click="exportData()" class="btn btn-success">Export</button>
-					<a style="margin-bottom: 65px;" href="#masters"
+					<br> <a style="margin-bottom: 65px;" href="#masters"
 						class="btn btn-success">Back</a>
 				</div>
 				</md-content> </md-tab> </md-tabs> </md-content>

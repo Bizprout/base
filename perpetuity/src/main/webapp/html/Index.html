@@ -65,7 +65,7 @@
 				<div class="menu-list collapse navbar-collapse" id="navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li class=""><a href="#home">Main Menu</a></li>
-						<li class=""><a href="#changepassword">Change Password</a></li>
+						<li class="" ng-if="usertype==PPAdmin"><a href="#changepassword">Change Password</a></li>
 						<li class=""><a href="#/" ng-click="logout()">Logout</a></li>
 					</ul>
 				</div>
@@ -95,6 +95,7 @@
 	<script type="application/javascript" src="js/app/AddEditController.js"></script>
 	<script type="application/javascript" src="js/app/UserController.js"></script>
 	<script type="application/javascript" src="js/app/ClientController.js"></script>
+	<script type="application/javascript" src="js/app/ChangePasswordController.js"></script>
 	<script type="application/javascript"
 		src="js/app/MasterPageController.js"></script>
 	<script type="application/javascript"

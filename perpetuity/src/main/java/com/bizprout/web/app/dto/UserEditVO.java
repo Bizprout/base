@@ -1,5 +1,7 @@
 package com.bizprout.web.app.dto;
 
+import javax.validation.constraints.Pattern;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -8,7 +10,9 @@ public class UserEditVO {
 	@NotBlank(message="Username Cannot be Blank!")
 	private String username;
 	
+	@Pattern(regexp="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message="Edit Username Should be a Valid Email ID!")
 	@NotBlank(message="Edit Username Cannot be Blank!")
+	@Email
 	private String editusername;
 	
 	@NotBlank(message="Usertype Cannot be Blank!")
@@ -17,8 +21,6 @@ public class UserEditVO {
 	@NotBlank(message="Userstatus Cannot be Blank!")
 	private String userstatus;
 	
-	@NotBlank(message="Email ID Cannot be Blank!")
-	@Email(message="Email ID is not Valid!")
 	private String emailid;
 	
 	private String mobile;

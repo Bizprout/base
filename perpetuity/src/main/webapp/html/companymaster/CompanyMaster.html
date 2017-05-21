@@ -14,7 +14,7 @@
 					ng-show="showSuccessAlert">
 					<button type="button" class="close"
 						data-ng-click="switchBool('showSuccessAlert')">x</button>
-					<strong>{{alerts.msgtype}}</strong> {{alerts.msg}}
+					<strong>{{alerts.msg}}</strong>
 				</div>
 			</div>
 			<div ng-class="'alert alert-' + (alerts.type || 'warning')"
@@ -22,8 +22,7 @@
 				<button type="button" class="close"
 					data-ng-click="switchBool('showerror')">x</button>
 				<ul>
-					<strong>{{alerts.msgtype}}</strong>
-					<li ng-repeat="err in errdata">{{err}}</li>
+					<strong><li ng-repeat="err in errdata">{{err}}</li></strong>
 				</ul>
 			</div>
 			<div ng-cloak>
@@ -36,13 +35,21 @@
 						<div
 							custom-select="cmp.cmpId as cmp.tallyCmpName for cmp in companylist |  filter: $searchTerm"
 							custom-select-options="companyselectOptions"
-							ng-model="companyDTO.tallyCmpName" disabled="compdisable" autofocus></div>
+							ng-model="companyDTO.cmpId" disabled="compdisable" autofocus></div>
 					</div>
-					<div class="col-xs-5">
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingcompany"></md-progress-circular>
+					</div>
+					<div class="col-xs-4">
 						<span>Tally GUID:</span><br>
-						<input type="text" ng-model="companyDTO.tallyGUID"
+						<input type="text" ng-model="tallyGUID"
 							class="form-control" ng-copy="$event.preventDefault()" required
 							placeholder="Tally GUID" style="width: 104%;" disabled autofocus>
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingtallyguid"></md-progress-circular>
 					</div>
 				</div>
 				<br>
@@ -54,38 +61,77 @@
 							custom-select-options="clientselectOptions"
 							ng-model="companyDTO.clientId" disabled="clientdisable" autofocus></div>
 					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingclient"></md-progress-circular>
+					</div>
+					<div class="col-xs-4">
+						<span>Books From:</span><br>
+						<input type="text" ng-model="bookfrom"
+							class="form-control" placeholder="Books From"
+							style="width: 104%;" disabled >
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingbookfrom"></md-progress-circular>
+					</div>
 				</div>
 				<br>
 				<div class="row">
-					<div class="col-xs-3">
-						<span>Sync Date From:</span><br>
+					<div class="col-xs-2">
+						<span>Sync From Date:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<md-datepicker ng-model="companyDTO.appFromDate"
-							md-placeholder="Sync Date From" md-open-on-focus></md-datepicker>
+							md-placeholder="Sync From Date" md-open-on-focus></md-datepicker>
 					</div>
-					<div class="col-xs-3">
-						<span>Upload Timer:</span>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingsyncdate"></md-progress-circular>
+					</div>
+					<div class="col-xs-2">
+						<span>Upload Timer:</span><span
+							style="color: red; font-size: 20px;">*</span>
 						<mdp-time-picker mdp-auto-switch="true"
 							ng-model="companyDTO.uploadTimer"></mdp-time-picker>
 					</div>
-					<div class="col-xs-4" style="width: 25%;">
-						<span>Download Timer:</span>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadinguploadtimer"></md-progress-circular>
+					</div>
+					<div class="col-xs-2">
+						<span>Download Timer:</span><span
+							style="color: red; font-size: 20px;">*</span>
 						<mdp-time-picker mdp-auto-switch="true"
 							ng-model="companyDTO.dnldTimer"></mdp-time-picker>
 					</div>
-					<div class="col-xs-3">
-						<span>No. of Retrials:</span>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingdownloadtimer"></md-progress-circular>
+					</div>
+					<div class="col-xs-2">
+						<span>No. of Retrials:</span><span
+							style="color: red; font-size: 20px;">*</span>
 						<input class="form-control" min="1" max="99"
 							onKeyDown="if(this.value.length==2) return false;"
 							ng-model="companyDTO.maxRetrial" type="number"
-							id="example-number-input" style="width: 40%;">
+							id="example-number-input" style="width: 50%;">
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingnoofretrials"></md-progress-circular>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-xs-3" style="margin-top: -20px;">
-						<span>Company Status:</span><br>
+					<div class="col-xs-4" style="margin-top: -20px;">
+						<span>Company Status:</span><span
+							style="color: red; font-size: 20px;">*</span><br>
 						<div custom-select="stat for stat in stats |  filter: $searchTerm"
 							custom-select-options="companystatusOptions" ng-change=""
 							ng-model="companyDTO.status" autofocus></div>
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingcompanystatus"></md-progress-circular>
 					</div>
 				</div>
 				<br />
@@ -94,7 +140,6 @@
 					<div class="col-xs-5">
 						<button type="button" class="btn btn-success"
 							ng-click="updatecompany(companyDTO)">Update</button>
-						<button type="reset" class="btn btn-success" ng-click="clear()">Clear</button>
 						<a href="#masters" class="btn btn-success">Back</a>
 					</div>
 				</div>
@@ -112,48 +157,56 @@
 								<input type="text" ng-model="search" class="form-control"
 									placeholder="Search">
 							</div>
+							<button style="margin-left: 50px;" ng-click="exportData()"
+								class="btn btn-success">Export</button>
 						</form>
+						<br>
 						<div id="exportable">
 							<table class="table table-striped table-hover">
 								<thead>
 									<tr>
-										<th ng-click="sort('id')">Sl.&nbsp;No.<span
-											class="glyphicon sort-icon" ng-show="sortKey=='id'"
+										<th ng-click="sort('slno')">Sl.&nbsp;No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='slno'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('first_name')">Client&nbsp;Name<span
-											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th></th>
-										<th></th>
-										<th></th>
-										<th></th>
-										<th ng-click="sort('last_name')">Tally&nbsp;Company&nbsp;Name<span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+										<th ng-click="sort('clientname')">Client&nbsp;Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='clientname'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
 										<th></th>
 										<th></th>
 										<th></th>
-										<th ng-click="sort('hobby')">Sync&nbsp;Applicable&nbsp;Date<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th></th>
+										<th ng-click="sort('tallycmpname')">Tally&nbsp;Company&nbsp;Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='tallycmpname'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">Upload&nbsp;Timer<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th></th>
+										<th></th>
+										<th></th>
+										<th ng-click="sort('syncdate')">Sync&nbsp;Applicable&nbsp;Date<span
+											class="glyphicon sort-icon" ng-show="sortKey=='syncdate'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">Download&nbsp;Timer<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th ng-click="sort('uploadtimer')">Upload&nbsp;Timer<span
+											class="glyphicon sort-icon" ng-show="sortKey=='uploadtimer'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">Max&nbsp;Retrials<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th ng-click="sort('downloadtimer')">Download&nbsp;Timer<span
+											class="glyphicon sort-icon"
+											ng-show="sortKey=='downloadtimer'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">Status<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th ng-click="sort('noofretrials')">Max&nbsp;Retrials<span
+											class="glyphicon sort-icon" ng-show="sortKey=='noofretrials'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('booksfrom')">Books&nbsp;From<span
+											class="glyphicon sort-icon" ng-show="sortKey=='booksfrom'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('status')">Status<span
+											class="glyphicon sort-icon" ng-show="sortKey=='status'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
 									</tr>
@@ -165,72 +218,59 @@
 										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
 										<td colspan="5">{{comp.client.clientName}}</td>
 										<td colspan="4">{{comp.tallyCmpName}}</td>
-										<td style="width: 200px;"">{{comp.appFromDate}}</td>
+										<td style="width: 200px;"">{{comp.appFromDate | date :
+											"dd-MMM-yyyy"}}</td>
 										<td>{{comp.uploadTimer}}</td>
 										<td>{{comp.dnldTimer}}</td>
 										<td>{{comp.maxRetrial}}</td>
+										<td>{{comp.bookfrom | date : "dd-MMM-yyyy"}}</td>
 										<td>{{comp.status}}</td>
 									</tr>
 								</tbody>
+								<md-progress-circular md-mode="indeterminate" md-diameter="40px"
+									ng-show="isLoading"></md-progress-circular>
 							</table>
 						</div>
 						<div id="exportableall" ng-hide="true">
-							<table class="table table-striped table-hover">
+							<table border="1">
+								<b>Perpetuity - Company Masters Report</b>
+								<br>
+								<b>List of Companies</b>
+								<br />
+								<br>
 								<thead>
 									<tr>
-										<th ng-click="sort('id')">Sl.&nbsp;No.<span
-											class="glyphicon sort-icon" ng-show="sortKey=='id'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('first_name')">Client&nbsp;Name<span
-											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('last_name')">Tally&nbsp;Company&nbsp;Name<span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">Sync&nbsp;Applicable&nbsp;Date<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">Upload&nbsp;Timer<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">Download&nbsp;Timer<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">Max&nbsp;Retrials<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">Status<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
+										<th style="text-align: left;">Sl.&nbsp;No.</th>
+										<th style="text-align: left;">Client&nbsp;Name</th>
+										<th style="text-align: left;">Tally&nbsp;Company&nbsp;Name</th>
+										<th style="text-align: left;">Sync&nbsp;Applicable&nbsp;Date</th>
+										<th style="text-align: left;">Upload&nbsp;Timer</th>
+										<th style="text-align: left;">Download&nbsp;Timer</th>
+										<th style="text-align: left;">Max&nbsp;Retrials</th>
+										<th style="text-align: left;">Books&nbsp;From</th>
+										<th style="text-align: left;">Status</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="comp in company">
-										<td>{{$index+1}}</td>
-										<td>{{comp.clientId}}</td>
-										<td>{{comp.tallyCmpName}}</td>
-										<td style="width: 200px;"">{{comp.appFromDate}}</td>
-										<td>{{comp.uploadTimer}}</td>
-										<td>{{comp.dnldTimer}}</td>
-										<td>{{comp.maxRetrial}}</td>
-										<td>{{comp.status}}</td>
+										<td style="text-align: left;">{{$index+1}}</td>
+										<td style="text-align: left;">{{comp.client.clientName}}</td>
+										<td style="text-align: left;">{{comp.tallyCmpName}}</td>
+										<td style="width: 200px; text-align: left;">{{comp.appFromDate
+											| date : "dd-MMM-yyyy"}}</td>
+										<td style="text-align: left;">{{comp.uploadTimer}}</td>
+										<td style="text-align: left;">{{comp.dnldTimer}}</td>
+										<td style="text-align: left;">{{comp.maxRetrial}}</td>
+										<td style="text-align: left;">{{comp.bookfrom | date :
+											"dd-MMM-yyyy"}}</td>
+										<td style="text-align: left;">{{comp.status}}</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 						<dir-pagination-controls max-size="5" direction-links="true"
 							boundary-links="true"> </dir-pagination-controls>
-						<button style="margin-left: 50px; margin-bottom: 65px;"
-							ng-click="exportData()" class="btn btn-success">Export</button>
-						<a style="margin-bottom: 65px;" href="#masters"
+						<br> <a style="margin-bottom: 65px;" href="#masters"
 							class="btn btn-success">Back</a>
 					</div>
 				</div>

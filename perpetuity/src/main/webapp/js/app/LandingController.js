@@ -35,8 +35,12 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 			emptyListText: 'Oops! The list is empty',
 			emptySearchResultText: 'Sorry, couldn\'t find "$0"'
 	};
-	
-	if($scope.landingcmpId!=null)
+		
+	if($localStorage.cmpid===undefined || $localStorage.cmpid==='')
+	{
+		$scope.linkEnabled = false;
+	}
+	else
 	{
 		$scope.linkEnabled = true;
 	}

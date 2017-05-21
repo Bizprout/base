@@ -56,7 +56,6 @@ public class BaseResorce {
 			resp = new ResponseEntity<String>("Bad Credentials",
 					HttpStatus.FORBIDDEN);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return resp;

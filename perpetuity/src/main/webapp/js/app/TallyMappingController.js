@@ -48,8 +48,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 	//*******DTO to store the form values for tally masters mapping to PP masters**********
 	$scope.ppmapDTO = {
-			"client" : 0,
-			"cmpId" : 0,
+			"cmpId" : $localStorage.cmpid,
 			"mastertype":"",
 			"tallyMasterId" : 0,
 			"ppId":0
@@ -58,58 +57,18 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 	$scope.onmapclick=function(){
 
 		console.log("Map Clicked....");
+		
+		$scope.ppmapDTO.mastertype='';
+		$scope.ppmapDTO.tallyMasterId='';
+		$scope.ppmapDTO.ppId='';
 
 		$scope.mastertypes = ["Ledger","Group","Cost Category","Cost Centre","Voucher Type"];
 
-		$http({
-			method : "GET",
-			url : "client/getclientidname",
-			headers : {
-				'Content-Type' : 'application/json'
-			}
-		}).success(function(dataclientnames, status, headers, config){
 
-			//*******options for client Names*********
-
-			$scope.clientnames=dataclientnames;
-
-		}).error(function(data, status, headers, config){
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
-		});
-
-
-		$scope.clientchanged=function(){
-
-			$scope.ppmapDTO.mastertype='';
-
-			$http({
-				method : "POST",
-				url : "pptallymapping/getcompanyidname",
-				data: {"clientId":$scope.ppmapDTO.client},
-				headers : {
-					'Content-Type' : 'application/json'
-				}
-			}).success(function(datacompnames, status, headers, config){
-
-				//*******options for client Names*********
-
-				$scope.companies=datacompnames;
-
-			}).error(function(data, status, headers, config){
-				// called asynchronously if an error occurs
-				// or server returns response with an error status.
-			});
-		};
-
-		$scope.companychanged=function(){
-			$scope.ppmapDTO.mastertype='';
-		};
-
-		$scope.masterchanged=function(){
+		$scope.masterchanged=function(ppmapDTO){
 
 			console.log("inside masterchanged...");
-
+			
 			$http({
 				method : "POST",
 				url : "pptallymapping/getppmasternames",
@@ -120,7 +79,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 			}).success(function(datappmasternames, status, headers, config){
 
 				//*******options for client Names*********
-
+				
 				$scope.ppmasternames=datappmasternames;
 
 			}).error(function(data, status, headers, config){
@@ -147,7 +106,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 			});
 		};
 
-		$scope.ppmasternamechanged=function(){
+		$scope.ppmasternamechanged=function(ppmapDTO){
 
 			$http({
 				method : "POST",
@@ -163,20 +122,61 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 				$scope.ppmapDTO.tallyMasterId=datatallymasterids;
 
 				$scope.datamapid=datatallymasterids;
+				
+				
+				
 
 			}).error(function(data, status, headers, config){
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});
 		};
+		
+		
+		$scope.ontallymasternamechange=function(){
+			
+			var tallymasternew = $scope.ppmapDTO.tallyMasterId.reduce(function (prev, value) {
 
-
-		$scope.mappingpp=function(){
-
-			if($scope.ppmapDTO.client>0 && $scope.ppmapDTO.mastertype.length>0 && $scope.ppmapDTO.ppId>0 && $scope.ppmapDTO.cmpId>0 && $scope.ppmapDTO.tallyMasterId.length>0)
-			{
+			    var isDuplicate = false;
+			    for (var i = 0; i < $scope.datamapid.length; i++) {
+			        if (value == $scope.datamapid[i]) {
+			            isDuplicate = true;
+			            break;
+			        }
+			    }
+			      
+			    if (!isDuplicate) {
+			        prev.push(value);
+			    }
+			       
+			    return prev;
+			        
+			}, []);
+			
+			console.log(tallymasternew);
+		};
+		
+		$scope.mappingpp=function(ppmapDTO){
+			
+			if($scope.ppmapDTO.mastertype.length>0 || $scope.ppmapDTO.ppId>0 || $scope.ppmapDTO.cmpId>0 || $scope.ppmapDTO.tallyMasterId.length>0)
+			{				
+				if($scope.ppmapDTO.mastertype==='')
+				{
+					$scope.alerts = { type: 'danger', msg: 'Master Type is Required!'};
+					$scope.showSuccessAlert = true;
+				}
+				else if($scope.ppmapDTO.ppId===0)
+				{
+					$scope.alerts = { type: 'danger', msg: 'Map to PP Master is Required!'};
+					$scope.showSuccessAlert = true;
+				}
+				else if($scope.ppmapDTO.tallyMasterId.length===0)
+				{
+					$scope.alerts = { type: 'danger', msg: 'Tally Master Name is Required!'};
+					$scope.showSuccessAlert = true;
+				}				
 				//call update
-				if($scope.datamapid	>0)
+				else if($scope.datamapid.length > 0)
 				{
 					angular.forEach($scope.ppmapDTO.tallyMasterId, function(value, key) {
 
@@ -193,24 +193,25 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 							if(successdata[0]==='success')
 							{
-								$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'PP Masters to tally Mapped'};
+								$scope.alerts = { type: 'success' ,msg: 'PP Masters to tally Mapped'};
 								$scope.showSuccessAlert = true;
 								$scope.showerror=false;
 
 								$scope.ppmapDTO.client='';
-								$scope.ppmapDTO.cmpId='';
 								$scope.ppmapDTO.mastertype='';
 								$scope.ppmapDTO.tallyMasterId='';
 								$scope.ppmapDTO.ppId='';
+								
+								$scope.onmapclick();
 							}
 							else if(successdata[0]==='failure')
 							{
-								$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'PP Masters to tally not Mapped'};
+								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
 								$scope.showSuccessAlert = true;
 							}
 							else
 							{
-								$scope.alerts = { type: 'danger', msgtype: 'Error!'};
+								$scope.alerts = { type: 'danger'};
 								$scope.errdata=successdata;
 								$scope.showerror=true;
 							}
@@ -218,7 +219,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 						}).error(function(data, status, headers, config){
 							if (data === "failure") {		
 
-								$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'PP Masters to tally not Mapped'};
+								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
 								$scope.showSuccessAlert = true;
 							}
 						});
@@ -226,7 +227,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 					});
 
 				}
-				else //call insert
+				else//call insert
 				{
 					angular.forEach($scope.ppmapDTO.tallyMasterId, function(value, key) {
 
@@ -243,24 +244,25 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 							if(successdata[0]==='success')
 							{
-								$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'PP Masters to tally Mapped'};
+								$scope.alerts = { type: 'success' ,msg: 'PP Masters to tally Mapped'};
 								$scope.showSuccessAlert = true;
 								$scope.showerror=false;
 
 								$scope.ppmapDTO.client='';
-								$scope.ppmapDTO.cmpId='';
 								$scope.ppmapDTO.mastertype='';
 								$scope.ppmapDTO.tallyMasterId='';
 								$scope.ppmapDTO.ppId='';
+								
+								$scope.onmapclick();
 							}
 							else if(successdata[0]==='failure')
 							{
-								$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'PP Masters to tally not Mapped'};
+								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
 								$scope.showSuccessAlert = true;
 							}
 							else
 							{
-								$scope.alerts = { type: 'danger', msgtype: 'Error!'};
+								$scope.alerts = { type: 'danger'};
 								$scope.errdata=successdata;
 								$scope.showerror=true;
 							}
@@ -268,7 +270,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 						}).error(function(data, status, headers, config){
 							if (data === "failure") {		
 
-								$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'PP Masters to tally not Mapped'};
+								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
 								$scope.showSuccessAlert = true;
 							}
 						});
@@ -278,7 +280,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 			}
 			else
 			{
-				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'All Fields should be Filled up.'};
+				$scope.alerts = { type: 'danger' ,msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
 		};
@@ -286,7 +288,6 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 		$scope.clear=function(){
 			$scope.ppmapDTO.client='';
-			$scope.ppmapDTO.cmpId='';
 			$scope.ppmapDTO.mastertype='';
 			$scope.ppmapDTO.tallyMasterId='';
 			$scope.ppmapDTO.ppId='';
@@ -320,6 +321,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 			var confirm = $mdDialog.confirm()
 			.title('Would you like to Export Excel Format?')
+			.textContent("Note: Please Save the Excel file as Excel Workbook and Upload.")
 			.ok('OK')
 			.cancel('Cancel');
 
@@ -350,12 +352,12 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 						if(response[0]==="success")
 						{
-							$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: "File - "+ file.name +" Uploaded Successfully!"};
+							$scope.alerts = { type: 'success' ,msg: "File - "+ file.name +" Uploaded Successfully!"};
 							$scope.showSuccessAlert = true;
 						}
 						else if(response[0]==="failure")
 						{
-							$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: "File- "+ file.name +" not Uploaded!"};
+							$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Uploaded!"};
 							$scope.showSuccessAlert = true;
 						}						
 
@@ -366,14 +368,14 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 				}
 				else
 				{
-					$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: "Please Upload Excel Files only!"};
+					$scope.alerts = { type: 'danger' ,msg: "Please Upload Excel Files only!"};
 					$scope.showSuccessAlert = true;
 				}
 
 			}
 			else
 			{
-				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: "No file Selected!"};
+				$scope.alerts = { type: 'danger' ,msg: "No file Selected!"};
 				$scope.showSuccessAlert = true;
 			}
 		};
@@ -385,42 +387,18 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 	$scope.onreportclick=function(){
 		console.log("Report clicked....");
 
+		$scope.search='';
+
 		//View tally pp mapping - Report================================================================================================
 
-		$scope.reportclientchanged=function(){
-
-			$scope.reportmastertype='';
-
-			$http({
-				method : "POST",
-				url : "pptallymapping/getcompanyidname",
-				data: {"clientId":$scope.reportclientid},
-				headers : {
-					'Content-Type' : 'application/json'
-				}
-			}).success(function(reportdatacompnames, status, headers, config){
-
-				//*******options for client Names*********
-
-				$scope.reportcompanies=reportdatacompnames;
-
-			}).error(function(data, status, headers, config){
-				// called asynchronously if an error occurs
-				// or server returns response with an error status.
-			});
-		};
-
-		$scope.reportcompanychanged=function(){
-			$scope.reportmastertype='';
-		};
 
 		$scope.savereportdata=function(){
 
 			console.log($scope.reportclientid+"---"+$scope.reportcmpid+"---"+$scope.reportmastertype);
 
-			if($scope.reportclientid===undefined || $scope.reportcmpid===undefined || $scope.reportmastertype.length===0)
+			if($scope.reportmastertype.length===0)
 			{
-				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'All Fields should be Filled up.'};
+				$scope.alerts = { type: 'danger' ,msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
 		}
@@ -428,9 +406,6 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 		$scope.tallyppmapdata=[];
 
 		$scope.reportmasterchanged=function(){
-
-			$scope.clientname=$scope.clientnames[0].clientName;
-			$scope.companyname=$scope.reportcompanies[0].tallyCmpName;
 
 			if($scope.reportcmpid>0 && $scope.reportmastertype.length!=0)
 			{
@@ -476,7 +451,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 				$scope.savereportdata=function(){			
 
-					if($scope.reportclientid!=undefined && $scope.reportcmpid!=undefined && $scope.reportmastertype!=undefined)
+					if($scope.reportmastertype!=undefined)
 					{
 						$scope.datapushed = [];
 						angular.forEach($scope.tallyppmapdata, function (mainobj) {
@@ -502,17 +477,15 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 							if(successdata==='success')
 							{
-								$scope.alerts = { type: 'success', msgtype: 'Success!' ,msg: 'PP Masters to tally Mapped'};
+								$scope.alerts = { type: 'success' ,msg: 'PP Masters to tally Mapped'};
 								$scope.showSuccessAlert = true;
 
-								$scope.reportclientid='';
-								$scope.reportcmpid='';
 								$scope.reportmastertype='';
 								$scope.tallyppmapdata=[];
 							}
 							else
 							{
-								$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'PP Masters to tally not Mapped'};
+								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
 								$scope.showSuccessAlert = true;
 							}
 
@@ -524,7 +497,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 					}
 					else
 					{
-						$scope.alerts = { type: 'danger', msgtype: 'Failure!' ,msg: 'All fields are Mandatory!'};
+						$scope.alerts = { type: 'danger' ,msg: 'All Mandatory Fields should be Filled up!'};
 						$scope.showSuccessAlert = true;
 					}
 
@@ -532,7 +505,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 			}
 			else
 			{
-				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'All Fields should be Filled up.'};
+				$scope.alerts = { type: 'danger' ,msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
 		};		
@@ -554,7 +527,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 			}
 			else
 			{
-				$scope.alerts = { type: 'danger', msgtype: 'Error!' ,msg: 'No data to Export!.'};
+				$scope.alerts = { type: 'danger' ,msg: 'No data to Export!.'};
 				$scope.showSuccessAlert = true;
 			}
 

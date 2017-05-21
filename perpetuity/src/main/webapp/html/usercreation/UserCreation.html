@@ -34,13 +34,13 @@
 						<div class="col-sm-12">
 							<div class="cu-section-content">
 								Username: <span style="color: red; font-size: 20px;">*</span>
-								<input type="text" name="username" id="username"
+								<input type="email" name="username" id="username"
 									ng-model="userDTO.username" class="form-control" required
-									placeholder="Username" autofocus>
-								<br> Email ID: <span style="color: red; font-size: 20px;">*</span>
+									placeholder="Email ID" autofocus>
+								<!-- 		<br> Email ID: <span style="color: red; font-size: 20px;">*</span>
 								<input type="text" name="emailid" id="emailid"
 									ng-model="userDTO.emailid" class="form-control" required
-									placeholder="Email ID" autofocus>
+									placeholder="Email ID" autofocus> -->
 								<br> Mobile No.:
 								<input type="text" name="mobile" id="mobile"
 									ng-model="userDTO.mobile" maxlength="10"
@@ -96,25 +96,19 @@
 								ng-change="populateuserdata()" ng-model="edituserDTO.username"
 								autofocus></div>
 						</div>
-						<div class="col-xs-1">
-							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
-								ng-show="isLoadingusername"></md-progress-circular>
-						</div>
-						<div class="col-xs-4">
-							<span>Edit Username:<span
-								style="color: red; font-size: 20px;">*</span></span><br>
-							<input type="text" name="editusername" id="editusername"
-								ng-model="edituserDTO.editusername" class="form-control"
-								required placeholder="Edit Username" autofocus>
-						</div>
 					</div>
 					<br>
 					<div class="row">
 						<div class="col-xs-4">
-							Email ID: <span style="color: red; font-size: 20px;">*</span>
+							<!-- Email ID: <span style="color: red; font-size: 20px;">*</span>
 							<input type="text" name="emailid" id="emailid"
 								ng-model="edituserDTO.emailid" class="form-control" required
-								placeholder="Email ID" autofocus>
+								placeholder="Email ID" autofocus> -->
+							<span>Edit Username:<span
+								style="color: red; font-size: 20px;">*</span></span><br>
+							<input type="email" name="editusername" id="editusername"
+								ng-model="edituserDTO.editusername" class="form-control"
+								required placeholder="Edit Username" autofocus>
 						</div>
 						<div class="col-xs-1">
 							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
@@ -185,28 +179,28 @@
 							<table class="table table-striped table-hover">
 								<thead>
 									<tr>
-										<th ng-click="sort('id')">Sl. No.<span
-											class="glyphicon sort-icon" ng-show="sortKey=='id'"
+										<th ng-click="sort('slno')">Sl. No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='slno'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('first_name')">Username<span
-											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
+										<th ng-click="sort('username')">Username<span
+											class="glyphicon sort-icon" ng-show="sortKey=='username'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('last_name')">User Type <span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+										<th ng-click="sort('usertype')">User Type <span
+											class="glyphicon sort-icon" ng-show="sortKey=='usertype'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('last_name')">Email ID <span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+										<th ng-click="sort('emailid')">Email ID <span
+											class="glyphicon sort-icon" ng-show="sortKey=='emailid'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('last_name')">Mobile No. <span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
+										<th ng-click="sort('mobileno')">Mobile No. <span
+											class="glyphicon sort-icon" ng-show="sortKey=='mobileno'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">User Status <span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th ng-click="sort('userstatus')">User Status <span
+											class="glyphicon sort-icon" ng-show="sortKey=='userstatus'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
 									</tr>
@@ -228,43 +222,27 @@
 							</table>
 						</div>
 						<div id="exportableall" ng-hide="true">
-							<table class="table table-striped table-hover">
+							<table border="1">
+							<b>Perpetuity - User Masters Report</b><br>
+							<b>List of Users</b><br/><br>							
 								<thead>
 									<tr>
-										<th ng-click="sort('id')">Sl. No.<span
-											class="glyphicon sort-icon" ng-show="sortKey=='id'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('first_name')">Username<span
-											class="glyphicon sort-icon" ng-show="sortKey=='first_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('last_name')">User Type <span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('last_name')">Email ID <span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('last_name')">Mobile No. <span
-											class="glyphicon sort-icon" ng-show="sortKey=='last_name'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
-										<th ng-click="sort('hobby')">User Status <span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
-											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-										</th>
+										<th style="text-align: left;">Sl. No.</th>
+										<th style="text-align: left;">Username</th>
+										<th style="text-align: left;">User Type</th>
+										<th style="text-align: left;">Email ID</th>
+										<th style="text-align: left;">Mobile No.</th>
+										<th style="text-align: left;">User Status</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr ng-repeat="user in users">
-										<td>{{$index+1}}</td>
-										<td>{{user.username}}</td>
-										<td>{{user.usertype}}</td>
-										<td>{{user.emailid}}</td>
-										<td>{{user.mobile}}</td>
-										<td>{{user.userstatus}}</td>
+										<td style="text-align: left;">{{$index+1}}</td>
+										<td style="text-align: left;">{{user.username}}</td>
+										<td style="text-align: left;">{{user.usertype}}</td>
+										<td style="text-align: left;">{{user.emailid}}</td>
+										<td style="text-align: left;">{{user.mobile}}</td>
+										<td style="text-align: left;">{{user.userstatus}}</td>
 									</tr>
 								</tbody>
 							</table>

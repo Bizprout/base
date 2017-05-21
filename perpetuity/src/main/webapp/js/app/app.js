@@ -33,14 +33,19 @@ baseApp.directive('myLink', function() {
 	};
 });
 
-baseApp.run(function($interval, $localStorage, $location){
-	$interval( function(){		  
-		$localStorage.$reset();
-		$location.path('/');
-		// delete all the required localStorage variables if the page is active more than 10 min
-	}, 1000*60*10);
-	
-	
+baseApp.run(function($rootScope, $localStorage, $location) {
+	var lastDigestRun = new Date();
+	setInterval(function () {
+		var now = Date.now();
+		if (now - lastDigestRun > 10 * 60 * 1000) {
+			$localStorage.$reset();
+			$location.path('/');
+		}
+	}, 1000);
+
+	$rootScope.$watch(function() {
+		lastDigestRun = new Date();
+	});
 });
 
 //ngRoute for routing - navigating to pages

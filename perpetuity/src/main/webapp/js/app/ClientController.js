@@ -15,7 +15,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 			"contactPerson": "",
 			"contactEmail": "",
 			"contactTelPhone": "",
-			"status": ""
+			"status": "Active"
 	};	
 
 	$scope.eclientDTO={
@@ -32,9 +32,14 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 	$scope.oncreateclick=function(){
 
 		console.log("Create Clicked...");
+		
+		$scope.clientDTO.clientName='';
+		$scope.clientDTO.contactPerson='';
+		$scope.clientDTO.contactEmail='';
+		$scope.clientDTO.contactTelPhone = '';
 
-		$scope.clientstatus = ["Active", "Inactive"];
-		$scope.clientDTO.status = $scope.clientstatus[0];	
+		/*$scope.clientstatus = ["Active", "Inactive"];
+		$scope.clientDTO.status = $scope.clientstatus[0];	*/
 
 		//*********Clear all the fields when clear button pressed*******
 		$scope.clear=function(){
@@ -43,7 +48,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 			$scope.clientDTO.contactPerson='';
 			$scope.clientDTO.contactEmail='';
 			$scope.clientDTO.contactTelPhone = '';
-			$scope.clientDTO.status = $scope.clientstatus[0];
+			//$scope.clientDTO.status = $scope.clientstatus[0];
 		}
 
 		//************when submit button is pressed validate and post to the service************
@@ -59,51 +64,64 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 				$scope.alerts = { type: 'danger', msg: 'E-Mail Address is not Valid!'};
 				$scope.showSuccessAlert = true;
 			}
-			else if($scope.clientDTO.clientName.length!=0 && $scope.clientDTO.contactPerson.length!=0 && $scope.clientDTO.contactEmail.length!=0 && $scope.clientDTO.contactTelPhone.length!=0 && $scope.clientDTO.status.length!=0) 
+			else if($scope.clientDTO.clientName.length!=0 || $scope.clientDTO.contactEmail.length!=0) 
 			{	
-				$http({
-					method : "POST",
-					url : "client/add",
-					data : clientDTO,
-					headers : {
-						'Content-Type' : 'application/json'
-					}
-				}).success(function(data, status, headers, config){
+				if($scope.clientDTO.clientName===undefined)
+				{
+					$scope.alerts = { type: 'danger', msg: 'Client Name cannot be Empty!'};
+					$scope.showSuccessAlert = true;
+				}
+				else if($scope.clientDTO.contactEmail===undefined)
+				{
+					$scope.alerts = { type: 'danger', msg: 'Email cannot be Empty!'};
+					$scope.showSuccessAlert = true;
+				}
+				else
+				{
+					$http({
+						method : "POST",
+						url : "client/add",
+						data : clientDTO,
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(data, status, headers, config){
 
-					if(data[0]==="success")
-					{
-						$scope.alerts = { type: 'success', msg: 'Client Created'};
-						$scope.showSuccessAlert = true;
-						$scope.showerror=false;
+						if(data[0]==="success")
+						{
+							$scope.alerts = { type: 'success', msg: 'Client Created'};
+							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 
-						$scope.clientDTO.clientName='';
-						$scope.clientDTO.contactPerson='';
-						$scope.clientDTO.contactEmail='';
-						$scope.clientDTO.contactTelPhone = '';
-						$scope.clientDTO.status = $scope.clientstatus[0];
-					}
-					else if(data[0]==="failure")
-					{
+							$scope.clientDTO.clientName='';
+							$scope.clientDTO.contactPerson='';
+							$scope.clientDTO.contactEmail='';
+							$scope.clientDTO.contactTelPhone = '';
+							//$scope.clientDTO.status = $scope.clientstatus[0];
+						}
+						else if(data[0]==="failure")
+						{
+							$scope.alerts = { type: 'failure', msg: 'Client not Created'};
+							$scope.showSuccessAlert = true;
+						}
+						else
+						{
+							$scope.alerts = { type: 'danger'};
+							$scope.errdata=data[0];
+							$scope.showerror=true;
+							$scope.showSuccessAlert = false;
+						}
+					}).error(function(data, status, headers, config){
+
 						$scope.alerts = { type: 'failure', msg: 'Client not Created'};
 						$scope.showSuccessAlert = true;
-					}
-					else
-					{
-						$scope.alerts = { type: 'danger'};
-						$scope.errdata=data[0];
-						$scope.showerror=true;
-						$scope.showSuccessAlert = false;
-					}
-				}).error(function(data, status, headers, config){
 
-					$scope.alerts = { type: 'failure', msg: 'Client not Created'};
-					$scope.showSuccessAlert = true;
-
-				});		
+					});	
+				}	
 			}	 	
 			else
 			{
-				$scope.alerts = { type: 'danger', msg: 'All Fields should be Filled up.'};
+				$scope.alerts = { type: 'danger', msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
 		};
@@ -115,6 +133,13 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 	$scope.oneditclick=function(){
 
 		console.log("Edit clicked...");		
+		
+		$scope.eclientDTO.clientId='';
+		$scope.eclientDTO.clientName='';
+		$scope.eclientDTO.contactPerson='';
+		$scope.eclientDTO.contactEmail='';
+		$scope.eclientDTO.contactTelPhone = '';
+		$scope.eclientDTO.status = '';
 
 		//******Autocomplete dropdown default options for select Client name********
 		$scope.clientnameselectOptions = {
@@ -154,10 +179,12 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 		//***************when eclientDTO is not filled and clicked edit then error msg shows up*****************
 
 		$scope.editclient=function(eclientDTO){
+			
+			console.log($scope.eclientDTO.status.length);
 
-			if($scope.eclientDTO.clientId===0 && $scope.eclientDTO.clientName.length===0 && $scope.eclientDTO.contactPerson.length===0 && $scope.eclientDTO.contactEmail.length===0 && $scope.eclientDTO.contactTelPhone.length===0 && $scope.eclientDTO.status.length===0)
+			if($scope.eclientDTO.clientId==="" && $scope.eclientDTO.clientName==="" && $scope.eclientDTO.contactEmail==="" && $scope.eclientDTO.status==="")
 			{
-				$scope.alerts = { type: 'danger', msg: 'All Fields should be Filled up.'};
+				$scope.alerts = { type: 'danger', msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
 			}
 		};
@@ -204,45 +231,82 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 				//call user add service
 
-				if($scope.eclientDTO.clientId>0 && $scope.eclientDTO.clientName.length!=undefined && $scope.eclientDTO.contactPerson.length!=undefined && $scope.eclientDTO.contactEmail.length!=undefined && $scope.eclientDTO.contactTelPhone.length!=null && $scope.eclientDTO.status.length!=0)
+				if($scope.eclientDTO.clientId>0 || $scope.eclientDTO.clientName!=undefined || $scope.eclientDTO.contactEmail!=undefined || $scope.eclientDTO.status.length!=0)
 				{
-					$http({
-						method : "POST",
-						url : "client/edit",
-						data : eclientDTO,
-						headers : {
-							'Content-Type' : 'application/json'
-						}
-					}).success(function(data, status, headers, config){
-
-						if(data[0]==="success")
-						{
-							$http({
-								method : "POST",
-								url : "company/updatecompanystatus",
-								data : {"clientId": $scope.eclientDTO.clientId, "status": $scope.eclientDTO.status},
-								headers : {
-									'Content-Type' : 'application/json'
-								}
-							}).success(function(dataa, status, headers, config){
-
-							}).error(function(data, status, headers, config){
-								$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
-								$scope.showSuccessAlert = true;
-							});
+					if($scope.eclientDTO.clientId===0)
+					{
+						$scope.alerts = { type: 'danger', msg: 'Please select Client Name!'};
+						$scope.showSuccessAlert = true;
+					}
+					else if($scope.eclientDTO.clientName===undefined)
+					{
+						$scope.alerts = { type: 'danger', msg: 'Edit Client Name cannot be Empty!'};
+						$scope.showSuccessAlert = true;
+					}					
+					else if($scope.eclientDTO.contactEmail===undefined)
+					{
+						$scope.alerts = { type: 'danger', msg: 'Email cannot be Empty!'};
+						$scope.showSuccessAlert = true;
+					}
+					else if($scope.eclientDTO.status.length===0)
+					{
+						$scope.alerts = { type: 'danger', msg: 'Client Status cannot be Empty!'};
+						$scope.showSuccessAlert = true;
+					}
+					else
+					{
+						$http({
+							method : "POST",
+							url : "client/edit",
+							data : eclientDTO,
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(data, status, headers, config){
 
 							if(data[0]==="success")
 							{
-								$scope.alerts = { type: 'success', msg: 'Client Updated!'};
-								$scope.showSuccessAlert = true;
-								$scope.showerror=false;
+								$http({
+									method : "POST",
+									url : "company/updatecompanystatus",
+									data : {"clientId": $scope.eclientDTO.clientId, "status": $scope.eclientDTO.status},
+									headers : {
+										'Content-Type' : 'application/json'
+									}
+								}).success(function(dataa, status, headers, config){
 
-								$scope.eclientDTO.clientId='';
-								$scope.eclientDTO.clientName='';
-								$scope.eclientDTO.contactPerson='';
-								$scope.eclientDTO.contactEmail='';
-								$scope.eclientDTO.contactTelPhone = '';
-								$scope.eclientDTO.status = '';
+								}).error(function(data, status, headers, config){
+									$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+									$scope.showSuccessAlert = true;
+								});
+
+								if(data[0]==="success")
+								{
+									$scope.alerts = { type: 'success', msg: 'Client Updated!'};
+									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
+
+									$scope.eclientDTO.clientId='';
+									$scope.eclientDTO.clientName='';
+									$scope.eclientDTO.contactPerson='';
+									$scope.eclientDTO.contactEmail='';
+									$scope.eclientDTO.contactTelPhone = '';
+									$scope.eclientDTO.status = '';
+									
+									$scope.oneditclick();
+								}
+								else if(data[0]==="failure")
+								{
+									$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+									$scope.showSuccessAlert = true;
+								}
+								else
+								{
+									$scope.alerts = { type: 'danger'};
+									$scope.errdata=data[0];
+									$scope.showerror=true;
+									$scope.showSuccessAlert = false;
+								}
 							}
 							else if(data[0]==="failure")
 							{
@@ -256,28 +320,15 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 								$scope.showerror=true;
 								$scope.showSuccessAlert = false;
 							}
-						}
-						else if(data[0]==="failure")
-						{
-							$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+
+						}).error(function(data, status, headers, config){
+							// called asynchronously if an error occurs
+							// or server returns response with an error status.	
+
+							$scope.alerts = { type: 'danger',msg: 'Client not Updated!'};
 							$scope.showSuccessAlert = true;
-						}
-						else
-						{
-							$scope.alerts = { type: 'danger'};
-							$scope.errdata=data[0];
-							$scope.showerror=true;
-							$scope.showSuccessAlert = false;
-						}
-
-					}).error(function(data, status, headers, config){
-						// called asynchronously if an error occurs
-						// or server returns response with an error status.	
-
-						$scope.alerts = { type: 'danger',msg: 'Client not Updated!'};
-						$scope.showSuccessAlert = true;
-					});
-
+						});
+					}
 				}
 				else
 				{
@@ -293,6 +344,8 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 	$scope.onreportclick=function(){
 
 		console.log("Report Clicked......");
+		
+		$scope.search='';
 
 		//View Users - Report================================================================================================
 

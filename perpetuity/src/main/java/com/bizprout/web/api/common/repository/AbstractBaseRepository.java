@@ -26,15 +26,16 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 
-	public void save(T t) {
+	public int save(T t) {
 		// TODO change into current session
 
 		logger.info("Inside Abstract class save method.....");
 
 		Session session = factory.openSession();
 		Transaction transaction = session.beginTransaction();
+		int id=0;
 		try {
-			session.save(t);
+			id=(int) session.save(t);
 			transaction.commit();
 		} catch (HibernateException he) {
 			he.printStackTrace();
@@ -42,7 +43,7 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 		} finally {
 			session.close();
 		}
-
+		return id;
 	}
 
 	public void update(T t) {

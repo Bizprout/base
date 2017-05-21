@@ -63,15 +63,15 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 
 			tx=session.beginTransaction();
 
-			Query qry=session.createQuery("UPDATE CompanyDTO set clientId=:clientid, appFromDate=:syncdate, uploadTimer=:uploadtime, dnldTimer=:dnldtime, maxRetrial=:retrials, status=:stat WHERE tallyCmpName=:cmpname");
-
+			Query qry=session.createQuery("UPDATE CompanyDTO set clientId=:clientid, appFromDate=:syncdate, uploadTimer=:uploadtime, dnldTimer=:dnldtime, maxRetrial=:retrials, status=:stat WHERE cmpId=:cmpid");
+			
 			qry.setParameter("clientid", companyDTO.getClientId());
 			qry.setParameter("syncdate", companyDTO.getAppFromDate());
 			qry.setParameter("uploadtime", companyDTO.getUploadTimer());
 			qry.setParameter("dnldtime", companyDTO.getDnldTimer());
 			qry.setParameter("retrials", companyDTO.getMaxRetrial());
 			qry.setParameter("stat", companyDTO.getStatus());
-			qry.setParameter("cmpname", companyDTO.getTallyCmpName());
+			qry.setParameter("cmpid", companyDTO.getCmpId());
 
 			result= qry.executeUpdate();
 			tx.commit();
@@ -86,7 +86,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		return result;
 	}
 	
-	public List<CompanyDTO> getCompanyData()
+	public List<CompanyDTO> getCompanyData(int cmpid)
 	{
 		Session session;
 		List<CompanyDTO> compDTO = null;
@@ -95,10 +95,11 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 
 			session = factory.getCurrentSession();
 
-			compDTO=session.createQuery(" from CompanyDTO").list(); // c left join c.client			
+			Query q=session.createQuery(" from CompanyDTO where cmpId=:cmp");	
+			q.setParameter("cmp", cmpid);
+			compDTO=q.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return compDTO;
@@ -142,6 +143,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		Session session = factory.getCurrentSession();
 
 		Criteria cr = session.createCriteria(CompanyDTO.class)
+				.add(Restrictions.eq("status", "Active"))
 				.setProjection(Projections.projectionList()
 						.add(Projections.property("cmpId"), "cmpId")
 						.add(Projections.property("tallyCmpName"), "tallyCmpName"))

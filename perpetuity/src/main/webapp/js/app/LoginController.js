@@ -62,6 +62,7 @@ baseApp.controller("LoginController", function($scope, $location, $http, $rootSc
 					$localStorage.user=data.username;
 					$localStorage.userid=data.userid;
 					$localStorage.usertype=data.usertype;
+					$scope.usertype=$localStorage.usertype;
 					$localStorage.logindatetime=new Date();
 
 					//insert user counter
@@ -89,6 +90,7 @@ baseApp.controller("LoginController", function($scope, $location, $http, $rootSc
 					$location.path('/');
 					$scope.alerts = { type: 'danger' ,msg: 'Not a Valid User!'};
 					$scope.showSuccessAlert = true;
+					$scope.isLoading=false;
 				}
 
 			}).error(function(data, status, headers, config){

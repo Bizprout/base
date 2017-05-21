@@ -2,11 +2,15 @@ package com.bizprout.web.app.repository;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
+import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
 import com.bizprout.web.app.resource.AESencrp;
@@ -59,6 +64,24 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			e.printStackTrace();
 		}
 		return (UserDTO) qry.uniqueResult();
+	}
+	
+	public UserDTO getUserDataById(int userid) 
+	{
+		logger.info("Inside getUserDataById method.......");
+		
+		Session session = factory.getCurrentSession();
+
+		Criteria cr = session.createCriteria(UserDTO.class)
+				.add(Restrictions.eq("userid", userid))
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("username"), "username")
+						.add(Projections.property("password"), "password"))
+						.setResultTransformer(Transformers.aliasToBean(UserDTO.class));
+
+		UserDTO comp=(UserDTO) cr.uniqueResult();
+
+		return comp;
 	}
 	
 	public int UpdateUsers(UserEditVO usereditVO) {
@@ -128,7 +151,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			
 			//encrypt the password to match db value
 			password=AESencrp.encrypt(password);
-
+			
 			qry=session.createQuery("from UserDTO where username=:user and password=:pwd and userstatus='Active'");
 
 			qry.setParameter("user",username);
@@ -138,6 +161,37 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			logger.error(e.getMessage());
 		}
 		return (UserDTO) qry.uniqueResult();
+	}
+	
+	public int updatePassword(String password, int cmpid) {
+		
+		int result = 0;
+		Session session = null;
+		Transaction tx = null;
+
+		try {
+			logger.info("Inside updatePassword method.......");
+
+			session = factory.getCurrentSession();
+			
+			tx=session.beginTransaction();
+
+			Query qry=session.createQuery("UPDATE UserDTO set password=:pass WHERE userid=:userd");
+
+			qry.setParameter("pass",password);
+			qry.setParameter("userd",cmpid);
+			
+			 result= qry.executeUpdate();
+			 tx.commit();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			tx.rollback();
+		}
+		finally {
+			session.close();
+		}
+		return result;
 	}
 
 }

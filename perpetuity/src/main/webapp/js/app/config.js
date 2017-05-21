@@ -11,7 +11,7 @@ baseApp.config(function($routeProvider){
     }).when("/PPmasters",{templateUrl:"html/ppstandardmaster/CreatePPStandardMasters.html", controller:"PPMasterController"
     }).when("/PPmapping",{templateUrl:"html/ppstandardmapping/MapPPStandardwithTally.html", controller:"TallyMappingController"
     }).when("/mappingUsers",{templateUrl:"html/usermapping/UserMappingtoClients.html", controller:"UserMappingController"
-    }).when("/changepassword",{templateUrl:"html/changepassword/ChangePassword.html", controller:"LoginController"
+    }).when("/changepassword",{templateUrl:"html/changepassword/ChangePassword.html", controller:"ChangePasswordController"
     });   
         
 });

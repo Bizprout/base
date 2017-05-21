@@ -35,8 +35,9 @@ public class ClientDTO {
 	@Column(name="contact_person")
 	private String contactPerson;
 	
+	@Pattern(regexp="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message="Email ID Should be Valid!")
 	@NotEmpty(message="Email cannot be Blank!")
-	@Email(message="Email address is not valid!")
+	@Email
 	@Column(name="email")
 	private String contactEmail;
 	

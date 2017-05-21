@@ -38,24 +38,60 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		}
 	}
 
-	public List<String> getPpMastersName(String mastertype) {
+	public List<String> getPpMastersName(String mastertype, String category, int cmpid, String ppmastername) {
 		
 		List<String> ppmasterlist = null;
 		try {
 			logger.info("inside getPpMastersName service method ");
-			ppmasterlist = PpRepository.getPpMasterList(mastertype);
+			ppmasterlist = PpRepository.getPpMasterList(mastertype, category, cmpid, ppmastername);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ppmasterlist;
+	}
+	
+	public List<String> getPpMastersNameall(String mastertype, String category, int cmpid) {
+		
+		List<String> ppmasterlist = null;
+		try {
+			logger.info("inside getPpMastersName service method ");
+			ppmasterlist = PpRepository.getPpMasterListall(mastertype, category, cmpid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ppmasterlist;
+	}
+	
+	public List<String> getPpMastersNamebyCostCategory(String mastertype, int cmpid, String ppmastername) {
+		
+		List<String> ppmasterlist = null;
+		try {
+			logger.info("inside getPpMastersName service method ");
+			ppmasterlist = PpRepository.getPpMasterbyCostCategory(mastertype, cmpid, ppmastername);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ppmasterlist;
+	}
+	
+	public List<String> getPpMastersNameByCompany(String mastertype, int cmpid) {
+		
+		List<String> ppmasterlist = null;
+		try {
+			logger.info("inside getPpMastersNameByCompany service method ");
+			ppmasterlist = PpRepository.getPpMasterListByCompany(mastertype, cmpid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return ppmasterlist;
 	}
 
-	public List<PpMasterDTO> getPpParentName(String mastertype, String ppmastername) {
+	public List<PpMasterDTO> getPpParentName(String mastertype, String ppmastername, int cmpid) {
 		
 		List<PpMasterDTO> ppparentname = null;
 		try {
 			logger.info("inside getPpMastersName service method ");
-			ppparentname = PpRepository.getPpParentName(mastertype, ppmastername);
+			ppparentname = PpRepository.getPpParentName(mastertype, ppmastername, cmpid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -73,12 +109,12 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		return PpRepository.UpdatePpMaster(editppmasterDTO);
 	}
 
-	public List<PpMasterDTO> getPpMasterdata() {
+	public List<PpMasterDTO> getPpMasterdata(int cmpid) {
 		
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
 			logger.info("inside getPpMasterdata method ");
-			ppmasterdata = PpRepository.getPpmasterData();
+			ppmasterdata = PpRepository.getPpmasterData(cmpid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

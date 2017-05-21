@@ -91,13 +91,12 @@ public class CompanyResource {
 		return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);		
 	}
 	
-	@GetMapping(value="/getcompanydata")
-	@ResponseBody
-	public List<CompanyDTO> getCompanyData()
+	@PostMapping(value="/getcompanydata")
+	public List<CompanyDTO> getCompanyData(@RequestBody CompanyDTO cmpdto)
 	{
 		List<CompanyDTO> compdto = null;
 		try {
-			compdto=companyservice.getCompanyData();
+			compdto=companyservice.getCompanyData(cmpdto.getCmpId());
 			logger.debug("Request......getCompanyData......");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

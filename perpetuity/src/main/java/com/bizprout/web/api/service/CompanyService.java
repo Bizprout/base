@@ -10,7 +10,7 @@ public interface CompanyService<T> {
 
 	public int updateCompany(CompanyDTO t);
 	
-	public List<CompanyDTO> getCompanyData();
+	public List<CompanyDTO> getCompanyData(int cmpid);
 
 	public int updateCompanyStatus(CompanyDTO t);
 	

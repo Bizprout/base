@@ -24,16 +24,18 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	private UserRepositoryImpl userRepository;
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
-	public void CreateUser(UserDTO t) {
+	public int CreateUser(UserDTO t) {
+		int id=0;
 		try {
 			
 			System.out.println("inside CreateUser service " + t);
 			logger.info("inside CreateUser service " + t);
 			//t.setUsertype(UserConstant.PP_SUPER_ADMIN);
-			baseRepository.save(t);
+			id=baseRepository.save(t);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return id;
 	}
 
 	public int UpdateUser(UserEditVO usereditVO) {
@@ -82,6 +84,28 @@ public class UserServiceImpl implements UserService<UserDTO> {
 			e.printStackTrace();
 		}
 		return user;
+	}
+	
+	public UserDTO getUserDataById(int Userid) {
+		UserDTO user = null;
+		try {
+			logger.info("inside getUserData method...");
+			user = userRepository.getUserDataById(Userid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+	
+	public int updatePassword(String password, int cmpid) {
+		int res = 0;
+		try {
+			logger.info("inside changerdPassword method...");
+			res = userRepository.updatePassword(password, cmpid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 
 }

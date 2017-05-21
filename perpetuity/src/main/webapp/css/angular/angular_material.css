@@ -1670,8 +1670,8 @@ md-checkbox .md-label {
 md-content {
     display: block;
     position: relative;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch
+    overflow: visible;
+    -webkit-overflow-scrolling: auto;
 }
 md-content[md-scroll-y] {
     overflow-y: auto;
@@ -2702,7 +2702,7 @@ md-input-container label:not(.md-no-float):not(.md-container-ignore) {
     order: 1;
     pointer-events: none;
     -webkit-font-smoothing: antialiased;
-    padding-left: 3px;
+    padding-left: 0px;
     padding-right: 0;
     z-index: 1;
     -webkit-transform: translate3d(0, 28px, 0) scale(1);
@@ -2846,12 +2846,12 @@ md-input-container:not(.md-input-invalid) .md-auto-hide .md-input-message-animat
 md-input-container.md-input-focused label:not(.md-no-float),
 md-input-container.md-input-has-placeholder label:not(.md-no-float),
 md-input-container.md-input-has-value label:not(.md-no-float) {
-    -webkit-transform: translate3d(0, 6px, 0) scale(.75);
-    transform: translate3d(0, 6px, 0) scale(.75);
-    -webkit-transition: width .4s cubic-bezier(.25, .8, .25, 1), -webkit-transform .4s cubic-bezier(.25, .8, .25, 1);
+    -webkit-transform: none;
+    transform: none;
+   /*  -webkit-transition: width .4s cubic-bezier(.25, .8, .25, 1), -webkit-transform .4s cubic-bezier(.25, .8, .25, 1);
     transition: width .4s cubic-bezier(.25, .8, .25, 1), -webkit-transform .4s cubic-bezier(.25, .8, .25, 1);
     transition: transform .4s cubic-bezier(.25, .8, .25, 1), width .4s cubic-bezier(.25, .8, .25, 1);
-    transition: transform .4s cubic-bezier(.25, .8, .25, 1), width .4s cubic-bezier(.25, .8, .25, 1), -webkit-transform .4s cubic-bezier(.25, .8, .25, 1)
+    transition: transform .4s cubic-bezier(.25, .8, .25, 1), width .4s cubic-bezier(.25, .8, .25, 1), -webkit-transform .4s cubic-bezier(.25, .8, .25, 1) */
 }
 md-input-container.md-input-has-value label {
     -webkit-transition: none;
@@ -4429,12 +4429,12 @@ md-input-container:not([md-no-float]) .md-select-placeholder span:first-child {
     transform-origin: left top
 }
 [dir=rtl] md-input-container:not([md-no-float]) .md-select-placeholder span:first-child {
-    -webkit-transform-origin: right top;
-    transform-origin: right top
+    -webkit-transform-origin: none;
+    transform-origin: none;
 }
 md-input-container.md-input-focused:not([md-no-float]) .md-select-placeholder span:first-child {
-    -webkit-transform: translateY(-22px) translateX(-2px) scale(.75);
-    transform: translateY(-22px) translateX(-2px) scale(.75)
+    -webkit-transform: none;
+    transform: none;
 }
 .md-select-menu-container {
     position: fixed;
@@ -4488,7 +4488,7 @@ md-input-container>md-select {
     border-width:0.5px;
     border-radius:4px;
     background: white;
-    width:357px; 
+    width:343px; 
 }
 md-input-container:not(.md-input-has-value) md-select.ng-required:not(.md-no-asterisk) .md-select-value span:first-child:after,
 md-input-container:not(.md-input-has-value) md-select[required]:not(.md-no-asterisk) .md-select-value span:first-child:after {
@@ -6425,7 +6425,7 @@ md-tooltip {
 md-tooltip .md-content {
     position: relative;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
     -webkit-transform-origin: center top;
     transform-origin: center top;

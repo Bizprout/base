@@ -82,13 +82,55 @@ public class PpMasterResource {
 		}		
 		return new ResponseEntity<Object>(jsonresponse,HttpStatus.OK);
 	}
+	
+	@PostMapping(value="/getppmastersnameall")
+	public List<String> getPpMastersNameall(@RequestBody PpMasterDTO ppmasterDTO){
+
+		List<String> ppmaster = null;
+		try {
+			ppmaster=ppmasterservice.getPpMastersNameall(ppmasterDTO.getMastertype(), ppmasterDTO.getCategory(), ppmasterDTO.getCmpid());
+			logger.debug("Request......getPpMastername List......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmaster;
+	}
 
 	@PostMapping(value="/getppmastersname")
 	public List<String> getPpMastersName(@RequestBody PpMasterDTO ppmasterDTO){
 
 		List<String> ppmaster = null;
 		try {
-			ppmaster=ppmasterservice.getPpMastersName(ppmasterDTO.getMastertype());
+			ppmaster=ppmasterservice.getPpMastersName(ppmasterDTO.getMastertype(), ppmasterDTO.getCategory(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername());
+			logger.debug("Request......getPpMastername List......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmaster;
+	}
+	
+	@PostMapping(value="/getppmastersnamebycostcategory")
+	public List<String> getPpMastersNameByCostCategory(@RequestBody PpMasterDTO ppmasterDTO){
+
+		List<String> ppmaster = null;
+		try {
+			ppmaster=ppmasterservice.getPpMastersNamebyCostCategory(ppmasterDTO.getMastertype(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername());
+			logger.debug("Request......getPpMastername List......");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ppmaster;
+	}
+	
+	@PostMapping(value="/getppmastersnamebycompany")
+	public List<String> getPpMastersNameByCompany(@RequestBody PpMasterDTO ppmasterDTO){
+
+		List<String> ppmaster = null;
+		try {
+			ppmaster=ppmasterservice.getPpMastersNameByCompany(ppmasterDTO.getMastertype(), ppmasterDTO.getCmpid());
 			logger.debug("Request......getPpMastername List......");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -102,7 +144,7 @@ public class PpMasterResource {
 
 		List<PpMasterDTO> ppparentname = null;
 		try {
-			ppparentname=ppmasterservice.getPpParentName(ppmasterDTO.getMastertype(), ppmasterDTO.getPpmastername());
+			ppparentname=ppmasterservice.getPpParentName(ppmasterDTO.getMastertype(), ppmasterDTO.getPpmastername(), ppmasterDTO.getCmpid());
 			logger.debug("Request......getPpParentName List......");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,13 +182,13 @@ public class PpMasterResource {
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);		
 	}
 
-	@GetMapping(value="/getppmasterdata")
+	@PostMapping(value="/getppmasterdata")
 	@ResponseBody
-	public List<PpMasterDTO> getPpMasterData()
+	public List<PpMasterDTO> getPpMasterData(@RequestBody PpMasterDTO ppmasterDTO)
 	{
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
-			ppmasterdata=ppmasterservice.getPpMasterdata();
+			ppmasterdata=ppmasterservice.getPpMasterdata(ppmasterDTO.getCmpid());
 			logger.debug("Request......getPpMasterData......");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

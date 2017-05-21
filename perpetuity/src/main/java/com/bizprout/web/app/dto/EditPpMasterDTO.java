@@ -16,7 +16,7 @@ public class EditPpMasterDTO {
 	@NotBlank(message="PP Parent Name cannot be Blank!")
 	private String ppparentname;
 
-	private String costcategory;
+	private String category;
 	
 	public String getMastertype() {
 		return mastertype;
@@ -42,11 +42,12 @@ public class EditPpMasterDTO {
 	public void setPpparentname(String ppparentname) {
 		this.ppparentname = ppparentname;
 	}
-	public String getCostcategory() {
-		return costcategory;
+	public String getCategory() {
+		return category;
 	}
-	public void setCostcategory(String costcategory) {
-		this.costcategory = costcategory;
+	public void setCategory(String category) {
+		this.category = category;
 	}
+
 
 }

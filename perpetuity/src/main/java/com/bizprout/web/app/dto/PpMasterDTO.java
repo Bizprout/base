@@ -43,8 +43,8 @@ public class PpMasterDTO {
 	@Column(name="group_name")
 	private String ppparentname;
 	
-	@Column(name="cost_category")
-	private String costcategory;
+	@Column(name="category")
+	private String category;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="cmp_id", nullable=false, insertable=false, updatable=false)
@@ -80,17 +80,17 @@ public class PpMasterDTO {
 	public void setPpparentname(String ppparentname) {
 		this.ppparentname = ppparentname;
 	}
-	public String getCostcategory() {
-		return costcategory;
-	}
-	public void setCostcategory(String costcategory) {
-		this.costcategory = costcategory;
-	}
 	public CompanyDTO getCompanydto() {
 		return companydto;
 	}
 	public void setCompanydto(CompanyDTO companydto) {
 		this.companydto = companydto;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	
