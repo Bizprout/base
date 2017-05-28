@@ -28,10 +28,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 	public List<CompanyDTO> getCompanyIdName(int clientid) {
 		List<CompanyDTO> comp = null;
 		try {
-			logger.info("inside getCompanyIdName method ");
+			logger.info("inside getCompanyIdName method "+this.getClass());
 			comp = tallymappingrepo.getCompanyIdName(clientid);
 		} catch (Exception e) {
-			logger.error("Exception in getCompanyIdName method \t" + e.getMessage());
+			logger.error("Exception in getCompanyIdName method \t" + e.getMessage(), this.getClass());
 		}
 		return comp;
 	}
@@ -40,10 +40,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 	{
 		List<TallyMastersDTO> tallymasters = null;
 		try {
-			logger.info("inside getTallyMasterNames method ");
+			logger.info("inside getTallyMasterNames method "+this.getClass());
 			tallymasters = tallymappingrepo.getTallyMasterNames(mastertype, cmpid);
 		} catch (Exception e) {
-			logger.error("Exception in getTallyMasterNames method \t" + e.getMessage());
+			logger.error("Exception in getTallyMasterNames method \t" + e.getMessage(), this.getClass());
 		}
 		return tallymasters;
 	}
@@ -52,10 +52,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 	{
 		List<PpMasterDTO> tallymasters = null;
 		try {
-			logger.info("inside getPpMasterNames method ");
+			logger.info("inside getPpMasterNames method "+this.getClass());
 			tallymasters = tallymappingrepo.getPpMasterNames(mastertype, cmpid);
 		} catch (Exception e) {
-			logger.error("Exception in getPpMasterNames method \t" + e.getMessage());
+			logger.error("Exception in getPpMasterNames method \t" + e.getMessage(), this.getClass());
 		}
 		return tallymasters;
 	}
@@ -63,10 +63,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 	public void insertTallyMapping(TallyMappingDTO tallymappingdto)
 	{
 		try {
-			logger.info("inside insertTallyMapping method ");
+			logger.info("inside insertTallyMapping method "+this.getClass());
 			baserepository.save(tallymappingdto);
 		} catch (Exception e) {
-			logger.error("Exception in insertTallyMapping method \t" + e.getMessage());
+			logger.error("Exception in insertTallyMapping method \t" + e.getMessage(), this.getClass());
 		}
 	}
 	
@@ -74,22 +74,34 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 	{
 		List<Integer> ppmapping=null;
 		try {
-			logger.info("inside getPpMasterMapping method ");
+			logger.info("inside getPpMasterMapping method "+this.getClass());
 			ppmapping=tallymappingrepo.getPpMastersMapping(cmpid, ppid);
 		} catch (Exception e) {
-			logger.error("Exception in getPpMasterMapping method \t" + e.getMessage());
+			logger.error("Exception in getPpMasterMapping method \t" + e.getMessage(), this.getClass());
 		}
 		return ppmapping;
+	}
+	
+	public int deletePpidCmpid(int cmpid, int ppid)
+	{
+		int res=0;
+		try {
+			logger.info("inside getPpMasterMapping method "+this.getClass());
+			res=tallymappingrepo.deletePpidCmpid(cmpid, ppid);
+		} catch (Exception e) {
+			logger.error("Exception in getPpMasterMapping method \t" + e.getMessage(), this.getClass());
+		}
+		return res;
 	}
 
 	public int updateTallyMapping(TallyMappingDTO tallymappingdto) {
 		
 		int result=0;
 		try {
-			logger.info("inside updateTallyMapping method ");
+			logger.info("inside updateTallyMapping method "+this.getClass());
 			result=tallymappingrepo.updateTallyMapping(tallymappingdto);
 		} catch (Exception e) {
-			logger.error("Exception in updateTallyMapping method \t" + e.getMessage());
+			logger.error("Exception in updateTallyMapping method \t" + e.getMessage(), this.getClass());
 		}
 		
 		return result;
@@ -100,10 +112,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		List<TallyMastersDTO> tallyppmappingdata=null;
 		
 		try {
-			logger.info("inside getTallyPpMappingData method ");
+			logger.info("inside getTallyPpMappingData method "+this.getClass());
 			tallyppmappingdata = tallymappingrepo.getTallyPpMappingData(cmpid, mastertype);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return tallyppmappingdata;
 	}
@@ -112,10 +124,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		
 		int result=0;
 		try {
-			logger.info("inside savePpMasterMapping method ");
+			logger.info("inside savePpMasterMapping method "+this.getClass());
 			result=tallymappingrepo.savePpMasterMapping(tallymasterdto);
 		} catch (Exception e) {
-			logger.error("Exception in savePpMasterMapping method \t" + e.getMessage());
+			logger.error("Exception in savePpMasterMapping method \t" + e.getMessage(), this.getClass());
 		}
 		
 		return result;
@@ -126,10 +138,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		List<PpMasterDTO> ppmasteridname=null;
 		
 		try {
-			logger.info("inside getTallyPpMappingData method ");
+			logger.info("inside getTallyPpMappingData method "+this.getClass());
 			ppmasteridname = tallymappingrepo.getPpMasterIdNames(cmpid, mastertype, ppmastername);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasteridname;
 	}
@@ -138,10 +150,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 	{
 		List<TallyMastersDTO> tallymasters = null;
 		try {
-			logger.info("inside getTallyMasterIdNames method ");
+			logger.info("inside getTallyMasterIdNames method "+this.getClass());
 			tallymasters = tallymappingrepo.getTallyMasterIdNames(mastertype, cmpid, tallymastername);
 		} catch (Exception e) {
-			logger.error("Exception in getTallyMasterIdNames method \t" + e.getMessage());
+			logger.error("Exception in getTallyMasterIdNames method \t" + e.getMessage(), this.getClass());
 		}
 		return tallymasters;
 	}

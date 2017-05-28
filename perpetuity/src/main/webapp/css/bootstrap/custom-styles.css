@@ -21,6 +21,7 @@ footer {
 	display: flex;
 	min-height: 100vh;
 	flex-direction: column;
+	overflow: auto;
 }
 
 .Site-content {
@@ -108,7 +109,7 @@ a {
 /* Chrome, Safari */
 ::-webkit-scrollbar {
 	width: 5px;
-	height: 5px;
+	height: 0px;
 	margin-left: 10px;
 }
 
@@ -1030,7 +1031,7 @@ a {
 }
 
 .modal-content {
-	padding: 30px;
+	padding: 27px;
 }
 
 .modal-header {
@@ -1248,12 +1249,12 @@ a {
 
 .dashboard-page .right .app-section {
 	padding: 30px 0;
+	display: flex;
 }
 
 .dashboard-page .right .app-section .app-section-container {
 	background: #fff;
 	width: calc(( 100% - 90px - 28px)/4);
-	float: left;
 	height: 300px;
 	border: 1px solid #999999;
 	border-radius: 5px;
@@ -1268,6 +1269,7 @@ a {
 .dashboard-page .right .app-section .app-section-container+.app-section-container
 	{
 	margin-left: 30px;
+	/* display: inline-table; */
 }
 
 .dashboard-page .right .app-section .app-section-container:nth-child(4n+2)
@@ -3877,3 +3879,9 @@ input:not(:focus):valid ~ .floating-label{
   top: 18px;
   transition: 0.2s ease all;
 }
+.breadcrumb {background: rgba(255, 255, 255, 0); border: 0px solid rgba(92, 72, 122, 0); border-radius: 6px; display: block;}
+.breadcrumb li {font-size: 14px;}
+.breadcrumb a {color: rgba(95, 127, 140, 1);}
+.breadcrumb a:hover {color: rgba(42, 100, 150, 1);}
+.breadcrumb>.active {color: rgba(153, 153, 153, 1);}
+.breadcrumb>li+li:before {color: rgba(204, 204, 204, 1); content: "\2771\00a0";}

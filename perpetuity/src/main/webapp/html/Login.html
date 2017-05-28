@@ -68,7 +68,7 @@
 									<div class="text">Enter Username to proceed</div>
 									<div ng-class="'alert alert-' + (alerts.type || 'warning')"
 										ng-show="showSuccessAlert">
-										<button type="button" class="close"
+										<button type="button" class="closealertbox"
 											data-ng-click="switchBool('showSuccessAlert')">x</button>
 										{{alerts.msg}}
 									</div>
@@ -82,8 +82,8 @@
 												<div class="col-sm-12">
 													<input type="text" name="login_username"
 														id="login_username" ng-model="loginDTO.username"
-														class="input-field" value="" placeholder="Username/ Email ID*"
-														autofocus />
+														class="input-field" value=""
+														placeholder="Username/ Email ID*" autofocus />
 													<input type="password" name="login_password"
 														id="login_password" ng-model="loginDTO.password"
 														class="input-field" value="" placeholder="Password*" />
@@ -117,8 +117,8 @@
 														<input type="radio" name="login_forgot_pwd_pick_any"
 															id="login_forgot_pwd_pick_any1"
 															value="Send OTP to my email address" checked>
-														<label for="login_forgot_pwd_pick_any1"> Send OTP
-															to my email address </label>
+														<label for="login_forgot_pwd_pick_any1"> Send New
+															Password to my Email Address </label>
 													</div>
 													<input type="button" id="forgot_otp_btn"
 														name="forgot_otp_btn" class="login_button"
@@ -131,25 +131,32 @@
 							</form>
 							<!-- End | Forgot Password Form -->
 							<!-- Begin | OTP Form -->
-							<form id="otp-form" style="display: none;">
+							<form id="otp-form" style="display: none; height: 350px;">
 								<div class="modal-header" align="center">
-									<div class="heading">Enter OTP</div>
-									<div class="text">Your one time password has been sent to
-										xyz@gmail.com</div>
+									<div class="heading">Enter Your Email ID</div>
+									<div class="text" style="word-wrap: break-word;">Your New
+										password will be sent to {{forgotpasswordemailid}}</div>
+									<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+										ng-show="showSuccessAlert">
+										<button type="button" class="closealertbox"
+											data-ng-click="switchBool('showSuccessAlert')">x</button>
+										{{alerts.msg}}
+									</div>
+									<md-progress-circular md-mode="indeterminate"
+										md-diameter="20px" ng-show="isLoadingforgotpassworduser"></md-progress-circular>
 								</div>
 								<div class="modal-body">
 									<div class="user-login-details">
 										<div class="container-fluid">
 											<div class="row">
 												<div class="col-sm-12">
-													<input type="text" name="login_enter_otp"
-														id="login_enter_otp" class="input-field" value="Enter OTP"
-														placeholder="Enter OTP"
-														onfocus="this.value != 'Enter OTP' ? this.value = this.value : this.value = '';"
-														onblur="this.value = !this.value ? 'Enter OTP' : this.value;" />
-													<input type="button" name="login_submit_enter_otp"
-														class="login_button" id="submit_login_enter_otp"
-														value="Continue" />
+													<input type="email" name="login_enter_email"
+														id="login_enter_email" class="input-field"
+														value="Enter Email ID" placeholder="Enter Email ID"
+														ng-model="forgotpasswordemailid" required />
+													<input type="submit" name="login_submit_enter_email"
+														class="login_button" id="submit_login_enter_email"
+														value="Continue" ng-click="forgotpassword(forgotpasswordemailid)" />
 												</div>
 											</div>
 										</div>

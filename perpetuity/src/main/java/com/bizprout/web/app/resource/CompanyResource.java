@@ -37,11 +37,9 @@ public class CompanyResource {
 	
 	public CompanyResource() {	
 		try {
-			System.out.println(this.getClass().getSimpleName() + "Created...");
-			logger.debug(this.getClass().getSimpleName() + "Created...");
+			logger.debug(this.getClass().getSimpleName() + "Created..."+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 	
@@ -50,12 +48,12 @@ public class CompanyResource {
 	{
 		CompanyDTO compDTO = null;
 		try {
-			logger.debug("Request......getClientStatus......");
+			logger.debug("Request......getClientStatus......"+this.getClass());
 			
-			compDTO=companyservice.getClientStatus(companyDTO.getTallyCmpName());
+			compDTO=companyservice.getClientStatus(companyDTO.getCmpId());
 		} catch (Exception e) {
 			
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return compDTO;
 	}
@@ -74,7 +72,7 @@ public class CompanyResource {
 		
 		try {
 			int res=companyservice.updateCompany(companydto);
-			logger.debug("Request.......updateCompany method......");
+			logger.debug("Request.......updateCompany method......"+this.getClass());
 			
 			if(res>0)
 			{
@@ -85,8 +83,7 @@ public class CompanyResource {
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);		
 	}
@@ -97,10 +94,22 @@ public class CompanyResource {
 		List<CompanyDTO> compdto = null;
 		try {
 			compdto=companyservice.getCompanyData(cmpdto.getCmpId());
-			logger.debug("Request......getCompanyData......");
+			logger.debug("Request......getCompanyData......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compdto;
+	}
+	
+	@PostMapping(value="/getcompanyidbyname")
+	public CompanyDTO getCompanyIdByName(@RequestBody CompanyDTO cmpdto)
+	{
+		CompanyDTO compdto = null;
+		try {
+			compdto=companyservice.getCompanyIdByName(cmpdto.getTallyCmpName());
+			logger.debug("Request......getCompanyData......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return compdto;
 	}
@@ -111,7 +120,7 @@ public class CompanyResource {
 		ResponseEntity<String> resp = null;
 		try {
 			int result=companyservice.updateCompanyStatus(companydto);
-			logger.debug("Request.......updateCompanyStatus method......");
+			logger.debug("Request.......updateCompanyStatus method......"+this.getClass());
 			
 			if(result>0)
 			{
@@ -122,8 +131,7 @@ public class CompanyResource {
 				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return resp;		
 	}
@@ -135,10 +143,23 @@ public class CompanyResource {
 		List<CompanyDTO> compdto = null;
 		try {
 			compdto=companyservice.getCompanyIdName();
-			logger.debug("Request......getCompanyIdName......");
+			logger.debug("Request......getCompanyIdName......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compdto;
+	}
+	
+	@GetMapping(value="/getcompanyidnameall")
+	@ResponseBody
+	public List<CompanyDTO> getCompanyIdNameall()
+	{
+		List<CompanyDTO> compdto = null;
+		try {
+			compdto=companyservice.getCompanyIdNameall();
+			logger.debug("Request......getCompanyIdNameall......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return compdto;
 	}

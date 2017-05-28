@@ -28,8 +28,7 @@ public class UserCounterResource {
 	
 	public UserCounterResource() {
 		
-		System.out.println(this.getClass().getSimpleName() + "Created...");
-		logger.debug(this.getClass().getSimpleName() + "Created...");
+		logger.debug(this.getClass().getSimpleName() + "Created..."+this.getClass());
 	}
 	
 	@PostMapping(value="/insert")
@@ -41,19 +40,19 @@ public class UserCounterResource {
 			
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 	
 	@PostMapping(value="/getlastlogindatetime")
-	public List<UserCounterDTO> getLastLoginDateTime(@RequestBody UserCounterDTO usercounterdto)
+	public UserCounterDTO getLastLoginDateTime(@RequestBody UserCounterDTO usercounterdto)
 	{
-		List<UserCounterDTO> usercounter=null;
+		UserCounterDTO usercounter=null;
 		try {
 			usercounter=usercounterservice.getlastlogindatetime(usercounterdto.getUserid());
 			logger.info("Request.......getLastLoginDateTime method......"+this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return usercounter;
 	}

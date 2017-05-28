@@ -45,6 +45,9 @@ public class TallyMastersDTO {
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="pp_id", nullable=false, insertable=false, updatable=false)
 	private PpMasterDTO ppmasterdto;
+	
+/*	@OneToMany(fetch = FetchType.EAGER,mappedBy = "tmdto")
+	 private List<VouchersDTO> vouchersdto;*/
 
 	public int getMasterIdIndex() {
 		return masterIdIndex;
@@ -101,6 +104,14 @@ public class TallyMastersDTO {
 	public void setPpmasterdto(PpMasterDTO ppmasterdto) {
 		this.ppmasterdto = ppmasterdto;
 	}
+
+/*	public List<VouchersDTO> getVouchersdto() {
+		return vouchersdto;
+	}
+
+	public void setVouchersdto(List<VouchersDTO> vouchersdto) {
+		this.vouchersdto = vouchersdto;
+	}*/
 	
 	
 }

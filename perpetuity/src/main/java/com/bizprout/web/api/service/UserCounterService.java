@@ -8,5 +8,5 @@ public interface UserCounterService<T> {
 
 	public void insertusercounter(UserCounterDTO usercounterdto);
 	
-	public List<UserCounterDTO> getlastlogindatetime(int userid);
+	public UserCounterDTO getlastlogindatetime(int userid);
 }

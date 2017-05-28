@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bizprout.web.api.service.PpMasterService;
+import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.EditPpMasterDTO;
 import com.bizprout.web.app.dto.PpMasterDTO;
-import com.bizprout.web.app.dto.UserDTO;
-import com.bizprout.web.app.dto.UserEditVO;
 
 @RestController
 @RequestMapping("/ppmaster")
@@ -43,14 +41,14 @@ public class PpMasterResource {
 
 
 	Logger logger=LoggerFactory.getLogger(this.getClass());
+	
+	int sesscmpid=0;
 
 	public PpMasterResource() {
 		try {
-			System.out.println(this.getClass().getSimpleName() + "Created...");
-			logger.debug(this.getClass().getSimpleName() + "Created...");
+			logger.debug(this.getClass().getSimpleName() + "Created..."+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 	@PostMapping(value="/add", produces=MediaType.APPLICATION_JSON_VALUE)
@@ -66,7 +64,7 @@ public class PpMasterResource {
 		}
 		try {
 			ppmasterservice.CreatePpMaster(ppmasterDTO);
-			logger.debug("Request.......addppmaster method......");
+			logger.debug("Request.......addppmaster method......"+this.getClass());
 
 			if(ppmasterDTO.getMasteridindex()>0)
 			{
@@ -77,8 +75,7 @@ public class PpMasterResource {
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}		
 		return new ResponseEntity<Object>(jsonresponse,HttpStatus.OK);
 	}
@@ -89,10 +86,9 @@ public class PpMasterResource {
 		List<String> ppmaster = null;
 		try {
 			ppmaster=ppmasterservice.getPpMastersNameall(ppmasterDTO.getMastertype(), ppmasterDTO.getCategory(), ppmasterDTO.getCmpid());
-			logger.debug("Request......getPpMastername List......");
+			logger.debug("Request......getPpMastername List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmaster;
 	}
@@ -103,10 +99,9 @@ public class PpMasterResource {
 		List<String> ppmaster = null;
 		try {
 			ppmaster=ppmasterservice.getPpMastersName(ppmasterDTO.getMastertype(), ppmasterDTO.getCategory(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername());
-			logger.debug("Request......getPpMastername List......");
+			logger.debug("Request......getPpMastername List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmaster;
 	}
@@ -117,10 +112,9 @@ public class PpMasterResource {
 		List<String> ppmaster = null;
 		try {
 			ppmaster=ppmasterservice.getPpMastersNamebyCostCategory(ppmasterDTO.getMastertype(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername());
-			logger.debug("Request......getPpMastername List......");
+			logger.debug("Request......getPpMastername List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmaster;
 	}
@@ -131,10 +125,9 @@ public class PpMasterResource {
 		List<String> ppmaster = null;
 		try {
 			ppmaster=ppmasterservice.getPpMastersNameByCompany(ppmasterDTO.getMastertype(), ppmasterDTO.getCmpid());
-			logger.debug("Request......getPpMastername List......");
+			logger.debug("Request......getPpMastername List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmaster;
 	}
@@ -145,9 +138,9 @@ public class PpMasterResource {
 		List<PpMasterDTO> ppparentname = null;
 		try {
 			ppparentname=ppmasterservice.getPpParentName(ppmasterDTO.getMastertype(), ppmasterDTO.getPpmastername(), ppmasterDTO.getCmpid());
-			logger.debug("Request......getPpParentName List......");
+			logger.debug("Request......getPpParentName List......"+this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppparentname;
 	}
@@ -165,7 +158,7 @@ public class PpMasterResource {
 		}
 		try {
 			int res=ppmasterservice.UpdatePpMasters(editppmasterDTO);
-			logger.debug("Request.......EditPpMasters method......");
+			logger.debug("Request.......EditPpMasters method......"+this.getClass());
 
 			if(res>0)
 			{
@@ -176,8 +169,7 @@ public class PpMasterResource {
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);		
 	}
@@ -189,55 +181,84 @@ public class PpMasterResource {
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
 			ppmasterdata=ppmasterservice.getPpMasterdata(ppmasterDTO.getCmpid());
-			logger.debug("Request......getPpMasterData......");
+			logger.debug("Request......getPpMasterData......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterdata;
+	}
+	
+	@PostMapping(value="/setsessioncmpid")
+	public void setsessioncmpid(@RequestBody CompanyDTO cmpdto)
+	{
+		try {
+			sesscmpid=cmpdto.getCmpId();
+			logger.debug("Request......setsessioncmpid......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 	}
 	
 	@RequestMapping(value="/ppmasteruploadfile", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<Object> pPmasterFileUpload(@RequestParam("file") MultipartFile file){
 		
-		String response;
 		List<Object> jsonresponse=new ArrayList<Object>();
-
+		ExcelReadData excel= new ExcelReadData();
+		boolean cmpid;
 		if(!file.isEmpty())
 		{
 			try {				
+				
+				logger.debug("inside pPmasterFileUpload method..."+this.getClass());
 				byte[] bytes=file.getBytes();
 				
-				// Creating the directory to store file
-				String rootPath = System.getProperty("catalina.home");
-				File dir = new File(rootPath + File.separator + "tmpFiles");
-				if (!dir.exists())
-					dir.mkdirs();
-
-				// Create the file on server
-				File serverFile = new File(dir.getAbsolutePath()
-						+ File.separator + file.getOriginalFilename());
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(serverFile));
-				stream.write(bytes);
-				stream.close();
-
-				logger.info("Server File Location="
-						+ serverFile.getAbsolutePath());
+				//check file cmpid is same as session cmp id
+										
+				cmpid=excel.checkCmp(file, sesscmpid);
 				
-				ExcelReadData excel= new ExcelReadData();
-				response=excel.excelReadData(file.getOriginalFilename());
-								
-				if(response.contains("success"))
+				if(cmpid==true)
 				{
-					jsonresponse.add("success");
+					// Creating the directory to store file
+					String rootPath = System.getProperty("catalina.home");
+					File dir = new File(rootPath + File.separator + "tmpFiles");
+					if (!dir.exists())
+						dir.mkdirs();
+
+					// Create the file on server
+					File serverFile = new File(dir.getAbsolutePath()
+							+ File.separator + file.getOriginalFilename());
+					BufferedOutputStream stream = new BufferedOutputStream(
+							new FileOutputStream(serverFile));
+					stream.write(bytes);
+					stream.close();
+
+					logger.info("Server File Location="
+							+ serverFile.getAbsolutePath(), this.getClass());
+					
+					jsonresponse=excel.excelReadData(file.getOriginalFilename());
+					
+					System.out.println(jsonresponse.toString());
+					
+					if(jsonresponse.contains("success"))
+					{
+						jsonresponse.add("success");
+					}
+					else if(jsonresponse.contains("failure"))
+					{
+						jsonresponse.add("failure");
+					}
+					else
+					{
+						return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+					}
 				}
 				else
 				{
-					jsonresponse.add("failure");
+					jsonresponse.add("Company Name does not match with the session Company Name!");
 				}
 				
 			} catch (Exception e) {
+				e.printStackTrace();
 				logger.error(e.getMessage()+"..."+this.getClass());
 			}
 		}

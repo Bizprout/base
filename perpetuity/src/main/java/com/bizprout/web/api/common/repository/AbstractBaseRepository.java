@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.bizprout.web.app.dto.PpMasterDTO;
-import com.bizprout.web.app.dto.UserDTO;
-
 @Repository
 public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 
@@ -25,43 +22,37 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
+	
+	public Session getSession()
+	{
+		return factory.getCurrentSession();
+	}
 
 	public int save(T t) {
 		// TODO change into current session
 
-		logger.info("Inside Abstract class save method.....");
-
-		Session session = factory.openSession();
-		Transaction transaction = session.beginTransaction();
+		logger.info("Inside Abstract class save method....."+this.getClass());
+				
 		int id=0;
 		try {
+			Session session = getSession();
 			id=(int) session.save(t);
-			transaction.commit();
 		} catch (HibernateException he) {
-			he.printStackTrace();
-			transaction.rollback();
-		} finally {
-			session.close();
-		}
+			logger.error(he.getMessage()+"....."+this.getClass());
+		} 
 		return id;
 	}
 
 	public void update(T t) {
 		// TODO Auto-generated method stub
 
-		logger.info("Inside Abstract class update method.....");
+		logger.info("Inside Abstract class update method....."+this.getClass());
 
-		Session sess = factory.openSession();
-		Transaction transact = sess.beginTransaction();
-
+		Session sess = getSession();
 		try {
-			sess.update(t);
-			transact.commit();
+			sess.update(t);			
 		} catch (HibernateException he) {
-			he.printStackTrace();
-			transact.rollback();
-		} finally {
-			sess.close();
+			logger.error(he.getMessage()+"....."+this.getClass());
 		}
 	}
 
@@ -71,7 +62,7 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 		Criteria criteria = null;
 
 		try {
-			logger.info("Inside Abstract class getEntity method.....");
+			logger.info("Inside Abstract class getEntity method....."+this.getClass());
 
 			Example baseDTO = Example.create(t);
 			Session session = factory.getCurrentSession();
@@ -79,7 +70,7 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 		}
 		catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"...."+this.getClass());
 		}
 		return (T) criteria.uniqueResult();
 	}
@@ -87,13 +78,14 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 	public List<T> getList() {
 		
 		Session session = null;
-
+		
+		logger.info("Inside Abstract class getList method....."+this.getClass());
+		
 		try {
 		session = factory.getCurrentSession();
 		
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"...."+this.getClass());
 		}
 		return (List<T>) session.createCriteria(
 				this.getClass().getTypeParameters().getClass()).list();
@@ -102,12 +94,13 @@ public abstract class AbstractBaseRepository<T> implements BaseRepository<T> {
 	public List<Object> getListOfProperty(Class c,String propertyName) {
 		Session session = null;
 		
+		logger.info("Inside Abstract class getListOfProperty method....."+this.getClass());
+		
 		try {
 			session = factory.getCurrentSession();
 			
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"...."+this.getClass());
 		}
 		return session.createCriteria(c)
 				.setProjection(Projections.property(propertyName)).list();

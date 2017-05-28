@@ -8,6 +8,16 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 	$scope.switchBool = function (value) {
 		$scope[value] = !$scope[value];
 	};
+	
+	if($localStorage.cmpid===undefined)
+	{
+		$location.path("/home");
+	}
+	
+	if($localStorage.userid===undefined)
+	{
+		$location.path("/");
+	}
 
 	//*******DTO to store the form values for add when populated**********
 	$scope.userDTO = {
@@ -95,7 +105,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 						if(data[0]==="success")
 						{
-							$scope.alerts = { type: 'success', msg: 'User Created'};
+							$scope.alerts = { type: 'success', msg: 'User Created and an Email has been sent with the Username and an Auto Generated Password.'};
 							$scope.showSuccessAlert = true;
 
 							$scope.userDTO.username='';

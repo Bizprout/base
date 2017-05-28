@@ -10,14 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="pp_masters")
@@ -29,6 +24,7 @@ public class PpMasterDTO {
 	private int masteridindex;
 	
 	@Column(name="cmp_id")
+	@NotNull(message="Company ID cannot be Blank!")
 	private int cmpid;
 	
 	@NotBlank(message="Master Type cannot be Blank!")

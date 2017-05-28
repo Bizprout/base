@@ -1,5 +1,4 @@
-var baseApp=angular.module("BaseApp",['ngRoute', 'AxelSoft', 'angularUtils.directives.dirPagination', 'btorfs.multiselect', 'ngMaterial', 'ngMessages', 'mdPickers', 'ngStorage', 'ngMdIcons']);
-
+var baseApp=angular.module("BaseApp",['ngRoute', 'AxelSoft', 'angularUtils.directives.dirPagination', 'btorfs.multiselect', 'ngMaterial', 'ngMessages', 'mdPickers', 'ngStorage', 'ngMdIcons','http-auth-interceptor']);
 
 baseApp.directive('fileModel', ['$parse', function ($parse) {
 	return {
@@ -33,7 +32,9 @@ baseApp.directive('myLink', function() {
 	};
 });
 
-baseApp.run(function($rootScope, $localStorage, $location) {
+
+baseApp.run(function($rootScope, $localStorage, $location,$http, USER_ROLES, $q, $timeout,
+		AuthSharedService) {
 	var lastDigestRun = new Date();
 	setInterval(function () {
 		var now = Date.now();
@@ -46,9 +47,54 @@ baseApp.run(function($rootScope, $localStorage, $location) {
 	$rootScope.$watch(function() {
 		lastDigestRun = new Date();
 	});
+	
+	$rootScope.$on('event:auth-forbidden', function(rejection) {
+		$rootScope.$evalAsync(function() {
+			console.log("forbidden");
+			$location.path('/login').replace();
+		});
+	});
+	$rootScope.$on('event:auth-loginRequired', function(event, data) {
+		if ($rootScope.loadingAccount && data.status !== 401) {
+			$rootScope.requestedUrl = $location.path();
+			$location.path('/');
+		} else {			
+			$rootScope.authenticated = false;
+			$rootScope.loadingAccount = false;
+			$location.path('/');
+		};		
+	});
 });
 
-//ngRoute for routing - navigating to pages
-//AxelSoft plugin for Autocomplete dropdown menu
-//angularUtils.directives.dirPagination plugin for report pagination
-//btorfs.multiselect plugin for multiselect dropdown
+baseApp.constant('USER_ROLES', {
+	ADMIN : 'PPAdmin',
+	SUPER_ADMIN : 'PPsuperadmin'
+});
+
+baseApp.factory('AuthSharedService', function( $rootScope, $http,$localStorage,
+		authService) {
+	
+	return {
+		// other functions ...
+		getAccount : function() {
+			$rootScope.loadingAccount = true;
+			$http.get('security/account').then(function(response) {
+				authService.loginConfirmed(response.data);
+			});
+		},
+		isAuthorized : function(authorizedRoles) {
+			if (!angular.isArray(authorizedRoles)) {
+				authorizedRoles = [ authorizedRoles ];
+			}
+			var isAuthorized = false;
+			
+			angular.forEach(authorizedRoles, function(authorizedRole) {						
+				var authorized = (authorizedRole==='ROLE_PPAdmin');
+				if (authorized) {
+					isAuthorized = true;
+				}
+			});
+			return isAuthorized;
+		}
+	};
+});

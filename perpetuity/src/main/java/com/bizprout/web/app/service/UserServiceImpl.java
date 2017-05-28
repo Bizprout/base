@@ -11,7 +11,6 @@ import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.UserService;
 import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
-import com.bizprout.web.app.dto.UserVO;
 import com.bizprout.web.app.repository.UserRepositoryImpl;
 
 @Service
@@ -27,13 +26,11 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public int CreateUser(UserDTO t) {
 		int id=0;
 		try {
-			
-			System.out.println("inside CreateUser service " + t);
-			logger.info("inside CreateUser service " + t);
+			logger.info("inside CreateUser service " + t, this.getClass());
 			//t.setUsertype(UserConstant.PP_SUPER_ADMIN);
 			id=baseRepository.save(t);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return id;
 	}
@@ -41,10 +38,9 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public int UpdateUser(UserEditVO usereditVO) {
 
 		try {
-			System.out.println("inside UpdateUser service " + usereditVO);
-			logger.info("inside UpdateUser service " + usereditVO);
+			logger.info("inside UpdateUser service " + usereditVO, this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return userRepository.UpdateUsers(usereditVO);
 	}
@@ -52,10 +48,10 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public List<UserDTO> getUsers() {
 		List<UserDTO> user = null;
 		try {
-			logger.info("inside getUsers method ");
+			logger.info("inside getUsers method "+this.getClass());
 			user = userRepository.getusers();
 		} catch (Exception e) {
-			logger.error("Exception in getUsers \t" + e.getMessage());
+			logger.error("Exception in getUsers \t" + e.getMessage(), this.getClass());
 		}
 		return user;
 	}
@@ -65,23 +61,22 @@ public class UserServiceImpl implements UserService<UserDTO> {
 		List<String> userNameList = null;
 
 		try {
-			logger.info("inside getUsernameList method ");
+			logger.info("inside getUsernameList method "+this.getClass());
 
 			userNameList = userRepository.getUsernameList();
-					/*(List<String>) (Object) userRepository.getListOfProperty(UserDTO.class, "username");*/
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return userNameList;
 	}
 
-	public UserDTO getUserData(UserVO uservo) {
+	public UserDTO getUserData(String username) {
 		UserDTO user = null;
 		try {
-			logger.info("inside getUserData method...");
-			user = userRepository.getUserData(uservo.getUsername());
+			logger.info("inside getUserData method..."+this.getClass());
+			user = userRepository.getUserData(username);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return user;
 	}
@@ -89,10 +84,10 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public UserDTO getUserDataById(int Userid) {
 		UserDTO user = null;
 		try {
-			logger.info("inside getUserData method...");
+			logger.info("inside getUserData method..."+this.getClass());
 			user = userRepository.getUserDataById(Userid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return user;
 	}
@@ -100,10 +95,22 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public int updatePassword(String password, int cmpid) {
 		int res = 0;
 		try {
-			logger.info("inside changerdPassword method...");
+			logger.info("inside changerdPassword method..."+this.getClass());
 			res = userRepository.updatePassword(password, cmpid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return res;
+	}
+	
+	@Override
+	public int resetPassword(String username, String password) {
+		int res = 0;
+		try {
+			logger.info("inside resetPassword method..."+this.getClass());
+			res = userRepository.resetPassword(username, password);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return res;
 	}

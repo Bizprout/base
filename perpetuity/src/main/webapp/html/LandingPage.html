@@ -1,17 +1,21 @@
-
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
 			<div class="path">
 				<div class="row">
-					<div class="col-xs-5" style="margin-left: -33px;">Welcome &nbsp;{{user}} !</div>
+					<div class="col-xs-5" style="margin-left: -33px;">Welcome
+						&nbsp;{{user}} !</div>
 					<div class="col-xs-7" style="float: right; margin-right: -118px;">
 						<span>Select Company:</span>
 						<div
-							custom-select="comp.cmpId as comp.tallyCmpName for comp in companies | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
+							custom-select="comp.cmpId as comp.tallyCmpName for comp in companies| orderBy: 'tallyCmpName' | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
 							custom-select-options="companyselectOptions"
 							ng-change="landingcompanychange()" ng-model="landingcmpId"
 							autofocus></div>
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadinglandcomp"></md-progress-circular>
 					</div>
 				</div>
 			</div>
@@ -28,9 +32,9 @@
 				</div>
 				<div class="content">Manage Masters Create, Edit, Reports for
 					Users, Clients, Company, PP standards.</div>
-				<a href="#masters" my-link="linkEnabled"
-					data-ng-class="{'disabled': !linkEnabled}" class="btn btn-success"
-					style="text-decoration: none;">Continue</a>
+				<a href="#masters" my-link="masterslinkenabled"
+					data-ng-class="{'disabled': !masterslinkenabled}"
+					class="btn btn-success" style="text-decoration: none;">Continue</a>
 			</div>
 			<div class="app-section-container path" role="button"
 				data-toggle="modal" data-target="#last-step-modal"
@@ -40,9 +44,9 @@
 				</div>
 				<div class="content">Manage Create, Edit, View Reports for
 					User Mapping to Clients and PP Mapping to Tally.</div>
-				<a href="#mapping" my-link="linkEnabled"
-					data-ng-class="{'disabled': !linkEnabled}" class="btn btn-success"
-					style="text-decoration: none;">Continue</a>
+				<a href="#mapping" my-link="mappinglinkenabled"
+					data-ng-class="{'disabled': !mappinglinkenabled}"
+					class="btn btn-success" style="text-decoration: none;">Continue</a>
 			</div>
 			<div class="app-section-container path" id="right" role="button"
 				data-toggle="modal" data-target="#last-step-modal"
@@ -52,9 +56,9 @@
 				</div>
 				<div class="content" style="margin-bottom: 55px;">Export
 					Reports.</div>
-				<a href="#reports" my-link="linkEnabled"
-					data-ng-class="{'disabled': !linkEnabled}" class="btn btn-success"
-					style="text-decoration: none;">Continue</a>
+				<a href="#reports" my-link="reportslinkenabled"
+					data-ng-class="{'disabled': !reportslinkenabled}"
+					class="btn btn-success" style="text-decoration: none;">Continue</a>
 			</div>
 		</div>
 	</div>

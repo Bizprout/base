@@ -1,10 +1,45 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<p style="text-align: center;">
+			<ol class="breadcrumb">
+				<li><a href="#home">Home</a></li>
+				<li class="active">Reports</li>
+			</ol>
+			<div style="text-align: center; margin-bottom: -10px;">
 				<b>Company:</b> {{cmpname}}
-			</p>
+			</div>
 			<div class="text">Reports</div>
+			<table style="float: right;">
+				<tr>
+					<td class="col-xs-5">
+						<!-- ng-change="selectReport()" -->
+						<div custom-select="rep for rep in reports | filter: $searchTerm"
+							custom-select-options="reportselectOptions" name="report"
+							ng-model="reportDTO.reportName" autofocus></div>
+					</td>
+					<td>
+						<div class="col-xs-5">
+							<md-datepicker ng-model="reportDTO.fromDate"
+								| date:'dd-MM-yyyy' 
+							md-placeholder="Sync Date From"
+								md-open-on-focus></md-datepicker>
+						</div>
+					</td>
+					<td>
+						<div class="col-xs-5">
+							<md-datepicker ng-model="reportDTO.toDate"
+								| date:'dd-MM-yyyy'
+							md-placeholder="Sync Date From"
+								md-open-on-focus></md-datepicker>
+						</div> <!-- 					<md-datepicker ng-model="reportDTO.fromDate" --> <!-- 							md-placeholder="Sync Date From" md-open-on-focus></md-datepicker>	 -->
+						<!-- 					<md-datepicker ng-model="reportDTO.toDate" --> <!-- 							md-placeholder="Sync Date From" md-open-on-focus></md-datepicker> -->
+					</td>
+					<td>
+						<button type="button" class="btn btn-success"
+							ng-click="selectReport()">Get</button>
+					</td>
+				</tr>
+			</table>
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
@@ -16,46 +51,357 @@
 				</div>
 			</div>
 			<div ng-cloak>
-				<md-content> <md-tabs md-dynamic-height
-					md-border-bottom> <md-tab label="Generate Reports"
-					md-on-select="onreportclick()"> <md-content
-					class="md-padding">
-				<div class="row">
-					<div class="col-xs-4">
-						<span>Select Client:</span><br>
-						<div
-							custom-select="clt.clientId as clt.clientName for clt in clientnames | filter: {clientName: $searchTerm} track by clt.clientId"
-							custom-select-options="clientselectOptions"
-							ng-change="clientchanged()" ng-model="reportDTO.client" autofocus></div>
-					</div>
-					<div class="col-xs-5">
-						<span>Select Company:</span><br>
-						<div
-							custom-select="comp.cmpId as comp.tallyCmpName for comp in companies | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
-							custom-select-options="companyselectOptions" ng-change=""
-							ng-model="reportDTO.cmpId" autofocus></div>
+				<md-content> <md-tabs md-border-bottom
+					style="min-height:396px;"> <md-tab
+					label={{reportDTO.reportName}}> <!-- ----------------------------------			TRIAL BALANCE			----------------------------------------------- -->
+				<div class="col-lg-12"
+					ng-if="reportDTO.reportName== 'Trial Balance'">
+					<div class="bs-component">
+						<!-- 					<div class="alert alert-info">
+						<p>Sort key: {{sortKey}}</p>
+						<p>Reverse: {{reverse}}</p>
+						<p>Search String : {{search}}</p>
+					</div> -->
+						<form class="form-inline">
+							<div class="form-group">
+								<input type="text" ng-model="search" class="form-control"
+									placeholder="Search">
+							</div>
+							<button style="margin-right: 50px;" ng-click="exportData()"
+								class="btn btn-success">Export</button>
+						</form>
+						<br>
+						<div id="exportable">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th ng-click="sort('slno')">Sl.&nbsp;No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='slno'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('clientname')">Ledger Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='clientname'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('clientname')">Base Group<span
+											class="glyphicon sort-icon" ng-show="sortKey=='clientname'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('contactperson')">Op.Balance(Dr)<span
+											class="glyphicon sort-icon"
+											ng-show="sortKey=='contactperson'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('phone')">Op.Balance(Cr)<span
+											class="glyphicon sort-icon" ng-show="sortKey=='phone'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('status')" style="text-align: right;">Cl.Balance(Dr)<span
+											class="glyphicon sort-icon" ng-show="sortKey=='status'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+										</span>
+										</th>
+										<th ng-click="sort('status')" style="text-align: right;">Cl.Balance(Cr)<span
+											class="glyphicon sort-icon" ng-show="sortKey=='status'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+										</span>
+										</th>
+										<th ng-click="sort('status')" style="text-align: right;">Net.
+											Balance<span class="glyphicon sort-icon"
+											ng-show="sortKey=='status'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+										</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr
+										dir-paginate="comp in data | orderBy:sortKey:reverse | filter:search|itemsPerPage:20"
+										current-page="currentPage">
+										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
+										<td>{{comp.name}}</td>
+										<td>{{comp.baseGrp}}</td>
+										<td style="text-align: right;">{{comp.opDrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.opCrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.vchDrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.vchCrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.opDrAmt-comp.opCrAmt+comp.vchDrAmt-comp.vchDrAmt-
+											comp.vchCrAmt | number:2}}</td>
+									</tr>
+									<tr ng-hide="{{ data.length}}">
+										<td colspan="16" style="text-align: right;">{{
+											data.length}} records found</td>
+									</tr>
+								</tbody>
+								<md-progress-circular md-mode="indeterminate" md-diameter="40px"
+									ng-show="isLoadingreports"></md-progress-circular>
+							</table>
+						</div>
+						<div id="exportableall" ng-hide="true">
+							<table border="1">
+								<b>{{cmpname}}</b>
+								<br>
+								<b>TRIAL BALANCE</b>
+								<br>
+								<b>{{reportDTO.fromDate | date:'dd-MMM-yyyy'}} to
+									{{reportDTO.toDate | date:'dd-MMM-yyyy'}}</b>
+								<br />
+								<br>
+								<thead>
+									<tr>
+										<th style="text-align: left;">Sl.No.</th>
+										<th style="text-align: left;">Name</th>
+										<th style="text-align: left;">Base Group</th>
+										<th style="text-align: left;">Opening Balance(Dr)</th>
+										<th style="text-align: left;">Opening Balance(Cr)</th>
+										<th style="text-align: right;">Closing Balance(Dr)</th>
+										<th style="text-align: right;">Closing Balance(Cr)</th>
+										<th style="text-align: right;">Net Balance</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="comp in data">
+										<td style="text-align: left;">{{$index+1}}</td>
+										<td>{{comp.name}}</td>
+										<td>{{comp.baseGrp}}</td>
+										<td style="text-align: right;">{{comp.opDrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.opCrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.vchDrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.vchCrAmt |
+											number:2}}</td>
+										<td style="text-align: right;">{{comp.vchDrAmt -
+											comp.vchCrAmt | number:2}}</td>
+									</tr>
+									<tr ng-hide="{{ data.length}}">
+										<td>{{ data.length}} records found</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<dir-pagination-controls max-size="20" direction-links="true"
+							boundary-links="true"> </dir-pagination-controls>
+						<br> <a style="margin-bottom: 65px;" href="#masters"
+							class="btn btn-success">Back</a>
 					</div>
 				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-3">
-						<span>Select Report:</span>
-						<div custom-select="rep for rep in reports | filter: $searchTerm"
-							custom-select-options="reportselectOptions" ng-change=""
-							ng-model="reportDTO.reportname" autofocus></div>
+				<!-- --------------------------------	DAY BOOK	----------------------------------------------------------->
+				<div class="col-lg-12" ng-if="reportDTO.reportName== 'Daybook'">
+					<div class="bs-component">
+						<!-- 					<div class="alert alert-info">
+						<p>Sort key: {{sortKey}}</p>
+						<p>Reverse: {{reverse}}</p>
+						<p>Search String : {{search}}</p>
+					</div> -->
+						<form class="form-inline">
+							<div class="form-group">
+								<input type="text" ng-model="search" class="form-control"
+									placeholder="Search" style="float: right;">
+							</div>
+							<button style="margin-right: 50px;" ng-click="exportData()"
+								class="btn btn-success" style="float:right;">Export</button>
+						</form>
+						<br>
+						<div id="exportable">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th ng-click="sort('slno')">Sl.&nbsp;No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='slno'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('clientname')">Voucher Type<span
+											class="glyphicon sort-icon" ng-show="sortKey=='clientname'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('clientname')">Voucher No<span
+											class="glyphicon sort-icon" ng-show="sortKey=='clientname'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('contactperson')">Date<span
+											class="glyphicon sort-icon"
+											ng-show="sortKey=='contactperson'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('phone')">Party Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='phone'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('status')" style="text-align: right;">Amount<span
+											class="glyphicon sort-icon" ng-show="sortKey=='status'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+										</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr
+										dir-paginate="vch in data | orderBy:sortKey:reverse | filter:search|itemsPerPage:15"
+										current-page="currentPage">
+										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
+										<td>{{vch.vchTypeId}}</td>
+										<td>{{vch.vchNumber}}</td>
+										<td>{{vch.vchDate | date:'dd-MMM-yyyy' }}</td>
+										<td>{{vch.partyLedger}}</td>
+										<td style="text-align: right;">{{vch.vchAmt | number:2}}</td>
+									</tr>
+									<tr ng-hide="{{ data.length}}">
+										<td>{{ data.length}} records found</td>
+									</tr>
+								</tbody>
+								<md-progress-circular md-mode="indeterminate" md-diameter="40px"
+									ng-show="isLoadingreports"></md-progress-circular>
+							</table>
+						</div>
+						<div id="exportableall" ng-hide="true">
+							<table border="1">
+								<b>{{cmpname}}</b>
+								<br>
+								<b>DAYBOOK</b>
+								<br>
+								<b>{{reportDTO.fromDate | date:'dd-MMM-yyyy'}} to
+									{{reportDTO.toDate | date:'dd-MMM-yyyy'}}</b>
+								<br />
+								<br>
+								<thead>
+									<tr>
+										<th style="text-align: left;">Sl.No.</th>
+										<th style="text-align: left;">Voucher Type.</th>
+										<th style="text-align: left;">Voucher No.</th>
+										<th style="text-align: left;">Date</th>
+										<th style="text-align: left;">Party Name</th>
+										<th style="text-align: right;">Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="vch in data">
+										<td style="text-align: left;">{{$index+1}}</td>
+										<td>{{vch.tallyMasterName}}</td>
+										<td style="text-align: left;">{{vch.vchNumber}}</td>
+										<td style="text-align: left;">{{vch.vchDate |
+											date:'dd-MMM-yyyy' }}</td>
+										<td style="text-align: left;">{{vch.partyLedger}}</td>
+										<td style="text-align: right;">{{vch.vchAmt | number:2}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<dir-pagination-controls max-size="15" direction-links="true"
+							boundary-links="true"> </dir-pagination-controls>
+						<br> <a style="margin-bottom: 65px;" href="#masters"
+							class="btn btn-success">Back</a>
 					</div>
 				</div>
-				<br />
-				<br />
-				<div class="row">
-					<div class="col-xs-5">
-						<button type="button" class="btn btn-success"
-							ng-click="generatereport(reportDTO)">Generate</button>
-						<button type="cancel" class="btn btn-success" ng-click="clear()">Clear</button>
-						<a href="#home" class="btn btn-success">Back</a>
+				<!-- --------------------------------	PAYMENT REGISTER	----------------------------------------------------------->
+				<div class="col-lg-12"
+					ng-if="reportDTO.reportName== 'Payment Register'">
+					<div class="bs-component">
+						<!-- 					<div class="alert alert-info">
+						<p>Sort key: {{sortKey}}</p>
+						<p>Reverse: {{reverse}}</p>
+						<p>Search String : {{search}}</p>
+					</div> -->
+						<form class="form-inline">
+							<div class="form-group">
+								<input type="text" ng-model="search" class="form-control"
+									placeholder="Search">
+							</div>
+							<button style="margin-right: 50px;" ng-click="exportData()"
+								class="btn btn-success">Export</button>
+						</form>
+						<br>
+						<div id="exportable">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th ng-click="sort('slno')">Sl.&nbsp;No.<span
+											class="glyphicon sort-icon" ng-show="sortKey=='slno'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('clientname')">Voucher No<span
+											class="glyphicon sort-icon" ng-show="sortKey=='clientname'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('contactperson')">Date<span
+											class="glyphicon sort-icon"
+											ng-show="sortKey=='contactperson'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('phone')">Party Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='phone'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('status')" style="text-align: right;">Amount<span
+											class="glyphicon sort-icon" ng-show="sortKey=='status'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}">
+										</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr
+										dir-paginate="vch in data | orderBy:sortKey:reverse | filter:search|itemsPerPage:15"
+										current-page="currentPage">
+										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
+										<td>{{vch.vchNumber}}</td>
+										<td>{{vch.vchDate | date:'dd-MMM-yyyy' }}</td>
+										<td>{{vch.partyLedger}}</td>
+										<td style="text-align: right;">{{vch.vchAmt | number:2}}</td>
+									</tr>
+									<tr ng-show="expanded" ng-init="1">
+										<td style="text-align: right;">{{vch.vchAmt | number:2}}</td>
+									</tr>
+								</tbody>
+								<md-progress-circular md-mode="indeterminate" md-diameter="40px"
+									ng-show="isLoadingreports"></md-progress-circular>
+							</table>
+						</div>
+						<div id="exportableall" ng-hide="true">
+							<table border="1">
+								<b>{{cmpname}}</b>
+								<br>
+								<b>PAYMENT REGISTER</b>
+								<br>
+								<b>{{reportDTO.fromDate | date:'dd-MMM-yyyy'}} to
+									{{reportDTO.toDate | date:'dd-MMM-yyyy'}}</b>
+								<br />
+								<br>
+								<thead>
+									<tr>
+										<th style="text-align: left;">Sl.No.</th>
+										<th style="text-align: left;">Voucher No.</th>
+										<th style="text-align: left;">Date</th>
+										<th style="text-align: left;">Party Name</th>
+										<th style="text-align: right;">Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="vch in data">
+										<td style="text-align: left;">{{$index+1}}</td>
+										<td style="text-align: left;">{{vch.vchNumber}}</td>
+										<td style="text-align: left;">{{vch.vchDate |
+											date:'dd-MMM-yyyy' }}</td>
+										<td style="text-align: left;">{{vch.partyLedger}}</td>
+										<td style="text-align: right;">{{vch.vchAmt | number:2}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<dir-pagination-controls max-size="15" direction-links="true"
+							boundary-links="true"> </dir-pagination-controls>
+						<br> <a style="margin-bottom: 65px;" href="#masters"
+							class="btn btn-success">Back</a>
 					</div>
-				</div>
-				</md-content> </md-tab> </md-tabs> </md-content>
+				</div></md-content>
+				</md-tab>
+				</md-tabs>
+				</md-content>
 			</div>
 		</div>
 	</div>

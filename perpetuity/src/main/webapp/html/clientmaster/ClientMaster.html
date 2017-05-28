@@ -1,6 +1,11 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
+			<ol class="breadcrumb">
+				<li><a href="#home">Home</a></li>
+				<li><a href="#masters">Masters</a></li>
+				<li class="active">Client Master</li>
+			</ol>
 			<p style="text-align: center; margin-bottom: -24px;">
 				<b>Company:</b> {{cmpname}}
 			</p>
@@ -52,8 +57,7 @@
 							autofocus>
 					</div>
 					<div class="col-xs-4">
-						<span>Mobile No.:</span><span
-							style="color: red; font-size: 20px;"></span>
+						<span>Mobile No.:</span><span style="color: red; font-size: 20px;"></span>
 						<input type="text" ng-model="clientDTO.contactTelPhone"
 							class="form-control" maxlength="10"
 							onkeypress='return event.charCode >= 48 && event.charCode <= 57'
@@ -166,7 +170,7 @@
 				</div>
 				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
 					class="md-padding"> <!-- <h1 class="md-display-2">Tab Two</h1> -->
-				<div class="col-lg-8">
+				<div class="col-lg-12">
 					<div class="bs-component">
 						<!-- 					<div class="alert alert-info">
 						<p>Sort key: {{sortKey}}</p>
@@ -231,8 +235,11 @@
 						</div>
 						<div id="exportableall" ng-hide="true">
 							<table border="1">
-							<b>Perpetuity - Client Masters Report</b><br>
-							<b>List of Clients</b><br/><br>				
+								<b>Perpetuity - Client Masters Report</b>
+								<br>
+								<b>List of Clients</b>
+								<br />
+								<br>
 								<thead>
 									<tr>
 										<th style="text-align: left;">Sl.No.</th>

@@ -11,9 +11,9 @@ import com.bizprout.web.app.dto.RegisterDTO;
 public class RegisterResource {
 
 	@Autowired
-	private RegisterService registerService;
+	private RegisterService<RegisterDTO> registerService;
 
-	public ResponseEntity save(RegisterDTO dto) {
+	public ResponseEntity<?> save(RegisterDTO dto) {
 		registerService.save(dto);
 		return null;
 

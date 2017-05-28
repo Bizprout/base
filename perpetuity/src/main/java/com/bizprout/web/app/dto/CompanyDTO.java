@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.bind.annotation.MatrixVariable;
 
 
 @Entity

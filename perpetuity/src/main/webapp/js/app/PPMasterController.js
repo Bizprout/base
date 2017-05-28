@@ -4,6 +4,16 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 	//TODO angular constants
 
 	$scope.cmpname=$localStorage.cmpname;
+	
+	if($localStorage.cmpid===undefined)
+	{
+		$location.path("/home");
+	}
+	
+	if($localStorage.userid===undefined)
+	{
+		$location.path("/");
+	}
 
 	$scope.hidecostcat=true;
 
@@ -103,24 +113,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 				$scope.hidecostcat=false;
 				$scope.categories=["Cost Category"];
 				$scope.ppparentnames=["Primary"];
-
-				$http({
-					method : "POST",
-					url : "ppmaster/getppmastersname",
-					data : {"mastertype":"Cost Category", "category":$scope.ppmasterDTO.category, "cmpid":$scope.ppmasterDTO.cmpid},
-					headers : {
-						'Content-Type' : 'application/json'
-					}
-				}).success(function(dataccat, status, headers, config){
-
-					for(var key1 in dataccat){
-						$scope.categories.push(dataccat[key1]);
-					}
-
-				}).error(function(data, status, headers, config){
-					// called asynchronously if an error occurs
-					// or server returns response with an error status.
-				});
 			}
 			else if($scope.ppmasterDTO.mastertype==="Cost Centre"){
 
@@ -135,8 +127,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						'Content-Type' : 'application/json'
 					}
 				}).success(function(dataccat, status, headers, config){
-
-					console.log(dataccat);
 
 					for(var key1 in dataccat){
 						$scope.categories.push(dataccat[key1]);
@@ -330,7 +320,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						else
 						{
 							$scope.alerts = { type: 'danger'};
-							$scope.errdata=data[0];
+							$scope.errdata=data;
 							$scope.showerror=true;
 						}
 					}).error(function(data, status, headers, config){
@@ -406,15 +396,16 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 		$scope.ppmasternamechange=function(){
 
 			$scope.isLoadingeditppmastername = true;
-			$scope.isLoadingselecteditcategory=true;
-			$scope.isLoadingeditppparentname=true;
 
 			$scope.editppmasterDTO.editppmastername=$scope.editppmasterDTO.ppmastername;
 
 			$scope.isLoadingeditppmastername = false;
 			
 			$scope.ppparentnames=[];
-
+			
+			$scope.isLoadingselecteditcategory=true;
+			$scope.isLoadingeditppparentname=true;
+			
 			$http({
 				method : "POST",
 				url : "ppmaster/getppparentname",
@@ -453,8 +444,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						for(var key1 in dataccat){
 							$scope.categories.push(dataccat[key1]);
 						}
-						$scope.isLoadingselecteditcategory=false;
-						$scope.isLoadingeditppparentname=false;
 
 					}).error(function(data, status, headers, config){
 						// called asynchronously if an error occurs
@@ -582,9 +571,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});
-
-			$scope.isLoadingselecteditcategory=false;
-			$scope.isLoadingeditppparentname=false;
 		};
 
 
@@ -701,7 +687,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						else
 						{
 							$scope.alerts = { type: 'danger'};
-							$scope.errdata=data[0];
+							$scope.errdata=data;
 							$scope.showerror=true;
 						}
 
@@ -733,7 +719,18 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 	$scope.onimpexpclick=function(){
 		console.log("Import/Export clicked....");
 
-
+		$http({
+			method : "POST",
+			url : "ppmaster/setsessioncmpid",
+			data : {"cmpId":$localStorage.cmpid},
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config){
+			
+		}).error(function(data, status, headers, config){
+			
+		});
 
 		$scope.exportppformat=function(){
 
@@ -778,7 +775,14 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						{
 							$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Uploaded!"};
 							$scope.showSuccessAlert = true;
-						}						
+						}
+						else
+						{
+							console.log(response);
+							$scope.alerts = { type: 'danger'};
+							$scope.errdata=response;
+							$scope.showerror=true;
+						}
 
 					})
 					.error(function(response){

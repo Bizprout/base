@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
-import com.bizprout.web.app.dto.ClientDTO;
 import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.PpMasterDTO;
 import com.bizprout.web.app.dto.TallyMappingDTO;
@@ -33,57 +32,72 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 	
 	public List<CompanyDTO> getCompanyIdName(int clientid)
 	{
-		logger.info("Inside getCompanyIdName method.......");
+		logger.info("Inside getCompanyIdName method......."+this.getClass());
 		
-		Session session = factory.getCurrentSession();
+		List<CompanyDTO> comp = null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		Criteria cr = session.createCriteria(CompanyDTO.class)
-				.add(Restrictions.eq("clientId", clientid))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("cmpId"), "cmpId")
-						.add(Projections.property("tallyCmpName"), "tallyCmpName"))
-						.setResultTransformer(Transformers.aliasToBean(CompanyDTO.class));
+			Criteria cr = session.createCriteria(CompanyDTO.class)
+					.add(Restrictions.eq("clientId", clientid))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("cmpId"), "cmpId")
+							.add(Projections.property("tallyCmpName"), "tallyCmpName"))
+							.setResultTransformer(Transformers.aliasToBean(CompanyDTO.class));
 
-		List<CompanyDTO> comp=cr.list();
+			comp = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return comp;
 	}
 	
 	public List<TallyMastersDTO> getTallyMasterNames(String mastertype, int cmpid)
 	{
-	logger.info("Inside getTallyMasterNames method.......");
+	logger.info("Inside getTallyMasterNames method......."+this.getClass());
 		
-		Session session = factory.getCurrentSession();
+		List<TallyMastersDTO> tallymasters = null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		Criteria cr = session.createCriteria(TallyMastersDTO.class)
-				.add(Restrictions.eq("masterType", mastertype))
-				.add(Restrictions.eq("cmpId", cmpid))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("cmpId"), "cmpId")
-						.add(Projections.property("masterId"), "masterId")
-						.add(Projections.property("tallyMasterName"), "tallyMasterName"))
-						.setResultTransformer(Transformers.aliasToBean(TallyMastersDTO.class));
+			Criteria cr = session.createCriteria(TallyMastersDTO.class)
+					.add(Restrictions.eq("masterType", mastertype))
+					.add(Restrictions.eq("cmpId", cmpid))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("cmpId"), "cmpId")
+							.add(Projections.property("masterId"), "masterId")
+							.add(Projections.property("tallyMasterName"), "tallyMasterName"))
+							.setResultTransformer(Transformers.aliasToBean(TallyMastersDTO.class));
 
-		List<TallyMastersDTO> tallymasters=cr.list();
+			tallymasters = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return tallymasters;
 	}
 	
 	public List<PpMasterDTO> getPpMasterNames(String mastertype, int cmpid)
 	{
-	logger.info("Inside getPpMasterNames method.......");
+	logger.info("Inside getPpMasterNames method......."+this.getClass());
 		
-		Session session = factory.getCurrentSession();
+		List<PpMasterDTO> ppmasternames = null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		Criteria cr = session.createCriteria(PpMasterDTO.class)
-				.add(Restrictions.eq("mastertype", mastertype))
-				.add(Restrictions.eq("cmpid", cmpid))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("masteridindex"), "masteridindex")
-						.add(Projections.property("ppmastername"), "ppmastername"))
-						.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
+			Criteria cr = session.createCriteria(PpMasterDTO.class)
+					.add(Restrictions.eq("mastertype", mastertype))
+					.add(Restrictions.eq("cmpid", cmpid))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("masteridindex"), "masteridindex")
+							.add(Projections.property("ppmastername"), "ppmastername"))
+							.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
 
-		List<PpMasterDTO> ppmasternames=cr.list();
+			ppmasternames = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return ppmasternames;
 	}
@@ -96,7 +110,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside updateTallyMapping method.......");
+			logger.info("Inside updateTallyMapping method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -110,7 +124,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 			tx.commit();
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
 		}
 		finally {
@@ -125,7 +139,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		Query qry=null;
 		List<Integer> ppmapping = null;
 		try {
-			logger.info("Inside TallyMappingRepositoryImpl......getPpMastersMapping method.......");
+			logger.info("Inside TallyMappingRepositoryImpl......getPpMastersMapping method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -135,10 +149,36 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 			ppmapping=qry.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmapping;
+	}
+	
+	public int deletePpidCmpid(int cmpid, int ppid)
+	{
+		int result = 0;
+		Transaction tx = null;
+		Session session;
+		Query qry=null;
+		
+		try {
+			logger.info("Inside TallyMappingRepositoryImpl......getPpMastersMapping method......."+this.getClass());
+
+			session = factory.getCurrentSession();
+			
+			tx=session.beginTransaction();
+
+			qry=session.createQuery("Delete from TallyMappingDTO where cmpId=:cmpid and ppId=:ppid");
+			qry.setParameter("cmpid",cmpid);
+			qry.setParameter("ppid",ppid);
+			
+			result= qry.executeUpdate();
+			tx.commit();
+			
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return result;
 	}
 	
 	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype)
@@ -146,7 +186,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		List<TallyMastersDTO> tallyppmappingdata = null;
 		Query qry=null;
 		try {
-			logger.info("Inside getTallyPpMappingData method.......");
+			logger.info("Inside getTallyPpMappingData method......."+this.getClass());
 
 			Session session = factory.getCurrentSession();
 
@@ -157,7 +197,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 			tallyppmappingdata=qry.list();
 
 		} catch (HibernateException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return tallyppmappingdata;
 	}
@@ -169,7 +209,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside savePpMasterMapping method.......");
+			logger.info("Inside savePpMasterMapping method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -187,8 +227,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 			tx.commit();
 			
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
 		}
 		finally {
@@ -199,38 +238,48 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 	
 	public List<PpMasterDTO> getPpMasterIdNames(int cmpid, String mastertype, String ppmastername)
 	{
-	logger.info("Inside getPpMasterIdNames method.......");
+	logger.info("Inside getPpMasterIdNames method......."+this.getClass());
 		
-		Session session = factory.getCurrentSession();
+		List<PpMasterDTO> ppmasternames = null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		Criteria cr = session.createCriteria(PpMasterDTO.class)
-				.add(Restrictions.eq("mastertype", mastertype))
-				.add(Restrictions.eq("cmpid", cmpid))
-				.add(Restrictions.eq("ppmastername", ppmastername))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("masteridindex"), "masteridindex"))
-						.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
+			Criteria cr = session.createCriteria(PpMasterDTO.class)
+					.add(Restrictions.eq("mastertype", mastertype))
+					.add(Restrictions.eq("cmpid", cmpid))
+					.add(Restrictions.eq("ppmastername", ppmastername))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("masteridindex"), "masteridindex"))
+							.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
 
-		List<PpMasterDTO> ppmasternames=cr.list();
+			ppmasternames = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return ppmasternames;
 	}
 	
 	public List<TallyMastersDTO> getTallyMasterIdNames(String mastertype, int cmpid, String tallymastername)
 	{
-	logger.info("Inside getTallyMasterIdNames method.......");
+	logger.info("Inside getTallyMasterIdNames method......."+this.getClass());
 		
-		Session session = factory.getCurrentSession();
+		List<TallyMastersDTO> tallymasters = null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		Criteria cr = session.createCriteria(TallyMastersDTO.class)
-				.add(Restrictions.eq("masterType", mastertype))
-				.add(Restrictions.eq("cmpId", cmpid))
-				.add(Restrictions.eq("tallyMasterName", tallymastername))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("masterId"), "masterId"))
-						.setResultTransformer(Transformers.aliasToBean(TallyMastersDTO.class));
+			Criteria cr = session.createCriteria(TallyMastersDTO.class)
+					.add(Restrictions.eq("masterType", mastertype))
+					.add(Restrictions.eq("cmpId", cmpid))
+					.add(Restrictions.eq("tallyMasterName", tallymastername))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("masterId"), "masterId"))
+							.setResultTransformer(Transformers.aliasToBean(TallyMastersDTO.class));
 
-		List<TallyMastersDTO> tallymasters=cr.list();
+			tallymasters = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return tallymasters;
 	}

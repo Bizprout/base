@@ -30,50 +30,61 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 
 	public List<ClientDTO> getClients()
 	{
-		logger.info("Inside getClients method.......");
+		List<ClientDTO> user=null;
+		try {
+			logger.info("Inside getClients method......."+this.getClass());
 
-		Session session = factory.getCurrentSession();
+			Session session = factory.getCurrentSession();
 
-		List<ClientDTO> user=session.createQuery("from ClientDTO").list();
-
+			user=session.createQuery("from ClientDTO").list();
+			
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"...."+this.getClass());
+		}
 		return user;
 	}
 	
 	public List<ClientDTO> getClientNames()
 	{
-		logger.info("Inside getClientNames method.......");
+		logger.info("Inside getClientNames method......."+this.getClass());
 
-		Session session = factory.getCurrentSession();
+		List<ClientDTO> user=null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		//Query qry=session.createQuery("select clientId, clientName from ClientDTO");
+			Criteria cr = session.createCriteria(ClientDTO.class)
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("clientId"), "clientId")
+							.add(Projections.property("clientName"), "clientName"))
+							.setResultTransformer(Transformers.aliasToBean(ClientDTO.class));
 
-		Criteria cr = session.createCriteria(ClientDTO.class)
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("clientId"), "clientId")
-						.add(Projections.property("clientName"), "clientName"))
-						.setResultTransformer(Transformers.aliasToBean(ClientDTO.class));
-
-		List<ClientDTO> user=cr.list();
+			user = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return user;
 	}
 
 	public List<ClientDTO> getClientIdName()
 	{
-		logger.info("Inside getClientIdName method.......");
+		logger.info("Inside getClientIdName method......."+this.getClass());
 
-		Session session = factory.getCurrentSession();
+		List<ClientDTO> user=null;
+		try {
+			Session session = factory.getCurrentSession();
+			
+			Criteria cr = session.createCriteria(ClientDTO.class)
+					.add(Restrictions.eq("status", "Active"))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("clientId"), "clientId")
+							.add(Projections.property("clientName"), "clientName"))
+							.setResultTransformer(Transformers.aliasToBean(ClientDTO.class));
 
-		//Query qry=session.createQuery("select clientId, clientName from ClientDTO");
-
-		Criteria cr = session.createCriteria(ClientDTO.class)
-				.add(Restrictions.eq("status", "Active"))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("clientId"), "clientId")
-						.add(Projections.property("clientName"), "clientName"))
-						.setResultTransformer(Transformers.aliasToBean(ClientDTO.class));
-
-		List<ClientDTO> user=cr.list();
+			user = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return user;
 	}
@@ -82,7 +93,7 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 		Session session;
 		Query qry = null;
 		try {
-			logger.info("Inside getClientData method.......");
+			logger.info("Inside getClientData method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -90,8 +101,7 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 
 			qry.setParameter("clientid",clientid);
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return (ClientDTO) qry.uniqueResult();
 	}
@@ -103,7 +113,7 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside updateClient method.......");
+			logger.info("Inside updateClient method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -121,12 +131,8 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 			result= qry.executeUpdate();
 			tx.commit();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
 	}

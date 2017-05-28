@@ -6,5 +6,7 @@ import com.bizprout.web.app.dto.UserDTO;
 public interface LoginService<T> {
 	
 	public UserDTO authenticate(LoginVO loginVO);
+	
+	public UserDTO findByUsername(String userName);
 
 }

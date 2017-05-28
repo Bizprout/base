@@ -5719,7 +5719,7 @@ md-tabs {
     flex-shrink: 0
 }
 md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
-    min-height: 440px
+    min-height: 410px
 }
 md-tabs[md-align-tabs=bottom] {
     padding-bottom: 48px

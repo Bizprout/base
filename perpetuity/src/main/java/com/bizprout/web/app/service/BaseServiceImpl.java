@@ -20,12 +20,10 @@ public class BaseServiceImpl implements BaseService<BaseDTO> {
 
 	public void testService(BaseDTO baseDTO) {
 		try {
-			System.out.println("test inside service" + baseDTO);
-			logger.info("test inside service" + baseDTO);
+			logger.info("test inside service" + baseDTO, this.getClass());
 			baseRepository.save(baseDTO);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 
 	}
@@ -33,14 +31,11 @@ public class BaseServiceImpl implements BaseService<BaseDTO> {
 	public BaseDTO auth(BaseDTO baseDTO) {
 		BaseDTO fromDb = null;
 		try {
-			System.out.println("inside auth method...");
-			logger.info("inside auth method...");
+			logger.info("inside auth method..."+this.getClass());
 			
 			fromDb= this.baseRepository.getEntity(baseDTO);
-			System.out.println(fromDb);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return fromDb;
 	}

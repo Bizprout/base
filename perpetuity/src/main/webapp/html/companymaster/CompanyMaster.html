@@ -2,7 +2,11 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
-			<!-- <div class="path">Tally Database Mapping to Company</div> -->
+			<ol class="breadcrumb">
+				<li><a href="#home">Home</a></li>
+				<li><a href="#masters">Masters</a></li>
+				<li class="active">Company Master</li>
+			</ol>
 			<p style="text-align: center; margin-bottom: -24px;">
 				<b>Company:</b> {{cmpname}}
 			</p>
@@ -34,8 +38,8 @@
 						<span>Select Company:</span><br>
 						<div
 							custom-select="cmp.cmpId as cmp.tallyCmpName for cmp in companylist |  filter: $searchTerm"
-							custom-select-options="companyselectOptions"
-							ng-model="companyDTO.cmpId" disabled="compdisable" autofocus></div>
+							custom-select-options="companyselectOptions" ng-change="oncompanychange()"
+							ng-model="companyDTO.cmpId" ng-disabled="compdisable" autofocus></div>
 					</div>
 					<div class="col-xs-1">
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
@@ -59,7 +63,7 @@
 						<div
 							custom-select="clt.clientId as clt.clientName for clt in clientnames |  filter: {clientName: $searchTerm} track by clt.clientId"
 							custom-select-options="clientselectOptions"
-							ng-model="companyDTO.clientId" disabled="clientdisable" autofocus></div>
+							ng-model="companyDTO.clientId" ng-disabled="clientdisable" autofocus></div>
 					</div>
 					<div class="col-xs-1">
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
@@ -145,7 +149,7 @@
 				</div>
 				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
 					class="md-padding">
-				<div class="col-lg-8">
+				<div class="col-lg-12">
 					<div class="bs-component">
 						<!-- 					<div class="alert alert-info">
 						<p>Sort key: {{sortKey}}</p>
@@ -173,17 +177,10 @@
 											class="glyphicon sort-icon" ng-show="sortKey=='clientname'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th></th>
-										<th></th>
-										<th></th>
-										<th></th>
 										<th ng-click="sort('tallycmpname')">Tally&nbsp;Company&nbsp;Name<span
 											class="glyphicon sort-icon" ng-show="sortKey=='tallycmpname'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th></th>
-										<th></th>
-										<th></th>
 										<th ng-click="sort('syncdate')">Sync&nbsp;Applicable&nbsp;Date<span
 											class="glyphicon sort-icon" ng-show="sortKey=='syncdate'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -216,8 +213,8 @@
 										dir-paginate="comp in company|orderBy:sortKey:reverse|filter:search|itemsPerPage:5"
 										current-page="currentPage">
 										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
-										<td colspan="5">{{comp.client.clientName}}</td>
-										<td colspan="4">{{comp.tallyCmpName}}</td>
+										<td>{{comp.client.clientName}}</td>
+										<td>{{comp.tallyCmpName}}</td>
 										<td style="width: 200px;"">{{comp.appFromDate | date :
 											"dd-MMM-yyyy"}}</td>
 										<td>{{comp.uploadTimer}}</td>

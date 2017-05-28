@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bizprout.web.api.common.BaseDTO;
@@ -25,11 +24,9 @@ public class BaseResorce {
 
 	public BaseResorce() {
 		try {
-			System.out.println(this.getClass().getSimpleName() + "Created...");
-			logger.info(this.getClass().getSimpleName() + "Created...");
+			logger.info(this.getClass().getSimpleName() + "Created..."+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 
@@ -37,26 +34,25 @@ public class BaseResorce {
 	public ResponseEntity<BaseDTO> testGet(@RequestBody BaseDTO baseDTO) {
 		try {
 			baseService.testService(baseDTO);
-			logger.info("Request.......testGet method......");
+			logger.info("Request.......testGet method......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return new ResponseEntity<BaseDTO>(baseDTO, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/auth")
-	public ResponseEntity auth(@RequestBody BaseDTO baseDTO) {
-		ResponseEntity resp = null;
+	public ResponseEntity<Object> auth(@RequestBody BaseDTO baseDTO) {
+		ResponseEntity<Object> resp = null;
 		try {
-			logger.info("Request........auth method......");
+			logger.info("Request........auth method......"+this.getClass());
 			if (baseService.auth(baseDTO) != null) {
-				resp = new ResponseEntity<BaseDTO>(HttpStatus.OK);
+				resp = new ResponseEntity<Object>(HttpStatus.OK);
 			}
-			resp = new ResponseEntity<String>("Bad Credentials",
+			resp = new ResponseEntity<Object>("Bad Credentials",
 					HttpStatus.FORBIDDEN);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return resp;
 

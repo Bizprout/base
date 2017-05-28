@@ -2,8 +2,6 @@ package com.bizprout.web.app.service;
 
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.PpMasterService;
 import com.bizprout.web.app.dto.EditPpMasterDTO;
 import com.bizprout.web.app.dto.PpMasterDTO;
-import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.repository.PpMasterRepositoryImpl;
 
 @Service
@@ -30,11 +27,11 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 	public void CreatePpMaster(PpMasterDTO t) {
 		
 		try {
-			System.out.println("inside CreatePpMaster service " + t);
-			logger.info("inside CreatePpMaster service " + t);
+			logger.info("inside CreatePpMaster service " + t, this.getClass());
 			baseRepository.save(t);
+			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 
@@ -42,10 +39,10 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("inside getPpMastersName service method ");
+			logger.info("inside getPpMastersName service method "+this.getClass());
 			ppmasterlist = PpRepository.getPpMasterList(mastertype, category, cmpid, ppmastername);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -54,10 +51,10 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("inside getPpMastersName service method ");
+			logger.info("inside getPpMastersName service method "+this.getClass());
 			ppmasterlist = PpRepository.getPpMasterListall(mastertype, category, cmpid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -66,10 +63,10 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("inside getPpMastersName service method ");
+			logger.info("inside getPpMastersName service method "+this.getClass());
 			ppmasterlist = PpRepository.getPpMasterbyCostCategory(mastertype, cmpid, ppmastername);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -78,10 +75,10 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("inside getPpMastersNameByCompany service method ");
+			logger.info("inside getPpMastersNameByCompany service method "+this.getClass());
 			ppmasterlist = PpRepository.getPpMasterListByCompany(mastertype, cmpid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -90,10 +87,10 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		
 		List<PpMasterDTO> ppparentname = null;
 		try {
-			logger.info("inside getPpMastersName service method ");
+			logger.info("inside getPpMastersName service method "+this.getClass());
 			ppparentname = PpRepository.getPpParentName(mastertype, ppmastername, cmpid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppparentname;
 	}
@@ -101,10 +98,9 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 	public int UpdatePpMasters(EditPpMasterDTO editppmasterDTO) {
 		
 		try {
-			System.out.println("inside UpdatePpMasters service " + editppmasterDTO);
-			logger.info("inside UpdatePpMasters service " + editppmasterDTO);
+			logger.info("inside UpdatePpMasters service " + editppmasterDTO, this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return PpRepository.UpdatePpMaster(editppmasterDTO);
 	}
@@ -113,10 +109,10 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
-			logger.info("inside getPpMasterdata method ");
+			logger.info("inside getPpMasterdata method ", this.getClass());
 			ppmasterdata = PpRepository.getPpmasterData(cmpid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterdata;
 	}

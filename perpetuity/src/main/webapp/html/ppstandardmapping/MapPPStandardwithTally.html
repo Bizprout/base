@@ -1,6 +1,11 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
+			<ol class="breadcrumb">
+				<li><a href="#home">Home</a></li>
+				<li><a href="#mapping">Mapping</a></li>
+				<li class="active">PP Mapping</li>
+			</ol>
 			<p style="text-align: center;">
 				<b>Company:</b> {{cmpname}}
 			</p>
@@ -21,12 +26,12 @@
 					data-ng-click="switchBool('showerror')">x</button>
 				<ul>
 					<strong><li ng-repeat="err in errdata track by $index">{{err}}</li></strong>
-					
 				</ul>
 			</div>
 			<div ng-cloak>
-				<md-content> <md-tabs md-border-bottom style="min-height:405px;"> <md-tab
-					label="Map" md-on-select="onmapclick()"> <md-content
+				<md-content> <md-tabs md-border-bottom
+					style="min-height:376px;"> <md-tab label="Map"
+					md-on-select="onmapclick()"> <md-content
 					class="md-padding"><!-- md-dynamic-height -->
 				<div class="row">
 					<div class="col-xs-3">
@@ -35,8 +40,8 @@
 						<div
 							custom-select="mt for mt in mastertypes | filter: $searchTerm"
 							custom-select-options="mastertypeselectOptions"
-							ng-change="masterchanged(ppmapDTO)" ng-model="ppmapDTO.mastertype"
-							autofocus></div>
+							ng-change="masterchanged(ppmapDTO)"
+							ng-model="ppmapDTO.mastertype" autofocus></div>
 					</div>
 				</div>
 				<br>
@@ -47,16 +52,20 @@
 						<div
 							custom-select="ppmn.masteridindex as ppmn.ppmastername for ppmn in ppmasternames | filter: {ppmastername: $searchTerm} track by ppmn.masteridindex"
 							custom-select-options="ppmasterselectOptions"
-							ng-change="ppmasternamechanged(ppmapDTO)" ng-model="ppmapDTO.ppId"
-							autofocus></div>
+							ng-change="ppmasternamechanged(ppmapDTO)"
+							ng-model="ppmapDTO.ppId" autofocus></div>
 					</div>
-					<div class="col-xs-5">
-						<span>Select
-							Tally Master Names:<span
-							style="color: red; font-size: 20px;">*</span></span> 
-						<md-input-container style="margin-top:-2px;"> <label>Select
-							Tally Master Names </label> <md-select ng-model="ppmapDTO.tallyMasterId"
-							md-on-close="clearSearchTerm()" ng-change="ontallymasternamechange()" class="md-no-underline"
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingmaptoppmaster"></md-progress-circular>
+					</div>
+					<div class="col-xs-4">
+						<span>Select Tally Master Names:<span
+							style="color: red; font-size: 20px;">*</span></span>
+						<md-input-container style="margin-top:-2px;">
+						<label>Select Tally Master Names </label> <md-select
+							ng-model="ppmapDTO.tallyMasterId" md-on-close="clearSearchTerm()"
+							ng-change="ontallymasternamechange()" class="md-no-underline"
 							data-md-container-class="selectdemoSelectHeader" multiple>
 						<md-select-header class="demo-select-header"> <input
 							ng-model="searchTerm" type="search"
@@ -70,6 +79,10 @@
 							ng-repeat="tmn in tallymasternames | filter:searchTerm track by tmn.cmpId+tmn.masterId"
 							ng-selected="optionallnone">{{tmn.tallyMasterName}}</md-option> </md-optgroup>
 						</md-select> </md-input-container>
+					</div>
+					<div class="col-xs-1">
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingtallymasternames"></md-progress-circular>
 					</div>
 				</div>
 				<br>
@@ -134,7 +147,7 @@
 				</div>
 				<br>
 				<br>
-				<div class="col-lg-8">
+				<div class="col-lg-12">
 					<div class="bs-component">
 						<!-- 					<div class="alert alert-info">
 						<p>Sort key: {{sortKey}}</p>
@@ -146,10 +159,9 @@
 								<input type="text" ng-model="search" class="form-control"
 									placeholder="Search">
 							</div>
-							<button style="margin-left: 50px;"
-								ng-click="savereportdata()" class="btn btn-success">Save</button>
-							<button ng-click="exportData()"
-								class="btn btn-success">Export</button>
+							<button style="margin-left: 50px;" ng-click="savereportdata()"
+								class="btn btn-success">Save</button>
+							<button ng-click="exportData()" class="btn btn-success">Export</button>
 						</form>
 						<br>
 						<div id="exportable">
@@ -180,12 +192,16 @@
 										<td ng-hide="true"
 											ng-model="tallyppmapdata[itemsPerPage * (currentPage-1)+key].masterId">{{tallyppmapdata[key].masterId}}</td>
 										<td><div
-												custom-select="reppmn.masteridindex as reppmn.ppmastername for reppmn in reportppmasternames | filter: {ppmastername: $searchTerm} track by reppmn.masterId"
+												custom-select="reppmn.masteridindex as reppmn.ppmastername for reppmn in reportppmasternames | filter: {ppmastername: $searchTerm} track by reppmn.masteridindex"
 												custom-select-options="ppmasterselectOptions"
 												ng-model="tallyppmapdata[itemsPerPage * (currentPage-1)+key].ppid"
 												style="width: 140px;"></div></td>
 									</tr>
 								</tbody>
+								<div class="col-xs-1">
+									<md-progress-circular md-mode="indeterminate"
+										md-diameter="40px" ng-show="isLoading"></md-progress-circular>
+								</div>
 							</table>
 						</div>
 						<div id="exportableall" ng-hide="true">

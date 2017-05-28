@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.BaseService;
 import com.bizprout.web.app.dto.ClientDTO;
-import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.repository.ClientRepositoryImpl;
 
 @Service
@@ -24,26 +23,32 @@ public class ClientServiceImpl implements BaseService<ClientDTO>{
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 	
 	public void testService(ClientDTO clientdto) {
-		System.out.println("inside test service " + clientdto);
-		logger.info("inside test service " + clientdto);
-		baseRepository.save(clientdto);		
+		try {
+			logger.info("inside test service " + clientdto, this.getClass());
+			baseRepository.save(clientdto);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}		
 	}
 	
 	public int updateservice(ClientDTO clientdto) {
-		System.out.println("inside updateservice " + clientdto);
-		logger.info("inside Update service " + clientdto);
-		int res=clientRepo.updateClient(clientdto);		
+		int res = 0;
+		try {
+			logger.info("inside Update service " + clientdto, this.getClass());
+			res = clientRepo.updateClient(clientdto);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}		
 		return res;
 	}
 	
 	public List<ClientDTO> getClientNames() {
 		List<ClientDTO> client = null;
 		try {
-			logger.info("inside getClientNames method ");
+			logger.info("inside getClientNames method ", this.getClass());
 			client = clientRepo.getClientNames();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			logger.error("Exception in getClientNames method \t" + e.getMessage());
+			logger.error("Exception in getClientNames method \t" + e.getMessage(), this.getClass());
 		}
 		return client;
 	}
@@ -51,29 +56,32 @@ public class ClientServiceImpl implements BaseService<ClientDTO>{
 	public List<ClientDTO> getClientIdName() {
 		List<ClientDTO> client = null;
 		try {
-			logger.info("inside getClientIdName method ");
+			logger.info("inside getClientIdName method "+this.getClass());
 			client = clientRepo.getClientIdName();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			logger.error("Exception in getClientIdName method \t" + e.getMessage());
+			logger.error("Exception in getClientIdName method \t" + e.getMessage(), this.getClass());
 		}
 		return client;
 	}
 	
 	public List<ClientDTO> getService() {		
-		logger.info("inside get service " );
-		logger.info("inside get service " + (clientRepo.getClients()));
-		return clientRepo.getClients();		
+		try {
+			logger.info("inside get service " + (clientRepo.getClients()), this.getClass());
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), this.getClass());
+		}		
+		return clientRepo.getClients();
 	}
 	
 	public ClientDTO getClientData(int clientid){
 		
 		ClientDTO clientdata = null;
 		try {
-			logger.info("inside getClientData method...");
+			logger.info("inside getClientData method..."+this.getClass());
 			clientdata = clientRepo.getClientData(clientid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return clientdata;
 	}

@@ -42,11 +42,9 @@ public class UserResource {
 	public UserResource()
 	{
 		try {
-			System.out.println(this.getClass().getSimpleName() + "Created...");
-			logger.debug(this.getClass().getSimpleName() + "Created...");
+			logger.debug(this.getClass().getSimpleName() + "Created..."+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 
@@ -74,10 +72,8 @@ public class UserResource {
 			userDTO.setPassword(password);
 
 			int id= userservice.CreateUser(userDTO);
-			logger.debug("Request.......adduser method......");
+			logger.debug("Request.......adduser method......"+this.getClass());
 			
-			System.out.println(id);
-
 			if(id > 0)
 			{
 				jsonresponse.add("success");
@@ -92,8 +88,7 @@ public class UserResource {
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}		
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
@@ -113,18 +108,33 @@ public class UserResource {
 
 		try {
 			int res=userservice.UpdateUser(usereditVO);
-			logger.debug("Request.......Edit user method......");
+			logger.debug("Request.......Edit user method......"+this.getClass());
 
 			if(res>0)
 			{
-				jsonresponse.add("success");
+				if(usereditVO.getUsername().equals(usereditVO.getEditusername()))
+				{
+					jsonresponse.add("success");
+				}
+				else
+				{						
+					UserDTO userdto=userservice.getUserData(usereditVO.getEditusername());
+					
+					String decryptedpassword=AESencrp.decrypt(userdto.getPassword());
+
+					Email email=new Email();
+					email.usernameChangeEmail(userdto.getUsername(), decryptedpassword);
+					
+					jsonresponse.add("success");
+				}
+				
 			}
 			else
 			{
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);		
 	}
@@ -136,13 +146,26 @@ public class UserResource {
 		List<String> udto = null;
 		try {
 			udto=userservice.getUsernameList();
-			logger.debug("Request......getUsernameList......");
+			logger.debug("Request......getUsernameList......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return udto;
 	}
+	
+	@GetMapping(value="/getusers")
+	  @ResponseBody
+	  public List<UserDTO> getUsersList()
+	  {
+	    List<UserDTO> udto = null;
+	    try {
+	      udto=userservice.getUsers();
+	      logger.debug("Request......getUsernameList......"+this.getClass());
+	    } catch (Exception e) {
+	    	logger.error(e.getMessage()+"..."+this.getClass());
+	    }
+	    return udto;
+	  }
 
 	@GetMapping(value="/getusersreport")
 	@ResponseBody
@@ -151,10 +174,9 @@ public class UserResource {
 		List<UserDTO> udto = null;
 		try {
 			udto=userservice.getUsers();
-			logger.debug("Request......getUsersreport......");
+			logger.debug("Request......getUsersreport......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return udto;
 	}
@@ -164,13 +186,12 @@ public class UserResource {
 	{
 		ResponseEntity<UserDTO> resp = null;
 		try {
-			logger.debug("Request......getUserData......");
+			logger.debug("Request......getUserData......"+this.getClass());
 
-			UserDTO userdto=userservice.getUserData(uservo);
+			UserDTO userdto=userservice.getUserData(uservo.getUsername());
 			resp = new ResponseEntity<UserDTO>(userdto, HttpStatus.OK);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return resp;
 	}
@@ -180,7 +201,7 @@ public class UserResource {
 	{
 		UserDTO userdto = null;
 		try {
-			logger.debug("Request......getUserDataById......");
+			logger.debug("Request......getUserDataById......"+this.getClass());
 
 			userdto=userservice.getUserDataById(userDTO.getUserid());
 			
@@ -189,8 +210,7 @@ public class UserResource {
 			userdto.setPassword(password);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return userdto;
 	}
@@ -201,7 +221,7 @@ public class UserResource {
 		List<Object> jsonresponse = new ArrayList<Object>();
 
 		try {
-			logger.debug("Request......updatePassword......");
+			logger.debug("Request......updatePassword......"+this.getClass());
 
 			String passwordencrypted=AESencrp.encrypt(userdto.getPassword());
 
@@ -217,8 +237,46 @@ public class UserResource {
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+	}
+	
+	@PostMapping(value="/forgotpassword", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> resetPassword(@RequestBody UserDTO userdto)
+	{
+		List<Object> jsonresponse = new ArrayList<Object>();
+
+		try {
+			logger.debug("Request......resetPassword......"+this.getClass());
+			
+			//generate and reset the password
+			
+			UUID uuid = UUID.randomUUID();
+			long l = ByteBuffer.wrap(uuid.toString().getBytes()).getLong();
+
+			String password=AESencrp.encrypt(Long.toString(l, Character.MAX_RADIX).subSequence(0, 9).toString());
+
+			userdto.setPassword(password);
+			
+			int res=userservice.resetPassword(userdto.getUsername(), userdto.getPassword());
+
+			if(res > 0)
+			{				
+				String decryptedpassword=AESencrp.decrypt(userdto.getPassword());
+
+				Email email=new Email();
+				email.sendForgotPasswordEmail(userdto.getUsername(), decryptedpassword);
+				
+				jsonresponse.add("success");
+			}
+			else
+			{
+				jsonresponse.add("failure");
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}

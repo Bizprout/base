@@ -15,16 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
-import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.UserDTO;
 import com.bizprout.web.app.dto.UserEditVO;
 import com.bizprout.web.app.resource.AESencrp;
 
 @Repository
-@Transactional
 public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 
 	@Autowired
@@ -35,15 +32,14 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 	public List<UserDTO> getusers() {
 		List<UserDTO> user = null;
 		try {
-			logger.info("Inside getusers method.......");
+			logger.info("Inside getusers method......."+this.getClass());
 
 			Session session = factory.getCurrentSession();
 
-			 user= session.createQuery("from UserDTO").list();
+			 user= session.createQuery("from UserDTO where usertype!='PPsuperadmin'").list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return user;
 	}
@@ -52,7 +48,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 		Session session;
 		Query qry = null;
 		try {
-			logger.info("Inside getLoginUser method.......");
+			logger.info("Inside getLoginUser method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -60,26 +56,30 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 
 			qry.setParameter("username",username);
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return (UserDTO) qry.uniqueResult();
 	}
 	
 	public UserDTO getUserDataById(int userid) 
 	{
-		logger.info("Inside getUserDataById method.......");
+		logger.info("Inside getUserDataById method......."+this.getClass());
 		
-		Session session = factory.getCurrentSession();
+		UserDTO comp = null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		Criteria cr = session.createCriteria(UserDTO.class)
-				.add(Restrictions.eq("userid", userid))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("username"), "username")
-						.add(Projections.property("password"), "password"))
-						.setResultTransformer(Transformers.aliasToBean(UserDTO.class));
+			Criteria cr = session.createCriteria(UserDTO.class)
+					.add(Restrictions.eq("userid", userid))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("username"), "username")
+							.add(Projections.property("password"), "password"))
+							.setResultTransformer(Transformers.aliasToBean(UserDTO.class));
 
-		UserDTO comp=(UserDTO) cr.uniqueResult();
+			comp = (UserDTO) cr.uniqueResult();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return comp;
 	}
@@ -91,7 +91,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside getLoginUser method.......");
+			logger.info("Inside getLoginUser method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 			
@@ -109,12 +109,8 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			 result= qry.executeUpdate();
 			 tx.commit();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
 	}
@@ -125,16 +121,15 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 		Query qry=null;
 		List<String> usernamelist = null;
 		try {
-			logger.info("Inside UserRepositoryImpl......getUsernameList method.......");
+			logger.info("Inside UserRepositoryImpl......getUsernameList method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
-			qry=session.createQuery("select username from UserDTO where userstatus='Active'");
+			qry=session.createQuery("select username from UserDTO where usertype!='PPsuperadmin'");
 			usernamelist=qry.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return usernamelist;
 	}
@@ -145,7 +140,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 		Query qry = null;
 		
 		try {
-			logger.info("Inside getLoginUser method.......");
+			logger.info("Inside getLoginUser method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 			
@@ -158,7 +153,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			qry.setParameter("pwd",password);
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return (UserDTO) qry.uniqueResult();
 	}
@@ -170,7 +165,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside updatePassword method.......");
+			logger.info("Inside updatePassword method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 			
@@ -184,14 +179,44 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			 result= qry.executeUpdate();
 			 tx.commit();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
 		}
 		finally {
 			session.close();
 		}
 		return result;
+	}
+
+	public int resetPassword(String username, String password) {
+		
+		int result = 0;
+		Session session = null;
+		Transaction tx = null;
+
+		try {
+			logger.info("Inside resetPassword method......."+this.getClass());
+
+			session = factory.getCurrentSession();
+			
+			tx=session.beginTransaction();
+
+			Query qry=session.createQuery("UPDATE UserDTO set password=:pass WHERE username=:user");
+
+			qry.setParameter("pass",password);
+			qry.setParameter("user",username);
+			
+			 result= qry.executeUpdate();
+			 tx.commit();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+			tx.rollback();
+		}
+		finally {
+			session.close();
+		}
+		return result;
+		
 	}
 
 }

@@ -3,6 +3,16 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 	console.log("ClientController loaded.....");
 
 	$scope.cmpname=$localStorage.cmpname;
+	
+	if($localStorage.cmpid===undefined)
+	{
+		$location.path("/home");
+	}
+	
+	if($localStorage.userid===undefined)
+	{
+		$location.path("/");
+	}
 
 
 	// **********switch flag for success message**********
@@ -38,8 +48,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 		$scope.clientDTO.contactEmail='';
 		$scope.clientDTO.contactTelPhone = '';
 
-		/*$scope.clientstatus = ["Active", "Inactive"];
-		$scope.clientDTO.status = $scope.clientstatus[0];	*/
+		$scope.clientstatus = ["Active", "Inactive"];
 
 		//*********Clear all the fields when clear button pressed*******
 		$scope.clear=function(){
@@ -101,7 +110,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 						}
 						else if(data[0]==="failure")
 						{
-							$scope.alerts = { type: 'failure', msg: 'Client not Created'};
+							$scope.alerts = { type: 'danger', msg: 'Client not Created'};
 							$scope.showSuccessAlert = true;
 						}
 						else
@@ -113,7 +122,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 						}
 					}).error(function(data, status, headers, config){
 
-						$scope.alerts = { type: 'failure', msg: 'Client not Created'};
+						$scope.alerts = { type: 'danger', msg: 'Client not Created'};
 						$scope.showSuccessAlert = true;
 
 					});	
@@ -255,45 +264,144 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 					}
 					else
 					{
-						$http({
-							method : "POST",
-							url : "client/edit",
-							data : eclientDTO,
-							headers : {
-								'Content-Type' : 'application/json'
-							}
-						}).success(function(data, status, headers, config){
-
-							if(data[0]==="success")
-							{
+						if($scope.eclientDTO.status==="Inactive")
+						{
+							var confirm = $mdDialog.confirm()
+							.title('Are you sure you want to make this Client Inactive?')
+							.textContent('Note: All the Companies Mapped to this Client will be Inactive.')
+							.ok('OK')
+							.cancel('Cancel');
+							
+							$mdDialog.show(confirm).then(function() {
 								$http({
 									method : "POST",
-									url : "company/updatecompanystatus",
-									data : {"clientId": $scope.eclientDTO.clientId, "status": $scope.eclientDTO.status},
+									url : "client/edit",
+									data : eclientDTO,
 									headers : {
 										'Content-Type' : 'application/json'
 									}
-								}).success(function(dataa, status, headers, config){
+								}).success(function(data, status, headers, config){
+
+									if(data[0]==="success")
+									{
+										$http({
+											method : "POST",
+											url : "company/updatecompanystatus",
+											data : {"clientId": $scope.eclientDTO.clientId, "status": $scope.eclientDTO.status},
+											headers : {
+												'Content-Type' : 'application/json'
+											}
+										}).success(function(dataa, status, headers, config){
+
+										}).error(function(data, status, headers, config){
+											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+											$scope.showSuccessAlert = true;
+										});
+
+										if(data[0]==="success")
+										{
+											$scope.alerts = { type: 'success', msg: 'Client Updated!'};
+											$scope.showSuccessAlert = true;
+											$scope.showerror=false;
+
+											$scope.eclientDTO.clientId='';
+											$scope.eclientDTO.clientName='';
+											$scope.eclientDTO.contactPerson='';
+											$scope.eclientDTO.contactEmail='';
+											$scope.eclientDTO.contactTelPhone = '';
+											$scope.eclientDTO.status = '';
+											
+											$scope.oneditclick();
+										}
+										else if(data[0]==="failure")
+										{
+											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+											$scope.showSuccessAlert = true;
+										}
+										else
+										{
+											$scope.alerts = { type: 'danger'};
+											$scope.errdata=data[0];
+											$scope.showerror=true;
+											$scope.showSuccessAlert = false;
+										}
+									}
+									else if(data[0]==="failure")
+									{
+										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+										$scope.showSuccessAlert = true;
+									}
+									else
+									{
+										$scope.alerts = { type: 'danger'};
+										$scope.errdata=data[0];
+										$scope.showerror=true;
+										$scope.showSuccessAlert = false;
+									}
 
 								}).error(function(data, status, headers, config){
-									$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+									// called asynchronously if an error occurs
+									// or server returns response with an error status.	
+
+									$scope.alerts = { type: 'danger',msg: 'Client not Updated!'};
 									$scope.showSuccessAlert = true;
 								});
+							});
+						}
+						else
+						{
+							$http({
+								method : "POST",
+								url : "client/edit",
+								data : eclientDTO,
+								headers : {
+									'Content-Type' : 'application/json'
+								}
+							}).success(function(data, status, headers, config){
 
 								if(data[0]==="success")
 								{
-									$scope.alerts = { type: 'success', msg: 'Client Updated!'};
-									$scope.showSuccessAlert = true;
-									$scope.showerror=false;
+									$http({
+										method : "POST",
+										url : "company/updatecompanystatus",
+										data : {"clientId": $scope.eclientDTO.clientId, "status": $scope.eclientDTO.status},
+										headers : {
+											'Content-Type' : 'application/json'
+										}
+									}).success(function(dataa, status, headers, config){
 
-									$scope.eclientDTO.clientId='';
-									$scope.eclientDTO.clientName='';
-									$scope.eclientDTO.contactPerson='';
-									$scope.eclientDTO.contactEmail='';
-									$scope.eclientDTO.contactTelPhone = '';
-									$scope.eclientDTO.status = '';
-									
-									$scope.oneditclick();
+									}).error(function(data, status, headers, config){
+										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+										$scope.showSuccessAlert = true;
+									});
+
+									if(data[0]==="success")
+									{
+										$scope.alerts = { type: 'success', msg: 'Client Updated!'};
+										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
+
+										$scope.eclientDTO.clientId='';
+										$scope.eclientDTO.clientName='';
+										$scope.eclientDTO.contactPerson='';
+										$scope.eclientDTO.contactEmail='';
+										$scope.eclientDTO.contactTelPhone = '';
+										$scope.eclientDTO.status = '';
+										
+										$scope.oneditclick();
+									}
+									else if(data[0]==="failure")
+									{
+										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+										$scope.showSuccessAlert = true;
+									}
+									else
+									{
+										$scope.alerts = { type: 'danger'};
+										$scope.errdata=data[0];
+										$scope.showerror=true;
+										$scope.showSuccessAlert = false;
+									}
 								}
 								else if(data[0]==="failure")
 								{
@@ -307,27 +415,15 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 									$scope.showerror=true;
 									$scope.showSuccessAlert = false;
 								}
-							}
-							else if(data[0]==="failure")
-							{
-								$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+
+							}).error(function(data, status, headers, config){
+								// called asynchronously if an error occurs
+								// or server returns response with an error status.	
+
+								$scope.alerts = { type: 'danger',msg: 'Client not Updated!'};
 								$scope.showSuccessAlert = true;
-							}
-							else
-							{
-								$scope.alerts = { type: 'danger'};
-								$scope.errdata=data[0];
-								$scope.showerror=true;
-								$scope.showSuccessAlert = false;
-							}
-
-						}).error(function(data, status, headers, config){
-							// called asynchronously if an error occurs
-							// or server returns response with an error status.	
-
-							$scope.alerts = { type: 'danger',msg: 'Client not Updated!'};
-							$scope.showSuccessAlert = true;
-						});
+							});
+						}
 					}
 				}
 				else

@@ -3,6 +3,16 @@ baseApp.controller("ChangePasswordController", function($scope, $location, $http
 	console.log("ChangePasswordController loaded...");
 
 	$scope.cmpname=$localStorage.cmpname;
+	
+	if($localStorage.cmpid===undefined)
+	{
+		$location.path("/home");
+	}
+	
+	if($localStorage.userid===undefined)
+	{
+		$location.path("/");
+	}
 
 
 	// **********switch flag for success message**********

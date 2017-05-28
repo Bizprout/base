@@ -6,7 +6,7 @@ import com.bizprout.web.app.dto.CompanyDTO;
 
 public interface CompanyService<T> {
 
-	public CompanyDTO getClientStatus(String companyname);
+	public CompanyDTO getClientStatus(int cmpid);
 
 	public int updateCompany(CompanyDTO t);
 	
@@ -15,4 +15,8 @@ public interface CompanyService<T> {
 	public int updateCompanyStatus(CompanyDTO t);
 	
 	public List<CompanyDTO> getCompanyIdName();
+	
+	public List<CompanyDTO> getCompanyIdNameall();
+	
+	public CompanyDTO getCompanyIdByName(String cmpname);
 }

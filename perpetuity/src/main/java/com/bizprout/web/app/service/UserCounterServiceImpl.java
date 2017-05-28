@@ -2,25 +2,20 @@ package com.bizprout.web.app.service;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.UserCounterService;
-import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.UserCounterDTO;
 import com.bizprout.web.app.repository.UserCounterRepositoryImpl;
 
 @Service
+@Transactional
 public class UserCounterServiceImpl implements UserCounterService<UserCounterDTO> {
 
 
@@ -42,21 +37,21 @@ public class UserCounterServiceImpl implements UserCounterService<UserCounterDTO
 			logger.debug("inside insert user counter method "+this.getClass());
 			baserepository.save(usercounterdto);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 
 	@Override
-	public List<UserCounterDTO> getlastlogindatetime(int userid) {
+	public UserCounterDTO getlastlogindatetime(int userid) {
 		
-		List<UserCounterDTO> usercounter=null;
+		UserCounterDTO usercounter=null;
 
 		try {
-			logger.info("Inside getlastlogindatetime method.......");
+			logger.info("Inside getlastlogindatetime method......."+this.getClass());
 
 			usercounter=usercounterrepository.getlastlogindatetime(userid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		
 		return usercounter;

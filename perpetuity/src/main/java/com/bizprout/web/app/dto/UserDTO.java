@@ -6,12 +6,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
+import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.security.core.Authentication;
 
 
 @Entity
@@ -45,6 +45,9 @@ public class UserDTO {
 	
 	@Column(name = "mobile_no")
 	private String mobile;
+	
+	@Transient
+	private Authentication authentication;
 
 	public int getUserid() {
 		return userid;
@@ -100,6 +103,14 @@ public class UserDTO {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public Authentication getAuthentication() {
+		return authentication;
+	}
+
+	public void setAuthentication(Authentication authentication) {
+		this.authentication = authentication;
 	}
 
 }

@@ -2,8 +2,6 @@ package com.bizprout.web.api.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.PpMasterDTO;
 import com.bizprout.web.app.dto.TallyMappingDTO;
@@ -22,6 +20,8 @@ public interface TallyMappingService<T> {
 	public int updateTallyMapping(TallyMappingDTO tallymappingdto);
 	
 	public List<Integer> getPpMastersMapping(int cmpid, int ppid);
+	
+	public int deletePpidCmpid(int cmpid, int ppid);
 	
 	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype);
 	

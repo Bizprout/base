@@ -1,6 +1,11 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
+			<ol class="breadcrumb">
+				<li><a href="#home">Home</a></li>
+				<li><a href="#masters">Masters</a></li>
+				<li class="active">PP Master</li>
+			</ol>
 			<p style="text-align: center; margin-bottom: -24px;">
 				<b>Company:</b> {{cmpname}}
 			</p>
@@ -134,20 +139,20 @@
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
 							ng-show="isLoadingeditppmastername"></md-progress-circular>
 					</div>
-					
 					<div ng-hide="hidecostcat">
-					<div class="col-xs-3">
-						<span>Select Category:</span><span
-							style="color: red; font-size: 20px;">*</span><br>
-						<div
-							custom-select="ccat for ccat in categories |  filter: $searchTerm"
-							custom-select-options="catselectOptions" ng-change="oneditcategorychange()"
-							ng-model="editppmasterDTO.category" autofocus></div>
-					</div>
-					<div class="col-xs-1">
-						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
-							ng-show="isLoadingselecteditcategory"></md-progress-circular>
-					</div>
+						<div class="col-xs-3">
+							<span>Select Category:</span><span
+								style="color: red; font-size: 20px;">*</span><br>
+							<div
+								custom-select="ccat for ccat in categories |  filter: $searchTerm"
+								custom-select-options="catselectOptions"
+								ng-change="oneditcategorychange()"
+								ng-model="editppmasterDTO.category" autofocus></div>
+						</div>
+						<div class="col-xs-1">
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingselecteditcategory"></md-progress-circular>
+						</div>
 					</div>
 				</div>
 				<br>
@@ -203,8 +208,9 @@
 				</div>
 				<!-- </form> -->
 				<div id="ppexcelexport" ng-hide="true">
-					<h4>Upload Format for Creating PP Masters:</h4>
-					<i>Category to be entered only for Master Type: Cost Center</i>
+					<b>Upload Format for Creating PP Masters</b><br> <b>Company
+						Name: {{cmpname}}</b><br> <i>Category to be entered only for
+						Master Type: Cost Center</i>
 					<table border="1">
 						<tr>
 							<th>Master Type</th>
@@ -216,7 +222,7 @@
 				</div>
 				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
 					class="md-padding">
-				<div class="col-lg-8">
+				<div class="col-lg-12">
 					<!-- 					<div class="alert alert-info">
 						<p>Sort key: {{sortKey}}</p>
 						<p>Reverse: {{reverse}}</p>

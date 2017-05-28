@@ -2,14 +2,20 @@
 <div class="dashboard-page">
 	<div class="right" style="margin-left: 100px;">
 		<div class="heading">
+			<ol class="breadcrumb">
+				<li><a href="#home">Home</a></li>
+				<li class="active">Mapping</li>
+			</ol>
 			<p style="text-align: center;">
 				<b>Company:</b> {{cmpname}}
 			</p>
 			<div class="text">Choose Your Option for Mapping</div>
 		</div>
 		<div class="app-section">
-			<div class="app-section-container path" role="button"
-				data-toggle="modal" data-target="#last-step-modal"
+			<md-progress-circular md-mode="indeterminate" md-diameter="50px"
+				ng-show="isLoadingmapping"></md-progress-circular>
+			<div class="app-section-container path" ng-hide="hideusermapping"
+				role="button" data-toggle="modal" data-target="#last-step-modal"
 				style="width: calc(( 100% - 90px - 28px)/2);">
 				<div class="app-type">
 					<div class="title">Users Mapping to Company</div>
@@ -17,10 +23,11 @@
 				<div class="content">Manage Add, Remove, View Reports for
 					Mapping Users to Clients.</div>
 				<a href="#mappingUsers" style="text-decoration: none;"><button
-						type="button" class="btn btn-success">Continue</button></a>
+						type="button" ng-disabled="usermapbuttondisable"
+						class="btn btn-success">Continue</button></a>
 			</div>
-			<div class="app-section-container path" role="button"
-				data-toggle="modal" data-target="#last-step-modal"
+			<div class="app-section-container path" ng-hide="hideppmapping"
+				role="button" data-toggle="modal" data-target="#last-step-modal"
 				style="width: calc(( 100% - 90px - 28px)/2);">
 				<div class="app-type">
 					<div class="title">PP Mapping to Tally</div>
@@ -28,7 +35,8 @@
 				<div class="content">Manage Create, Edit, View Reports for
 					Mapping PP Masters to Tally Masters.</div>
 				<a href="#PPmapping" style="text-decoration: none;"><button
-						type="button" class="btn btn-success">Continue</button></a>
+						type="button" ng-disabled="ppmapbuttondisable"
+						class="btn btn-success">Continue</button></a>
 			</div>
 		</div>
 	</div>

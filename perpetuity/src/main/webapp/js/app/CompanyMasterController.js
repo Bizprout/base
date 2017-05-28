@@ -9,7 +9,19 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 	$scope.cmpname=$localStorage.cmpname;
 
-	if($localStorage.usertype==='PPAdmin')
+	if($localStorage.cmpid===undefined)
+	{
+		$location.path("/home");
+	}
+
+	if($localStorage.userid===undefined)
+	{
+		$location.path("/");
+	}
+
+	console.log($localStorage.usertype);
+
+	if($localStorage.usertype!="PPsuperadmin")
 	{
 		$scope.compdisable=true;
 		$scope.clientdisable=true;
@@ -88,7 +100,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 		$http({
 			method : "GET",
-			url : "company/getcompanyidname",
+			url : "company/getcompanyidnameall",
 			headers : {
 				'Content-Type' : 'application/json'
 			}
@@ -104,7 +116,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 			$http({
 				method : "POST",
 				url : "company/getclientstatus",
-				data : {"tallyCmpName":$localStorage.cmpname},
+				data : {"cmpId":$localStorage.cmpid},
 				headers : {
 					'Content-Type' : 'application/json'
 				}
@@ -225,6 +237,129 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 		});	
 
 
+		$scope.oncompanychange=function(){
+
+			$http({
+				method : "POST",
+				url : "company/getclientstatus",
+				data : {"cmpId":$scope.companyDTO.cmpId},
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(data, status, headers, config){
+
+				//*******options for company names********************************
+
+				$scope.clientid=data.clientId;
+				$scope.status=data.status;
+
+				if($scope.clientid===0 && $scope.status==="Inactive")
+				{
+					$scope.isLoadingclient=true;
+					$scope.isLoadingbookfrom=true;
+					$scope.isLoadingtallyguid=true;
+					$scope.isLoadingsyncdate=true;
+					$scope.isLoadinguploadtimer=true;
+					$scope.isLoadingdownloadtimer=true;
+					$scope.isLoadingnoofretrials=true;
+					$scope.isLoadingcompanystatus=true;
+
+					$http({
+						method : "GET",
+						url : "client/getclientidname",
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(dataclientnames, status, headers, config){
+
+						//*******options for user names and default selected option*********
+
+						$scope.clientnames=dataclientnames;
+
+						$scope.tallyGUID=data.tallyGUID;
+						$scope.companyDTO.appFromDate=new Date(data.appFromDate);
+						$scope.companyDTO.uploadTimer=new Date(data.appFromDate+" "+data.uploadTimer);
+						$scope.companyDTO.dnldTimer=new Date(data.appFromDate+" "+data.dnldTimer);
+						$scope.companyDTO.maxRetrial=data.maxRetrial;
+						$scope.companyDTO.status=data.status;
+						$scope.bookfrom=$filter('date')(data.bookfrom, 'dd-MMM-yyyy');
+
+						$scope.isLoadingclient=false;
+						$scope.isLoadingbookfrom=false;
+						$scope.isLoadingtallyguid=false;
+						$scope.isLoadingsyncdate=false;
+						$scope.isLoadinguploadtimer=false;
+						$scope.isLoadingdownloadtimer=false;
+						$scope.isLoadingnoofretrials=false;
+						$scope.isLoadingcompanystatus=false;
+
+
+						if(data.appFromDate===null){$scope.companyDTO.appFromDate='';}
+						if(data.uploadTimer===null){$scope.companyDTO.uploadTimer='';}
+						if(data.dnldTimer===null){$scope.companyDTO.dnldTimer='';}
+
+					}).error(function(data, status, headers, config){
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
+				}
+				else
+				{	
+					$scope.isLoadingclient=true;
+					$scope.isLoadingbookfrom=true;
+					$scope.isLoadingtallyguid=true;
+					$scope.isLoadingsyncdate=true;
+					$scope.isLoadinguploadtimer=true;
+					$scope.isLoadingdownloadtimer=true;
+					$scope.isLoadingnoofretrials=true;
+					$scope.isLoadingcompanystatus=true;
+
+					$http({
+						method : "GET",
+						url : "client/getclientidname",
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(dataclientnames, status, headers, config){
+
+						$scope.clientnames=dataclientnames;
+						$scope.companyDTO.clientId=data.clientId;
+						$scope.tallyGUID=data.tallyGUID;
+						$scope.companyDTO.appFromDate=new Date(data.appFromDate);
+						$scope.companyDTO.uploadTimer=new Date(data.appFromDate+" "+data.uploadTimer);
+						$scope.companyDTO.dnldTimer=new Date(data.appFromDate+" "+data.dnldTimer);
+						$scope.companyDTO.maxRetrial=data.maxRetrial;
+						$scope.companyDTO.status=data.status;
+						$scope.bookfrom=$filter('date')(data.bookfrom, 'dd-MMM-yyyy');
+
+						$scope.isLoadingclient=false;
+						$scope.isLoadingbookfrom=false;
+						$scope.isLoadingtallyguid=false;
+						$scope.isLoadingsyncdate=false;
+						$scope.isLoadinguploadtimer=false;
+						$scope.isLoadingdownloadtimer=false;
+						$scope.isLoadingnoofretrials=false;
+						$scope.isLoadingcompanystatus=false;
+
+						if(data.appFromDate===null){$scope.companyDTO.appFromDate='';}
+						if(data.uploadTimer===null){$scope.companyDTO.uploadTimer='';}
+						if(data.dnldTimer===null){$scope.companyDTO.dnldTimer='';}
+
+					}).error(function(data, status, headers, config){
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
+
+				}
+
+			}).error(function(data, status, headers, config){
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});		
+
+		};
+
+
 		$scope.updatecompany=function(companyDTO)
 		{			
 			console.log("inside updatecompany..");
@@ -271,7 +406,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 				}
 				else
 				{
-					if($scope.companyDTO.status==="Inactive")
+					if($scope.companyDTO.status==="Inactive" && $localStorage.usertype==="PPAdmin")
 					{
 						var confirm = $mdDialog.confirm()
 						.title('Are you sure you want to make this Company Inactive?')
@@ -295,7 +430,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 									$scope.alerts = { type: 'success', msg: 'Company Updated!'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
-									
+
 									$localStorage.cmpid='';
 									$localStorage.cmpname='';
 									$location.path('/home');
@@ -322,39 +457,92 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 					}
 					else
 					{
-						$http({
-							method : "POST",
-							url : "company/update",
-							data : companyDTO,
-							headers : {
-								'Content-Type' : 'application/json'
-							}
-						}).success(function(data, status, headers, config){
 
-							if(data[0]==="success")
-							{
-								$scope.alerts = { type: 'success', msg: 'Company Updated!'};
-								$scope.showSuccessAlert = true;
-								$scope.showerror=false;
-							}
-							else if(data[0]==="failure")
-							{
+						if($scope.companyDTO.status==="Inactive")
+						{
+							var confirm = $mdDialog.confirm()
+							.title('Are you sure you want to make this Company Inactive?')
+							.ok('OK')
+							.cancel('Cancel');
+
+							$mdDialog.show(confirm).then(function() {
+								$http({
+									method : "POST",
+									url : "company/update",
+									data : companyDTO,
+									headers : {
+										'Content-Type' : 'application/json'
+									}
+								}).success(function(data, status, headers, config){
+
+									if(data[0]==="success")
+									{
+										$scope.alerts = { type: 'success', msg: 'Company Updated!'};
+										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
+
+										$scope.oncreateeditclick();
+									}
+									else if(data[0]==="failure")
+									{
+										$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
+										$scope.showSuccessAlert = true;
+									}
+									else
+									{
+										$scope.alerts = { type: 'danger', msgtype: 'Error!'};
+										$scope.errdata=data[0];
+										$scope.showerror=true;
+										$scope.showSuccessAlert = true;
+									}
+
+								}).error(function(data, status, headers, config){
+
+									$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
+									$scope.showSuccessAlert = true;
+								});
+							});
+						}
+						else
+						{
+							$http({
+								method : "POST",
+								url : "company/update",
+								data : companyDTO,
+								headers : {
+									'Content-Type' : 'application/json'
+								}
+							}).success(function(data, status, headers, config){
+
+								if(data[0]==="success")
+								{
+									$scope.alerts = { type: 'success', msg: 'Company Updated!'};
+									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
+
+									$scope.oncreateeditclick();
+								}
+								else if(data[0]==="failure")
+								{
+									$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
+									$scope.showSuccessAlert = true;
+								}
+								else
+								{
+									$scope.alerts = { type: 'danger', msgtype: 'Error!'};
+									$scope.errdata=data[0];
+									$scope.showerror=true;
+									$scope.showSuccessAlert = true;
+								}
+
+							}).error(function(data, status, headers, config){
+
 								$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 								$scope.showSuccessAlert = true;
-							}
-							else
-							{
-								$scope.alerts = { type: 'danger', msgtype: 'Error!'};
-								$scope.errdata=data[0];
-								$scope.showerror=true;
-								$scope.showSuccessAlert = true;
-							}
+							});
+						}
 
-						}).error(function(data, status, headers, config){
 
-							$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
-							$scope.showSuccessAlert = true;
-						});
 					}					
 				}
 			}
@@ -379,7 +567,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 		$scope.company = []; //declare an empty array
 		$scope.isLoading=true;
-		
+
 		$http({
 			method : "POST",
 			url : "company/getcompanydata",
@@ -388,10 +576,10 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 				'Content-Type' : 'application/json'
 			}
 		}).success(function(reportdata, status, headers, config){
-			
+
 			$scope.company = reportdata;  //ajax request to fetch data into $scope.data
 			$scope.isLoading=false;
-			
+
 		}).error(function(data, status, headers, config){
 
 			$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
@@ -404,7 +592,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 		};
 
 		$scope.exportData = function () {
-			
+
 			var confirm = $mdDialog.confirm()
 			.title('Would you like to Export Table data to Excel?')
 			.ok('OK')

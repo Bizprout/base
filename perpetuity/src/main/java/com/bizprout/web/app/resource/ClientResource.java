@@ -39,7 +39,6 @@ public class ClientResource {
 
 	public ClientResource()
 	{
-		System.out.println(this.getClass().getSimpleName() + "Created...");
 		logger.debug(this.getClass().getSimpleName() + "Created...");
 	}
 
@@ -57,7 +56,7 @@ public class ClientResource {
 
 		try {
 			baseService.testService(clientdto);
-			logger.info("Request.......adduser method......");
+			logger.info("Request.......adduser method......"+this.getClass());
 
 			if(clientdto.getClientId()>0)
 			{
@@ -69,7 +68,7 @@ public class ClientResource {
 			}
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
@@ -88,7 +87,7 @@ public class ClientResource {
 
 		try {
 			int res=clientService.updateservice(clientdto);
-			logger.info("Request.......Edit client method......");
+			logger.info("Request.......Edit client method......"+this.getClass());
 
 
 			if(res>0)
@@ -100,7 +99,7 @@ public class ClientResource {
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
@@ -112,10 +111,9 @@ public class ClientResource {
 		List<ClientDTO> cdto = null;
 		try {
 			cdto=clientService.getClientNames();
-			logger.debug("Request......getClient Name List......");
+			logger.debug("Request......getClient Name List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return cdto;
 	}
@@ -127,10 +125,9 @@ public class ClientResource {
 		List<ClientDTO> cdto = null;
 		try {
 			cdto=clientService.getClientIdName();
-			logger.debug("Request......getClientIdName List......");
+			logger.debug("Request......getClientIdName List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return cdto;
 	}
@@ -138,8 +135,13 @@ public class ClientResource {
 	@PostMapping(value="/getclientdata")
 	public ResponseEntity<ClientDTO> getClientData(@RequestBody ClientDTO clientdto)
 	{
-		ClientDTO cDTO=clientService.getClientData(clientdto.getClientId());
-		logger.info("Request.......getclientdata method......");
+		ClientDTO cDTO=null;
+		try {
+			cDTO = clientService.getClientData(clientdto.getClientId());
+			logger.info("Request.......getclientdata method......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return new ResponseEntity<ClientDTO>(cDTO, HttpStatus.OK);
 	}
@@ -148,9 +150,14 @@ public class ClientResource {
 	@ResponseBody
 	public  List<ClientDTO> getClient()
 	{
-		logger.info("Request.......get user method......");
-		List<ClientDTO> listOfClients= new ArrayList<ClientDTO>();        
-		listOfClients = clientService.getService();
+		List<ClientDTO> listOfClients = null;
+		try {
+			logger.info("Request.......get user method......"+this.getClass());
+			listOfClients = new ArrayList<ClientDTO>();        
+			listOfClients = clientService.getService();
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 		return listOfClients;		
 	}
 }

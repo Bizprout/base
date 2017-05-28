@@ -19,14 +19,14 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 
-	public CompanyDTO getClientStatus(String companyname) {
+	public CompanyDTO getClientStatus(int cmpid) {
 		
 		CompanyDTO compDTO = null ;
 		try {
-			logger.info("inside getClientStatus service method ");
-			compDTO= companyrepository.getClientStatus(companyname);
+			logger.info("inside getClientStatus service method "+this.getClass());
+			compDTO= companyrepository.getClientStatus(cmpid);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return compDTO;
 	}
@@ -34,9 +34,9 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 	public int updateCompany(CompanyDTO companyDTO)
 	{
 		try {
-			logger.info("inside UpdateCompany service " + companyDTO);
+			logger.info("inside UpdateCompany service " + companyDTO, this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return companyrepository.updateCompany(companyDTO);
 	}
@@ -44,9 +44,9 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 	public List<CompanyDTO> getCompanyData(int cmpid)
 	{
 		try {
-			logger.info("inside getCompanyData service ");
+			logger.info("inside getCompanyData service "+this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return companyrepository.getCompanyData(cmpid);
 	}
@@ -54,9 +54,9 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 	public int updateCompanyStatus(CompanyDTO companyDTO)
 	{
 		try {
-			logger.info("inside updateCompanyStatus service " + companyDTO);
+			logger.info("inside updateCompanyStatus service " + companyDTO, this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return companyrepository.updateCompanyStatus(companyDTO);
 	}
@@ -64,10 +64,30 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 	public List<CompanyDTO> getCompanyIdName()
 	{
 		try {
-			logger.info("inside getCompanyIdName service ");
+			logger.info("inside getCompanyIdName service "+this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return companyrepository.getCompanyIdName();
+	}
+	
+	public List<CompanyDTO> getCompanyIdNameall()
+	{
+		try {
+			logger.info("inside getCompanyIdNameall service "+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return companyrepository.getCompanyIdNameall();
+	}
+
+	@Override
+	public CompanyDTO getCompanyIdByName(String cmpname) {
+		try {
+			logger.info("inside getCompanyData service "+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return companyrepository.getCompanyIdByName(cmpname);
 	}
 }

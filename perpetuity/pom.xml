@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.bizprout.web</groupId>
-	<artifactId>base</artifactId>
+	<artifactId>perpetuity</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>base Maven Webapp</name>
@@ -10,6 +10,7 @@
 	<properties>
 		<spring.bom.version>4.3.6.RELEASE</spring.bom.version>
 		<spring.data.rest.version>2.5.7.RELEASE</spring.data.rest.version>
+		<spring.security.version>4.2.2.RELEASE</spring.security.version>
 		<jackson.core.version>2.6.0</jackson.core.version>
 		<jackson.databind.version>2.6.0</jackson.databind.version>
 		<hibernate.version>5.0.4.Final</hibernate.version>
@@ -29,6 +30,22 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -53,6 +70,12 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-rest-webmvc</artifactId>
 			<version>${spring.data.rest.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Apache Commons FileUpload -->
@@ -146,6 +169,13 @@
 			<version>20090211</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -183,6 +213,6 @@
 
 	</dependencies>
 	<build>
-		<finalName>base</finalName>
+		<finalName>perpetuity</finalName>
 	</build>
 </project>

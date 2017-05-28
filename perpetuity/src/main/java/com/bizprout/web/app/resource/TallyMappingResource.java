@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,10 +45,9 @@ public class TallyMappingResource {
 
 	public TallyMappingResource() {
 		try {
-			logger.info(this.getClass().getSimpleName() + "Created...");
+			logger.info(this.getClass().getSimpleName() + "Created..."+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
 
@@ -59,10 +57,9 @@ public class TallyMappingResource {
 		List<CompanyDTO> cdto = null;
 		try {
 			cdto=tallymappingservice.getCompanyIdName(compdto.getClientId());
-			logger.debug("Request......getCompanyIdName List......");
+			logger.debug("Request......getCompanyIdName List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return cdto;
 	}
@@ -73,10 +70,9 @@ public class TallyMappingResource {
 		List<TallyMastersDTO> tallymasters = null;
 		try {
 			tallymasters=tallymappingservice.getTallyMasterNames(tallymasterdto.getMasterType(), tallymasterdto.getCmpId());
-			logger.debug("Request......getTallyMasterNames List......");
+			logger.debug("Request......getTallyMasterNames List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return tallymasters;
 	}
@@ -87,10 +83,9 @@ public class TallyMappingResource {
 		List<PpMasterDTO> ppmasternames = null;
 		try {
 			ppmasternames=tallymappingservice.getPpMasterNames(ppmasterdto.getMastertype(), ppmasterdto.getCmpid());
-			logger.debug("Request......getTallyMasterNames List......");
+			logger.debug("Request......getTallyMasterNames List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasternames;
 	}
@@ -108,7 +103,7 @@ public class TallyMappingResource {
 		}
 		
 		try {
-			logger.info("inside insertTallyMapping method ");
+			logger.info("inside insertTallyMapping method....."+this.getClass());
 			tallymappingservice.insertTallyMapping(tallymappingdto);
 
 			if(tallymappingdto.getMappingId()!=0)
@@ -121,7 +116,7 @@ public class TallyMappingResource {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error("Exception in insertTallyMapping method \t" + e.getMessage());
+			logger.error("Exception in insertTallyMapping method \t" + e.getMessage(), this.getClass());
 		}
 
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
@@ -141,7 +136,7 @@ public class TallyMappingResource {
 		
 		int res=0;
 		try {
-			logger.info("inside updateTallyMapping method ");
+			logger.info("inside updateTallyMapping method..."+this.getClass());
 			res=tallymappingservice.updateTallyMapping(tallymappingdto);
 
 			if(res>0)
@@ -154,7 +149,7 @@ public class TallyMappingResource {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.error("Exception in updateTallyMapping method \t" + e.getMessage());
+			logger.error("Exception in updateTallyMapping method \t" + e.getMessage(), this.getClass());
 		}
 
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
@@ -166,12 +161,24 @@ public class TallyMappingResource {
 		List<Integer> ppmapping = null;
 		try {
 			ppmapping=tallymappingservice.getPpMastersMapping(tallymappingdto.getCmpId(), tallymappingdto.getPpId());
-			logger.debug("Request......getTallyMasterids List......");
+			logger.debug("Request......getTallyMasterids List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmapping;
+	}
+	
+	@PostMapping(value="/deleteppidcmpid")
+	public int deletePpidCmpid(@RequestBody TallyMappingDTO tallymappingdto)
+	{
+		int res=0;
+		try {
+			res=tallymappingservice.deletePpidCmpid(tallymappingdto.getCmpId(), tallymappingdto.getPpId());
+			logger.debug("Request......getTallyMasterids List......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return res;
 	}
 
 	@PostMapping(value="/gettallyppmappingdata")
@@ -180,9 +187,9 @@ public class TallyMappingResource {
 		List<TallyMastersDTO> tallymasterdata = null;
 		try {
 			tallymasterdata=tallymappingservice.getTallyPpMappingData(tallymasterdto.getCmpId(), tallymasterdto.getMasterType());
-			logger.debug("Request......getPpMasterData......");
+			logger.debug("Request......getPpMasterData......"+this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return tallymasterdata;
 	}
@@ -206,9 +213,9 @@ public class TallyMappingResource {
 				resp= new ResponseEntity<String>("failure", HttpStatus.OK);
 			}
 
-			logger.debug("Request......getPpMasterData......");
+			logger.debug("Request......getPpMasterData......"+this.getClass());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return resp;
 	}
@@ -239,7 +246,7 @@ public class TallyMappingResource {
 				stream.close();
 
 				logger.info("Server File Location="
-						+ serverFile.getAbsolutePath());
+						+ serverFile.getAbsolutePath(), this.getClass());
 				
 				ExcelReadData excel= new ExcelReadData();
 				response=excel.excelReadDatamapping(file.getOriginalFilename());
@@ -270,10 +277,9 @@ public class TallyMappingResource {
 		List<PpMasterDTO> ppmasternames = null;
 		try {
 			ppmasternames=tallymappingservice.getPpMasterIdNames(ppmasterdto.getMastertype(), ppmasterdto.getCmpid(), ppmasterdto.getPpmastername());
-			logger.debug("Request......getPpMasterIdNames List......");
+			logger.debug("Request......getPpMasterIdNames List......", this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasternames;
 	}
@@ -284,10 +290,9 @@ public class TallyMappingResource {
 		List<TallyMastersDTO> tallymasters = null;
 		try {
 			tallymasters=tallymappingservice.getTallyMasterIdNames(tallymasterdto.getMasterType(), tallymasterdto.getCmpId(), tallymasterdto.getTallyMasterName());
-			logger.debug("Request......getTallyMasterIdNames List......");
+			logger.debug("Request......getTallyMasterIdNames List......"+this.getClass());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return tallymasters;
 	}

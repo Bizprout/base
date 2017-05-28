@@ -18,8 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
 import com.bizprout.web.app.dto.CompanyDTO;
-import com.bizprout.web.app.dto.UserDTO;
-import com.bizprout.web.app.dto.UserEditVO;
 
 @Repository
 public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
@@ -29,23 +27,42 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 
-	public CompanyDTO getClientStatus(String companyname)
+	public CompanyDTO getClientStatus(int cmpid)
 	{		
 		Session session;
 		Query qry=null;
 		CompanyDTO compDTO = null;
 		try {
-			logger.info("Inside CompanyRepositoryImpl......getClientStatus method.......");
+			logger.info("Inside CompanyRepositoryImpl......getClientStatus method......."+this.getClass());
+
+			session = factory.getCurrentSession();
+
+			qry=session.createQuery("from CompanyDTO where cmpId=:cmpid");
+			qry.setParameter("cmpid",cmpid);
+			compDTO=(CompanyDTO) qry.uniqueResult();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compDTO;
+	}
+	
+	public CompanyDTO getCompanyIdByName(String cmpname)
+	{		
+		Session session;
+		Query qry=null;
+		CompanyDTO compDTO = null;
+		try {
+			logger.info("Inside CompanyRepositoryImpl......getCompanyIdByName method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
 			qry=session.createQuery("from CompanyDTO where tallyCmpName=:cmpname");
-			qry.setParameter("cmpname",companyname);
+			qry.setParameter("cmpname",cmpname);
 			compDTO=(CompanyDTO) qry.uniqueResult();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return compDTO;
 	}
@@ -57,7 +74,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside updateCompany method.......");
+			logger.info("Inside updateCompany method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -76,12 +93,8 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 			result= qry.executeUpdate();
 			tx.commit();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
 	}
@@ -91,7 +104,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		Session session;
 		List<CompanyDTO> compDTO = null;
 		try {
-			logger.info("Inside CompanyRepositoryImpl......getCompanyData method.......");
+			logger.info("Inside CompanyRepositoryImpl......getCompanyData method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -100,7 +113,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 			compDTO=q.list();
 
 		} catch (HibernateException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return compDTO;
 	}
@@ -112,7 +125,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside updateCompanyStatus method.......");
+			logger.info("Inside updateCompanyStatus method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -126,30 +139,53 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 			result= qry.executeUpdate();
 			tx.commit();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
 	}
 	
 	public List<CompanyDTO> getCompanyIdName()
 	{
-		logger.info("Inside getCompanyIdName method.......");
+		logger.info("Inside getCompanyIdName method......."+this.getClass());
 		
-		Session session = factory.getCurrentSession();
+		List<CompanyDTO> comp=null;
+		try {
+			Session session = factory.getCurrentSession();
 
-		Criteria cr = session.createCriteria(CompanyDTO.class)
-				.add(Restrictions.eq("status", "Active"))
-				.setProjection(Projections.projectionList()
-						.add(Projections.property("cmpId"), "cmpId")
-						.add(Projections.property("tallyCmpName"), "tallyCmpName"))
-						.setResultTransformer(Transformers.aliasToBean(CompanyDTO.class));
+			Criteria cr = session.createCriteria(CompanyDTO.class)
+					.add(Restrictions.eq("status", "Active"))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("cmpId"), "cmpId")
+							.add(Projections.property("tallyCmpName"), "tallyCmpName"))
+							.setResultTransformer(Transformers.aliasToBean(CompanyDTO.class));
 
-		List<CompanyDTO> comp=cr.list();
+			comp = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+
+		return comp;
+	}
+	
+	public List<CompanyDTO> getCompanyIdNameall()
+	{
+		logger.info("Inside getCompanyIdNameall method......."+this.getClass());
+		
+		List<CompanyDTO> comp=null;
+		try {
+			Session session = factory.getCurrentSession();
+
+			Criteria cr = session.createCriteria(CompanyDTO.class)
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("cmpId"), "cmpId")
+							.add(Projections.property("tallyCmpName"), "tallyCmpName"))
+							.setResultTransformer(Transformers.aliasToBean(CompanyDTO.class));
+
+			comp = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 
 		return comp;
 	}

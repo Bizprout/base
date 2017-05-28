@@ -17,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
-import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.dto.EditPpMasterDTO;
 import com.bizprout.web.app.dto.PpMasterDTO;
-import com.bizprout.web.app.dto.UserDTO;
 
 @Repository
 public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
@@ -35,7 +33,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		Query qry=null;
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method.......");
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -47,8 +45,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			ppmasterlist=qry.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -58,7 +55,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		Query qry=null;
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method.......");
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -69,8 +66,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			ppmasterlist=qry.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -80,7 +76,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		Query qry=null;
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method.......");
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -91,8 +87,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			ppmasterlist=qry.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -102,7 +97,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		Query qry=null;
 		List<String> ppmasterlist = null;
 		try {
-			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method.......");
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 
@@ -112,8 +107,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			ppmasterlist=qry.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
 	}
@@ -123,7 +117,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		Query qry=null;
 		List<PpMasterDTO> ppparentname = null;
 		try {
-			logger.info("Inside PpMasterRepositoryImpl......getPpParentName method.......");
+			logger.info("Inside PpMasterRepositoryImpl......getPpParentName method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 			
@@ -138,8 +132,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			ppparentname=cr.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppparentname;
 	}
@@ -151,7 +144,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 		Transaction tx = null;
 
 		try {
-			logger.info("Inside getLoginUser method.......");
+			logger.info("Inside getLoginUser method......."+this.getClass());
 
 			session = factory.getCurrentSession();
 			
@@ -168,8 +161,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			 result= qry.executeUpdate();
 			 tx.commit();
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 			tx.rollback();
 		}
 		finally {
@@ -181,7 +173,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 	public List<PpMasterDTO> getPpmasterData(int cmpid) {
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
-			logger.info("Inside getPpmasterData method.......");
+			logger.info("Inside getPpmasterData method......."+this.getClass());
 
 			Session session = factory.getCurrentSession();
 
@@ -190,8 +182,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			ppmasterdata=q.list();
 
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterdata;
 	}
