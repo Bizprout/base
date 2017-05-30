@@ -1,13 +1,6 @@
 baseApp.controller("ChangePasswordController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage) {
 
-	console.log("ChangePasswordController loaded...");
-
 	$scope.cmpname=$localStorage.cmpname;
-	
-	if($localStorage.cmpid===undefined)
-	{
-		$location.path("/home");
-	}
 	
 	if($localStorage.userid===undefined)
 	{
@@ -94,13 +87,23 @@ baseApp.controller("ChangePasswordController", function($scope, $location, $http
 						{
 							$scope.alerts = { type: 'danger' ,msg: 'Password not Updated!'};
 							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 						}
 						else
 						{
-							$scope.alerts = { type: 'danger'};
-							$scope.errdata=data[0];
-							$scope.showerror=true;
-							$scope.showSuccessAlert = false;
+							if(data.length>0)
+							{
+								$scope.alerts = { type: 'danger'};
+								$scope.errdata=data;
+								$scope.showerror=true;
+								$scope.showSuccessAlert = false;
+							}
+							else
+							{
+								$scope.alerts = { type: 'danger' ,msg: 'Password not Updated!'};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+							}
 						}
 
 					}).error(function(data, status, headers, config){

@@ -107,7 +107,7 @@ public class CompanyResource {
 		CompanyDTO compdto = null;
 		try {
 			compdto=companyservice.getCompanyIdByName(cmpdto.getTallyCmpName());
-			logger.debug("Request......getCompanyData......"+this.getClass());
+			logger.debug("Request......getCompanyIdByName......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

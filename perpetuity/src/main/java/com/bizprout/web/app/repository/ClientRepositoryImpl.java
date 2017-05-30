@@ -7,7 +7,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -28,29 +27,31 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 
+	@SuppressWarnings("unchecked")
 	public List<ClientDTO> getClients()
 	{
 		List<ClientDTO> user=null;
 		try {
 			logger.info("Inside getClients method......."+this.getClass());
 
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			user=session.createQuery("from ClientDTO").list();
-			
+
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"...."+this.getClass());
 		}
 		return user;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public List<ClientDTO> getClientNames()
 	{
 		logger.info("Inside getClientNames method......."+this.getClass());
 
 		List<ClientDTO> user=null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(ClientDTO.class)
 					.setProjection(Projections.projectionList()
@@ -66,14 +67,15 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 		return user;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<ClientDTO> getClientIdName()
 	{
 		logger.info("Inside getClientIdName method......."+this.getClass());
 
 		List<ClientDTO> user=null;
 		try {
-			Session session = factory.getCurrentSession();
-			
+			Session session = getSession();
+
 			Criteria cr = session.createCriteria(ClientDTO.class)
 					.add(Restrictions.eq("status", "Active"))
 					.setProjection(Projections.projectionList()
@@ -95,7 +97,7 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 		try {
 			logger.info("Inside getClientData method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			qry=session.createQuery("from ClientDTO where clientId=:clientid");
 
@@ -110,17 +112,14 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
 
 		try {
 			logger.info("Inside updateClient method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-
-			tx=session.beginTransaction();
+			session = getSession();
 
 			Query qry=session.createQuery("UPDATE ClientDTO set clientName=:editclientname, contactPerson=:contactper, contactEmail=:email, contactTelPhone=:phone, status=:stat WHERE clientId=:clientid");
-			
+
 			qry.setParameter("editclientname", clientdto.getClientName());
 			qry.setParameter("contactper",clientdto.getContactPerson());
 			qry.setParameter("email", clientdto.getContactEmail());
@@ -129,10 +128,9 @@ public class ClientRepositoryImpl extends AbstractBaseRepository<ClientDTO> {
 			qry.setParameter("clientid", clientdto.getClientId());
 
 			result= qry.executeUpdate();
-			tx.commit();
+
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
 		}
 		return result;
 	}

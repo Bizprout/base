@@ -8,9 +8,12 @@ public abstract interface ReportService<T>
 {
   public abstract List<Object> getCmpTrialBal(ReportsDTO t);
   
+  public abstract List<Object> getCmpDaybook(ReportsDTO t);
+  
   public abstract List<Object> getCmpVchData(ReportsDTO t);
   
-  public abstract List<Object> getPymtVchData(ReportsDTO t);
+  public abstract List<Object> getVchLedgers(String s);
+  
   
   
 }

@@ -191,9 +191,11 @@
 									file-model="myFile"
 									accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 									name="file" /></span> <span class="fileupload-preview"></span> <a
-								href="#" class="close fileupload-exists"
+								href="#" id="fileuploadclose" class="close fileupload-exists"
 								data-dismiss="fileupload" style="float: none">x</a>
 						</div>
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingimportfile"></md-progress-circular>
 					</div>
 				</div>
 				<br />

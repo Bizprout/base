@@ -7,7 +7,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -29,45 +28,47 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@SuppressWarnings("unchecked")
 	public List<UserDTO> getusers() {
 		List<UserDTO> user = null;
 		try {
 			logger.info("Inside getusers method......."+this.getClass());
 
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
-			 user= session.createQuery("from UserDTO where usertype!='PPsuperadmin'").list();
+			user= session.createQuery("from UserDTO where usertype!='PPsuperadmin'").list();
 
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return user;
 	}
-	
+
 	public UserDTO getUserData(String username) {
 		Session session;
 		Query qry = null;
 		try {
-			logger.info("Inside getLoginUser method......."+this.getClass());
+			logger.info("Inside getUserData method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			qry=session.createQuery("from UserDTO where username=:username");
 
 			qry.setParameter("username",username);
+
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return (UserDTO) qry.uniqueResult();
 	}
-	
+
 	public UserDTO getUserDataById(int userid) 
 	{
 		logger.info("Inside getUserDataById method......."+this.getClass());
-		
+
 		UserDTO comp = null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(UserDTO.class)
 					.add(Restrictions.eq("userid", userid))
@@ -77,25 +78,23 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 							.setResultTransformer(Transformers.aliasToBean(UserDTO.class));
 
 			comp = (UserDTO) cr.uniqueResult();
+
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 
 		return comp;
 	}
-	
+
 	public int UpdateUsers(UserEditVO usereditVO) {
-		
+
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
 
 		try {
-			logger.info("Inside getLoginUser method......."+this.getClass());
+			logger.info("Inside UpdateUsers method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-			
-			tx=session.beginTransaction();
+			session = getSession();
 
 			Query qry=session.createQuery("UPDATE UserDTO set username=:editusername, usertype=:usertyp, userstatus=:userstat, emailid=:email, mobile=:phone WHERE username=:oldusername");
 
@@ -106,24 +105,24 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 			qry.setParameter("phone", usereditVO.getMobile());
 			qry.setParameter("oldusername", usereditVO.getUsername());
 
-			 result= qry.executeUpdate();
-			 tx.commit();
+			result= qry.executeUpdate();
+
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
 		}
 		return result;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public List<String> getUsernameList()
 	{
 		Session session;
 		Query qry=null;
 		List<String> usernamelist = null;
 		try {
-			logger.info("Inside UserRepositoryImpl......getUsernameList method......."+this.getClass());
+			logger.info("Inside....getUsernameList method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			qry=session.createQuery("select username from UserDTO where usertype!='PPsuperadmin'");
 			usernamelist=qry.list();
@@ -133,90 +132,73 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDTO> {
 		}
 		return usernamelist;
 	}
-	
+
 	public UserDTO getLoginUser(String username,String password) {
 
 		Session session;
 		Query qry = null;
-		
+
 		try {
 			logger.info("Inside getLoginUser method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-			
+			session = getSession();
+
 			//encrypt the password to match db value
 			password=AESencrp.encrypt(password);
-			
+
 			qry=session.createQuery("from UserDTO where username=:user and password=:pwd and userstatus='Active'");
 
 			qry.setParameter("user",username);
 			qry.setParameter("pwd",password);
-			
+
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return (UserDTO) qry.uniqueResult();
 	}
-	
+
 	public int updatePassword(String password, int cmpid) {
-		
+
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
-
 		try {
 			logger.info("Inside updatePassword method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-			
-			tx=session.beginTransaction();
+			session = getSession();
 
 			Query qry=session.createQuery("UPDATE UserDTO set password=:pass WHERE userid=:userd");
 
 			qry.setParameter("pass",password);
 			qry.setParameter("userd",cmpid);
-			
-			 result= qry.executeUpdate();
-			 tx.commit();
+
+			result= qry.executeUpdate();
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
 	}
 
 	public int resetPassword(String username, String password) {
-		
+
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
 
 		try {
 			logger.info("Inside resetPassword method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-			
-			tx=session.beginTransaction();
+			session = getSession();
 
 			Query qry=session.createQuery("UPDATE UserDTO set password=:pass WHERE username=:user");
 
 			qry.setParameter("pass",password);
 			qry.setParameter("user",username);
-			
-			 result= qry.executeUpdate();
-			 tx.commit();
+
+			result= qry.executeUpdate();
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
-		
+
 	}
 
 }

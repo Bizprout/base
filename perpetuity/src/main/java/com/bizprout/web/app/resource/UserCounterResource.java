@@ -1,7 +1,5 @@
 package com.bizprout.web.app.resource;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -55,5 +53,16 @@ public class UserCounterResource {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return usercounter;
+	}
+	
+	@PostMapping(value="/updatelogoutdatetime")
+	public void updateLogoutTime(@RequestBody UserCounterDTO usercounterdto)
+	{
+		try {
+			usercounterservice.updateLogoutTime(usercounterdto.getUserid(), usercounterdto.getLogindatetime(), usercounterdto.getLogoutdatetime());
+			logger.info("Request.......updateLogoutTime method......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
 	}
 }

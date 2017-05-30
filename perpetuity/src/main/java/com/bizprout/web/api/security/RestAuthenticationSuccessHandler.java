@@ -28,9 +28,6 @@ public class RestAuthenticationSuccessHandler extends
 	public void onAuthenticationSuccess(HttpServletRequest request,
 			HttpServletResponse response, Authentication authentication)
 			throws ServletException, IOException {
-		// User user = userService.findByLogin(authentication.getName());
-		// SecurityUtils.sendResponse(response, HttpServletResponse.SC_OK,
-		// user);
 
 		// servlet2 is the url-pattern of the second servlet
 		UserDetails user = userDetailsService.loadUserByUsername(authentication

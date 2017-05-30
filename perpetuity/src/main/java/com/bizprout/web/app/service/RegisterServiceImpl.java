@@ -4,12 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.RegisterService;
 import com.bizprout.web.app.dto.RegisterDTO;
 
 @Service
+@Transactional
 public class RegisterServiceImpl implements RegisterService<RegisterDTO> {
 
 	@Autowired

@@ -7,7 +7,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -35,7 +34,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		try {
 			logger.info("Inside CompanyRepositoryImpl......getClientStatus method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			qry=session.createQuery("from CompanyDTO where cmpId=:cmpid");
 			qry.setParameter("cmpid",cmpid);
@@ -53,9 +52,10 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		Query qry=null;
 		CompanyDTO compDTO = null;
 		try {
+						
 			logger.info("Inside CompanyRepositoryImpl......getCompanyIdByName method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			qry=session.createQuery("from CompanyDTO where tallyCmpName=:cmpname");
 			qry.setParameter("cmpname",cmpname);
@@ -71,14 +71,11 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
 
 		try {
 			logger.info("Inside updateCompany method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-
-			tx=session.beginTransaction();
+			session = getSession();
 
 			Query qry=session.createQuery("UPDATE CompanyDTO set clientId=:clientid, appFromDate=:syncdate, uploadTimer=:uploadtime, dnldTimer=:dnldtime, maxRetrial=:retrials, status=:stat WHERE cmpId=:cmpid");
 			
@@ -91,14 +88,14 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 			qry.setParameter("cmpid", companyDTO.getCmpId());
 
 			result= qry.executeUpdate();
-			tx.commit();
+			
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
 		}
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<CompanyDTO> getCompanyData(int cmpid)
 	{
 		Session session;
@@ -106,7 +103,7 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		try {
 			logger.info("Inside CompanyRepositoryImpl......getCompanyData method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			Query q=session.createQuery(" from CompanyDTO where cmpId=:cmp");	
 			q.setParameter("cmp", cmpid);
@@ -122,14 +119,11 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
 
 		try {
 			logger.info("Inside updateCompanyStatus method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-
-			tx=session.beginTransaction();
+			session = getSession();
 
 			Query qry=session.createQuery("UPDATE CompanyDTO set status=:stat WHERE clientId=:clientid");
 			
@@ -137,21 +131,21 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 			qry.setParameter("clientid", companyDTO.getClientId());
 
 			result= qry.executeUpdate();
-			tx.commit();
+			
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
 		}
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<CompanyDTO> getCompanyIdName()
 	{
 		logger.info("Inside getCompanyIdName method......."+this.getClass());
 		
 		List<CompanyDTO> comp=null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(CompanyDTO.class)
 					.add(Restrictions.eq("status", "Active"))
@@ -168,13 +162,14 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		return comp;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<CompanyDTO> getCompanyIdNameall()
 	{
 		logger.info("Inside getCompanyIdNameall method......."+this.getClass());
 		
 		List<CompanyDTO> comp=null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(CompanyDTO.class)
 					.setProjection(Projections.projectionList()

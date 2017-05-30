@@ -1,176 +1,131 @@
-
-<script type="text/javascript">
-            $(document).ready(function () {
-            	
-                $(function () {
-                	
-                /* 	$("#login_button").click(function(){
-                		 location.reload();
-                	});  */
-                	
-                    var $formLogin = $('#login-form');
-                    var $formForgot = $('#forgot-form');
-                    var $formOTP = $('#otp-form');
-                    var $divForms = $('#div-forms');
-                    var $modalAnimateTime = 300;
-
-                    
-                    $('.close').click(function () {
-                        location.reload();
-                    });
-
-                    $('#login_forgot_btn').click(function () {
-                        modalAnimate($formLogin, $formForgot);
-                    });
-                    $('#forgot_otp_btn').click(function () {
-                        modalAnimate($formForgot, $formOTP);
-                    });
-                    function modalAnimate($oldForm, $newForm) {
-                        var $oldH = $oldForm.height();
-                        var $newH = $newForm.height();
-                        $divForms.css("height", $oldH);
-                        $oldForm.fadeToggle($modalAnimateTime, function () {
-                            $divForms.animate({height: $newH}, $modalAnimateTime, function () {
-                                $newForm.fadeToggle($modalAnimateTime);
-                                
-                            });
-                        });
-                    }
-
-                });
-            });
-            
-        </script>
 <div class="dashboard-page">
 	<div class="right no-right">
-		<div class="heading">
-			<div class="path" role="button" data-toggle="modal"
-				data-target="#login-modal">Login</div>
-		</div>
-		<div class="login-section">
-			<div class="modal fade" id="login-modal" tabindex="-1" role="dialog"
-				aria-labelledby="myModalLabel" aria-hidden="true"
-				style="display: none;">
-				<div class="modal-dialog">
-					<div class="modal-content">
+		<div align="center" class="login-section">
+			<div class="modal-content" style="width: 450px;height:500px;">
+				<!-- Begin # DIV Form -->
+				<div id="div-forms">
+					<!-- Begin # Login Form -->
+					<form id="login-form">
 						<div class="modal-header" align="center">
-							<button type="button" class="close" data-dismiss="modal"
-								aria-label="Close">
-								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-							</button>
+							<div class="heading">Welcome</div>
+							<div class="text">Enter Username and Password to proceed</div>
+							<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+								ng-show="showSuccessAlert">
+								<button type="button" class="closealertbox"
+									data-ng-click="switchBool('showSuccessAlert')">x</button>
+								{{alerts.msg}}
+							</div>
+
+							<md-progress-linear md-mode="indeterminate" ng-show="isLoading"></md-progress-linear>
+								
 						</div>
-						<!-- Begin # DIV Form -->
-						<div id="div-forms">
-							<!-- Begin # Login Form -->
-							<form id="login-form">
-								<div class="modal-header" align="center">
-									<div class="heading">Welcome</div>
-									<div class="text">Enter Username to proceed</div>
-									<div ng-class="'alert alert-' + (alerts.type || 'warning')"
-										ng-show="showSuccessAlert">
-										<button type="button" class="closealertbox"
-											data-ng-click="switchBool('showSuccessAlert')">x</button>
-										{{alerts.msg}}
-									</div>
-									<md-progress-circular md-mode="indeterminate"
-										md-diameter="20px" ng-show="isLoading"></md-progress-circular>
-								</div>
-								<div class="modal-body">
-									<div class="user-login-details">
-										<div class="container-fluid">
-											<div class="row">
-												<div class="col-sm-12">
-													<input type="text" name="login_username"
-														id="login_username" ng-model="loginDTO.username"
-														class="input-field" value=""
-														placeholder="Username/ Email ID*" autofocus />
-													<input type="password" name="login_password"
-														id="login_password" ng-model="loginDTO.password"
-														class="input-field" value="" placeholder="Password*" />
-													<br />
-													<input type="submit" name="login_button"
-														class="login_button" id="login_button" value="Login"
-														ng-click="login(loginDTO)" />
-													<div class="forgot-passowrd">
-														<button id="login_forgot_btn" type="button"
-															class="btn btn-link">Forgot Password?</button>
-													</div>
-												</div>
+						<div class="modal-body">
+							<div class="user-login-details">
+								<div class="container-fluid">
+									<div class="row" style="margin-right:-15px;margin-left: -25px;">
+										<div class="col-sm-1">
+											<span style="top: 27px;" class="glyphicon glyphicon-user"></span>
+											<span style="top: 80px;" class="glyphicon glyphicon-lock"></span>
+										</div>
+										<div class="col-sm-11">
+											<input type="text" name="login_username" id="login_username"
+												ng-model="loginDTO.username" class="input-field" value=""
+												placeholder="Username/ Email ID*" autofocus />
+											
+											<input type="password" name="login_password"
+												id="login_password" ng-model="loginDTO.password"
+												class="input-field" value="" placeholder="Password*" />
+											<br />
+											<input type="submit" name="login_button" class="login_button"
+												id="login_button" value="Login" ng-click="login(loginDTO)" />
+											<div class="forgot-passowrd">
+												<button id="login_forgot_btn" type="button"
+													class="btn btn-link" ng-click="forgotclick()">Forgot
+													Password?</button>
 											</div>
 										</div>
 									</div>
 								</div>
-							</form>
-							<!-- End # Login Form -->
-							<!-- Begin | Forgot Password Form -->
-							<form id="forgot-form" style="display: none;">
-								<div class="modal-header" align="center">
-									<div class="heading">Forgot Password</div>
-									<div class="text">Pick one of the following</div>
-								</div>
-								<div class="modal-body">
-									<div class="user-login-details">
-										<div class="container-fluid">
-											<div class="row">
-												<div class="col-sm-12">
-													<div class="radio">
-														<input type="radio" name="login_forgot_pwd_pick_any"
-															id="login_forgot_pwd_pick_any1"
-															value="Send OTP to my email address" checked>
-														<label for="login_forgot_pwd_pick_any1"> Send New
-															Password to my Email Address </label>
-													</div>
-													<input type="button" id="forgot_otp_btn"
-														name="forgot_otp_btn" class="login_button"
-														value="Continue" />
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</form>
-							<!-- End | Forgot Password Form -->
-							<!-- Begin | OTP Form -->
-							<form id="otp-form" style="display: none; height: 350px;">
-								<div class="modal-header" align="center">
-									<div class="heading">Enter Your Email ID</div>
-									<div class="text" style="word-wrap: break-word;">Your New
-										password will be sent to {{forgotpasswordemailid}}</div>
-									<div ng-class="'alert alert-' + (alerts.type || 'warning')"
-										ng-show="showSuccessAlert">
-										<button type="button" class="closealertbox"
-											data-ng-click="switchBool('showSuccessAlert')">x</button>
-										{{alerts.msg}}
-									</div>
-									<md-progress-circular md-mode="indeterminate"
-										md-diameter="20px" ng-show="isLoadingforgotpassworduser"></md-progress-circular>
-								</div>
-								<div class="modal-body">
-									<div class="user-login-details">
-										<div class="container-fluid">
-											<div class="row">
-												<div class="col-sm-12">
-													<input type="email" name="login_enter_email"
-														id="login_enter_email" class="input-field"
-														value="Enter Email ID" placeholder="Enter Email ID"
-														ng-model="forgotpasswordemailid" required />
-													<input type="submit" name="login_submit_enter_email"
-														class="login_button" id="submit_login_enter_email"
-														value="Continue" ng-click="forgotpassword(forgotpasswordemailid)" />
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</form>
-							<!-- End | OTP Form -->
+							</div>
 						</div>
-						<!-- End # DIV Form -->
-					</div>
+					</form>
+					<!-- End # Login Form -->
+					<!-- Begin | Forgot Password Form -->
+					<form id="forgot-form" style="display: none;">
+						<div class="modal-header" align="center">
+							<ol class="breadcrumb">
+								<li><a href="#/" ng-click="home()">Login</a></li>
+								<li class="active">Forgot Password</li>
+							</ol>
+							<div class="heading">Forgot Password</div>
+							<div class="text">Pick one of the following</div>
+						</div>
+						<div class="modal-body">
+							<div class="user-login-details">
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="radio">
+												<input type="radio" name="login_forgot_pwd_pick_any"
+													id="login_forgot_pwd_pick_any1"
+													value="Send OTP to my email address" checked>
+												<label for="login_forgot_pwd_pick_any1"> Send New
+													Password to my Email Address </label>
+											</div>
+											<input type="button" id="forgot_otp_btn"
+												name="forgot_otp_btn" ng-click="forgotclickemail()"
+												class="login_button" value="Continue" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+					<!-- End | Forgot Password Form -->
+					<!-- Begin | OTP Form -->
+					<form id="otp-form" style="display: none; height: 350px;">
+						<div class="modal-header" align="center">
+							<ol class="breadcrumb">
+								<li><a href="" ng-click="home()">Login</a></li>
+								<li class="active">Forgot Password</li>
+							</ol>
+							<div class="heading">Enter Your Email ID</div>
+							<div class="text" style="word-wrap: break-word;">Your New
+								password will be sent to {{forgotpasswordemailid}}</div>
+							<div ng-class="'alert alert-' + (alerts.type || 'warning')"
+								ng-show="showSuccessAlert">
+								<button type="button" class="closealertbox"
+									data-ng-click="switchBool('showSuccessAlert')">x</button>
+								{{alerts.msg}}
+							</div>
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingforgotpassworduser"></md-progress-circular>
+						</div>
+						<div class="modal-body">
+							<div class="user-login-details">
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<input type="email" name="login_enter_email"
+												id="login_enter_email" class="input-field"
+												value="Enter Email ID" placeholder="Enter Email ID"
+												ng-model="forgotpasswordemailid" required />
+											<input type="submit" name="login_submit_enter_email"
+												class="login_button" id="submit_login_enter_email"
+												value="Continue"
+												ng-click="forgotpassword(forgotpasswordemailid)" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+					<!-- End | OTP Form -->
 				</div>
+				<!-- End # DIV Form -->
 			</div>
+			<!-- END LOGIN Section-->
 		</div>
-		<!-- END LOGIN Section-->
+		<div class="clearfix"></div>
 	</div>
-	<div class="clearfix"></div>
 </div>

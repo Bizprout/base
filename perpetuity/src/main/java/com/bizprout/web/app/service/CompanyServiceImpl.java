@@ -6,12 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.service.CompanyService;
 import com.bizprout.web.app.dto.CompanyDTO;
 import com.bizprout.web.app.repository.CompanyRepositoryImpl;
 
 @Service
+@Transactional
 public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 
 	@Autowired
@@ -84,7 +86,8 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 	@Override
 	public CompanyDTO getCompanyIdByName(String cmpname) {
 		try {
-			logger.info("inside getCompanyData service "+this.getClass());
+			logger.info("inside getCompanyIdByName service "+this.getClass());
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

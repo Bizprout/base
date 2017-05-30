@@ -19,8 +19,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="path">Your Last Login was on {{lastlogin | date:
+			<div ng-if="lastlogin" class="path">Your Last Login was on {{lastlogin | date:
 				"EEEE, MMMM d, y 'at' h:mm a"}}</div>
+			<div ng-if="!lastlogin" class="path">You Have Logged in for the First Time!</div>
 			<div class="text">Choose Your Option</div>
 		</div>
 		<div class="app-section">
@@ -30,8 +31,7 @@
 				<div class="app-type">
 					<div class="title">Masters</div>
 				</div>
-				<div class="content">Manage Masters Create, Edit, Reports for
-					Users, Clients, Company, PP standards.</div>
+				<div class="content">Manage Users, Clients, Company and PP standards.</div>
 				<a href="#masters" my-link="masterslinkenabled"
 					data-ng-class="{'disabled': !masterslinkenabled}"
 					class="btn btn-success" style="text-decoration: none;">Continue</a>
@@ -42,8 +42,7 @@
 				<div class="app-type">
 					<div class="title">Mapping</div>
 				</div>
-				<div class="content">Manage Create, Edit, View Reports for
-					User Mapping to Clients and PP Mapping to Tally.</div>
+				<div class="content">Manage User Mapping to Clients and PP Mapping to Tally.</div>
 				<a href="#mapping" my-link="mappinglinkenabled"
 					data-ng-class="{'disabled': !mappinglinkenabled}"
 					class="btn btn-success" style="text-decoration: none;">Continue</a>
@@ -54,7 +53,7 @@
 				<div class="app-type">
 					<div class="title">Reports</div>
 				</div>
-				<div class="content" style="margin-bottom: 55px;">Export
+				<div class="content">Export
 					Reports.</div>
 				<a href="#reports" my-link="reportslinkenabled"
 					data-ng-class="{'disabled': !reportslinkenabled}"

@@ -4,12 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.BaseDTO;
 import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.BaseService;
 
 @Service
+@Transactional
 public class BaseServiceImpl implements BaseService<BaseDTO> {
 
 	@Autowired
@@ -20,7 +22,7 @@ public class BaseServiceImpl implements BaseService<BaseDTO> {
 
 	public void testService(BaseDTO baseDTO) {
 		try {
-			logger.info("test inside service" + baseDTO, this.getClass());
+			logger.info("inside test service" + baseDTO, this.getClass());
 			baseRepository.save(baseDTO);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -41,7 +43,6 @@ public class BaseServiceImpl implements BaseService<BaseDTO> {
 	}
 
 	public int updateservice(BaseDTO t) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

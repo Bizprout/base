@@ -1,10 +1,8 @@
 baseApp.controller("ClientController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage, $mdDialog) {
 
-	console.log("ClientController loaded.....");
-
 	$scope.cmpname=$localStorage.cmpname;
 	
-	if($localStorage.cmpid===undefined)
+	if($localStorage.usertype!="PPsuperadmin" && $localStorage.cmpid===undefined)
 	{
 		$location.path("/home");
 	}
@@ -40,8 +38,6 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 	// **********************When Create tab is clicked*****************************************************************
 
 	$scope.oncreateclick=function(){
-
-		console.log("Create Clicked...");
 		
 		$scope.clientDTO.clientName='';
 		$scope.clientDTO.contactPerson='';
@@ -64,8 +60,6 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 		//Create Client=======================================================================================================
 		$scope.createclient=function(clientDTO){
-
-			console.log("inside Create client..");
 
 			//call user add service
 			if($scope.clientDTO.contactEmail===undefined)
@@ -112,13 +106,24 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 						{
 							$scope.alerts = { type: 'danger', msg: 'Client not Created'};
 							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 						}
 						else
 						{
-							$scope.alerts = { type: 'danger'};
-							$scope.errdata=data[0];
-							$scope.showerror=true;
-							$scope.showSuccessAlert = false;
+							if(data.length>0)
+							{
+								$scope.alerts = { type: 'danger'};
+								$scope.errdata=data;
+								$scope.showerror=true;
+								$scope.showSuccessAlert = false;
+							}
+							else
+							{
+								$scope.alerts = { type: 'danger', msg: 'Client not Created'};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+							}
+							
 						}
 					}).error(function(data, status, headers, config){
 
@@ -140,8 +145,6 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 	// **********************When Edit tab is clicked*****************************************************************
 
 	$scope.oneditclick=function(){
-
-		console.log("Edit clicked...");		
 		
 		$scope.eclientDTO.clientId='';
 		$scope.eclientDTO.clientName='';
@@ -189,8 +192,6 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 		$scope.editclient=function(eclientDTO){
 			
-			console.log($scope.eclientDTO.status.length);
-
 			if($scope.eclientDTO.clientId==="" && $scope.eclientDTO.clientName==="" && $scope.eclientDTO.contactEmail==="" && $scope.eclientDTO.status==="")
 			{
 				$scope.alerts = { type: 'danger', msg: 'All Mandatory Fields should be Filled up.'};
@@ -235,8 +236,6 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 			});
 
 			$scope.editclient=function(eclientDTO){
-
-				console.log("inside Edit client..");
 
 				//call user add service
 
@@ -296,6 +295,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 										}).error(function(data, status, headers, config){
 											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 											$scope.showSuccessAlert = true;
+											$scope.showerror=false;
 										});
 
 										if(data[0]==="success")
@@ -317,26 +317,47 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 										{
 											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 											$scope.showSuccessAlert = true;
+											$scope.showerror=false;
 										}
 										else
-										{
-											$scope.alerts = { type: 'danger'};
-											$scope.errdata=data[0];
-											$scope.showerror=true;
-											$scope.showSuccessAlert = false;
+										{											
+											if(data.length>0)
+											{
+												$scope.alerts = { type: 'danger'};
+												$scope.errdata=data;
+												$scope.showerror=true;
+												$scope.showSuccessAlert = false;
+											}
+											else
+											{
+												$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+												$scope.showSuccessAlert = true;
+												$scope.showerror=false;
+											}
 										}
 									}
 									else if(data[0]==="failure")
 									{
 										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
 									}
 									else
 									{
-										$scope.alerts = { type: 'danger'};
-										$scope.errdata=data[0];
-										$scope.showerror=true;
-										$scope.showSuccessAlert = false;
+										if(data.length>0)
+										{
+											$scope.alerts = { type: 'danger'};
+											$scope.errdata=data;
+											$scope.showerror=true;
+											$scope.showSuccessAlert = false;
+										}
+										else
+										{
+											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+											$scope.showSuccessAlert = true;
+											$scope.showerror=false;
+										}
+									
 									}
 
 								}).error(function(data, status, headers, config){
@@ -394,26 +415,46 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 									{
 										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
 									}
 									else
 									{
-										$scope.alerts = { type: 'danger'};
-										$scope.errdata=data[0];
-										$scope.showerror=true;
-										$scope.showSuccessAlert = false;
+										if(data.length>0)
+										{
+											$scope.alerts = { type: 'danger'};
+											$scope.errdata=data;
+											$scope.showerror=true;
+											$scope.showSuccessAlert = false;
+										}
+										else
+										{
+											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+											$scope.showSuccessAlert = true;
+											$scope.showerror=false;
+										}
 									}
 								}
 								else if(data[0]==="failure")
 								{
 									$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
 								}
 								else
-								{
-									$scope.alerts = { type: 'danger'};
-									$scope.errdata=data[0];
-									$scope.showerror=true;
-									$scope.showSuccessAlert = false;
+								{									
+									if(data.length>0)
+									{
+										$scope.alerts = { type: 'danger'};
+										$scope.errdata=data;
+										$scope.showerror=true;
+										$scope.showSuccessAlert = false;
+									}
+									else
+									{
+										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
+										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
+									}
 								}
 
 							}).error(function(data, status, headers, config){
@@ -438,8 +479,6 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 //	*******when Report tab is clicked********************
 
 	$scope.onreportclick=function(){
-
-		console.log("Report Clicked......");
 		
 		$scope.search='';
 

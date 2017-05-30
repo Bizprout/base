@@ -1,7 +1,5 @@
 baseApp.controller("UserMappingController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage, $mdDialog) {
 
-	console.log("UserMappingController loaded.....");
-
 	//*******DTO to store the form values for add when populated*******************************
 
 	$scope.cmpname=$localStorage.cmpname;
@@ -36,8 +34,6 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 				"username" : "",
 				"companyName":""
 		}
-		console.log("AJ:User Mapping Loaded");
-
 
 		//**************search option for multiselect***********************************************
 		$scope.searchTerm;
@@ -202,7 +198,6 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 			var sids=(userMappingDTO.screenId).toString();	
 
 			var a = {"userid": userMappingDTO.userid,"cmpId": userMappingDTO.cmpId,"screenId":sids};
-			console.log(a);
 			$http({
 				method 	: "POST",
 				url 	: "usermapping/updateUserMapping",
@@ -229,13 +224,23 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 				{
 					$scope.alerts = { type: 'danger' ,msg: 'User not Mapped!'};
 					$scope.showSuccessAlert = true;
+					$scope.showerror=false;
 				}
 				else
 				{
-					$scope.alerts = { type: 'danger'};
-					$scope.errdata=data;
-					$scope.showerror=true;
-					$scope.showSuccessAlert = false;
+					if(data.length>0)
+					{
+						$scope.alerts = { type: 'danger'};
+						$scope.errdata=data;
+						$scope.showerror=true;
+						$scope.showSuccessAlert = false;
+					}
+					else
+					{
+						$scope.alerts = { type: 'danger' ,msg: 'User not Mapped!'};
+						$scope.showSuccessAlert = true;
+						$scope.showerror=false;
+					}
 				}
 
 				//*******options for user names and default selected option********************************
@@ -258,8 +263,6 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 //	*******when Report tab is clicked********************
 
 	$scope.onreportclick=function(){
-
-		console.log("Report Clicked......");
 
 		//View Users - Report================================================================================================
 

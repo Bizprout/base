@@ -108,6 +108,8 @@
 								href="#" class="close fileupload-exists"
 								data-dismiss="fileupload" style="float: none">x</a>
 						</div>
+						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+							ng-show="isLoadingimportfile"></md-progress-circular>
 					</div>
 				</div>
 				<br />
@@ -122,7 +124,7 @@
 				</div>
 				<div id="ppmappingexcelexport" ng-hide="true">
 					<b><font style="font-size: 16px;">Upload Format for
-							Mapping PP Masters:</font></b><br /> <b><font style="font-size: 16px;">Client
+							Mapping PP Masters</font></b><br /> <b><font style="font-size: 16px;">Client
 							Name: {{clientname}}</font></b><br /> <b><font style="font-size: 16px;">Company
 							Name: {{cmpname}}</font></b><br />
 					<table border="1">

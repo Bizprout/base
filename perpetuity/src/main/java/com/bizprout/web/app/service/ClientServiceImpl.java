@@ -6,14 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.BaseRepository;
-import com.bizprout.web.api.service.BaseService;
+import com.bizprout.web.api.service.ClientService;
 import com.bizprout.web.app.dto.ClientDTO;
 import com.bizprout.web.app.repository.ClientRepositoryImpl;
 
 @Service
-public class ClientServiceImpl implements BaseService<ClientDTO>{
+@Transactional
+public class ClientServiceImpl implements ClientService<ClientDTO>{
 	
 	@Autowired
 	private BaseRepository<ClientDTO> baseRepository;

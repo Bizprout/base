@@ -27,18 +27,20 @@ public class LoginServiceImpl implements LoginService<UserDTO> {
 			fromDb = this.userRepository.getLoginUser(loginVO.getUsername(),
 					loginVO.getPassword());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return fromDb;
 	}
 
 	public UserDTO findByUsername(String userName) {
-
+		
+		logger.info("inside findByUsername method...");
+		
 		try {
 			UserDTO dto = userRepository.getUserData(userName);
 			return dto;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return null;
 

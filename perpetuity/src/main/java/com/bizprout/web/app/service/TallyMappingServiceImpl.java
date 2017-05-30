@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.TallyMappingService;
@@ -16,6 +17,7 @@ import com.bizprout.web.app.dto.TallyMastersDTO;
 import com.bizprout.web.app.repository.TallyMappingRepositoryImpl;
 
 @Service
+@Transactional
 public class TallyMappingServiceImpl implements TallyMappingService<TallyMappingDTO> {
 	
 	@Autowired
@@ -86,10 +88,10 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 	{
 		int res=0;
 		try {
-			logger.info("inside getPpMasterMapping method "+this.getClass());
+			logger.info("inside deletePpidCmpid method "+this.getClass());
 			res=tallymappingrepo.deletePpidCmpid(cmpid, ppid);
 		} catch (Exception e) {
-			logger.error("Exception in getPpMasterMapping method \t" + e.getMessage(), this.getClass());
+			logger.error("Exception in deletePpidCmpid method \t" + e.getMessage(), this.getClass());
 		}
 		return res;
 	}
@@ -138,7 +140,7 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		List<PpMasterDTO> ppmasteridname=null;
 		
 		try {
-			logger.info("inside getTallyPpMappingData method "+this.getClass());
+			logger.info("inside getPpMasterIdNames method "+this.getClass());
 			ppmasteridname = tallymappingrepo.getPpMasterIdNames(cmpid, mastertype, ppmastername);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());

@@ -1,4 +1,4 @@
-var baseApp=angular.module("BaseApp",['ngRoute', 'AxelSoft', 'angularUtils.directives.dirPagination', 'btorfs.multiselect', 'ngMaterial', 'ngMessages', 'mdPickers', 'ngStorage', 'ngMdIcons','http-auth-interceptor']);
+var baseApp=angular.module("BaseApp",['ngRoute', 'ngAnimate', 'AxelSoft', 'angularUtils.directives.dirPagination', 'btorfs.multiselect', 'ngMaterial', 'ngMessages', 'mdPickers', 'ngStorage', 'ngMdIcons','http-auth-interceptor']);
 
 baseApp.directive('fileModel', ['$parse', function ($parse) {
 	return {
@@ -50,7 +50,6 @@ baseApp.run(function($rootScope, $localStorage, $location,$http, USER_ROLES, $q,
 	
 	$rootScope.$on('event:auth-forbidden', function(rejection) {
 		$rootScope.$evalAsync(function() {
-			console.log("forbidden");
 			$location.path('/login').replace();
 		});
 	});

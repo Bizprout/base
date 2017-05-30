@@ -31,9 +31,6 @@ public class ApplicationWebXml implements WebApplicationInitializer {
 				"openSessionInViewFilter", OpenSessionInViewFilter.class);
 		filter.setInitParameter("singleSession", "true");
 		 filter.addMappingForServletNames(null, true, "dispatcher");
-		/*filter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST),
-                true, "/*");
-*/
 	}
 
 }

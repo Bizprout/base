@@ -6,7 +6,7 @@ public class SecurityWebInitializer extends
 		AbstractSecurityWebApplicationInitializer {
 
 	public SecurityWebInitializer() {
-		System.out.println("SecurityWebInitializer");
+
 	}
 
 }

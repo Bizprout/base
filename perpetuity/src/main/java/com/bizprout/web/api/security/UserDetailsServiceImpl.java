@@ -32,19 +32,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		try {
 			UserDTO dto = new UserDTO();
 			dto.setUsername(userId);
-			
+
 			dto = (UserDTO) userRepositoryImpl.getUserData(userId);
-			
+
 			if (dto == null) {
 				logger.debug("user not found with the provided username");
 				throw new UsernameNotFoundException("User not found");
 			}
-			
+
 			String password = AESencrp.decrypt(dto.getPassword());						
-			
+
 			logger.debug(" user from username " + dto.toString()
 					+ dto.getPassword());
-			
+
 			return new org.springframework.security.core.userdetails.User(
 					dto.getUsername(), password, getAuthorities(dto));
 		} catch (Exception e) {

@@ -13,6 +13,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
 public class RestAuthenticationFailureHandler extends
 		SimpleUrlAuthenticationFailureHandler implements
@@ -21,24 +23,30 @@ public class RestAuthenticationFailureHandler extends
 	public void onAuthenticationFailure(HttpServletRequest request,
 			HttpServletResponse response, AuthenticationException exception)
 			throws IOException, ServletException {
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString("Auth Failed");
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		response.getWriter().write("Auth Failed");
+		response.getWriter().write(jsonInString);
 	}
 
 	public void commence(HttpServletRequest arg0, HttpServletResponse response,
 			AuthenticationException arg2) throws IOException, ServletException {
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString("Auth Failed");
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		response.getWriter().write("Auth Failed");
+		response.getWriter().write(jsonInString);
 
 	}
 
 	public void handle(HttpServletRequest arg0, HttpServletResponse response,
 			AccessDeniedException arg2) throws IOException, ServletException {
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString("Auth Failed");
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		response.getWriter().write("Auth Failed");
+		response.getWriter().write(jsonInString);
 
 	}
 

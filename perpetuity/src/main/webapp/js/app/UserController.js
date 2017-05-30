@@ -1,19 +1,17 @@
 baseApp.controller("UserController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage, $mdDialog) {
 
-	console.log("UserController loaded.....");
-
 	$scope.cmpname=$localStorage.cmpname;
 
 	// **********switch flag for success message**********
 	$scope.switchBool = function (value) {
 		$scope[value] = !$scope[value];
 	};
-	
-	if($localStorage.cmpid===undefined)
+
+	if($localStorage.usertype!="PPsuperadmin" && $localStorage.cmpid===undefined)
 	{
 		$location.path("/home");
 	}
-	
+
 	if($localStorage.userid===undefined)
 	{
 		$location.path("/");
@@ -42,8 +40,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 	$scope.onaddclick=function(){
 
-		console.log("Add Clicked...");
-		
 		$scope.userDTO.username='';
 		$scope.userDTO.mobile='';
 
@@ -80,8 +76,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 		//Create user=======================================================================================================
 		$scope.createuser=function(userDTO){
 
-			console.log("inside Create User..");
-			
 			if($scope.userDTO.username!="")
 			{
 				//call user add service
@@ -94,44 +88,62 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 				{
 					$scope.userDTO.emailid=$scope.userDTO.username;
 
-					$http({
-						method : "POST",
-						url : "user/add",
-						data : userDTO,
-						headers : {
-							'Content-Type' : 'application/json'
-						}
-					}).success(function(data, status, headers, config){
+					var confirm = $mdDialog.confirm()
+					.title('Confirm Your Email ID')
+					.textContent($scope.userDTO.emailid)
+					.ok('OK')
+					.cancel('Cancel');
 
-						if(data[0]==="success")
-						{
-							$scope.alerts = { type: 'success', msg: 'User Created and an Email has been sent with the Username and an Auto Generated Password.'};
+					$mdDialog.show(confirm).then(function() {
+						$http({
+							method : "POST",
+							url : "user/add",
+							data : userDTO,
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(data, status, headers, config){
+
+							if(data[0]==="success")
+							{
+								$scope.alerts = { type: 'success', msg: 'User Created and an Email has been sent with the Username and an Auto Generated Password!'};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+
+								$scope.userDTO.username='';
+								//$scope.userDTO.usertype = $scope.usertype[0].id;
+								//$scope.userDTO.emailid='';
+								$scope.userDTO.mobile='';
+							}
+							else if (data[0] === "failure") {		
+
+								$scope.alerts = { type: 'danger', msg: 'User not Created!'};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+							}
+							else
+							{
+								if(data.length>0)
+								{
+									$scope.alerts = { type: 'danger'};
+									$scope.errdata=data;
+									$scope.showerror=true;
+									$scope.showSuccessAlert = false;
+								}
+								else
+								{
+									$scope.alerts = { type: 'danger', msg: 'User not Created'};
+									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
+								}
+							}
+						}).error(function(data, status, headers, config){
+
+							$scope.alerts = { type: 'failure', msg: 'User not Created'};
 							$scope.showSuccessAlert = true;
 
-							$scope.userDTO.username='';
-							//$scope.userDTO.usertype = $scope.usertype[0].id;
-							//$scope.userDTO.emailid='';
-							$scope.userDTO.mobile='';
-						}
-						else if (data[0] === "failure") {		
-
-							$scope.alerts = { type: 'danger', msg: 'User not Created'};
-							$scope.showSuccessAlert = true;
-						}
-						else
-						{
-							$scope.alerts = { type: 'danger', msgtype: 'Error!'};
-							$scope.errdata=data[0];
-							$scope.showerror=true;
-							$scope.showSuccessAlert = false;
-
-						}
-					}).error(function(data, status, headers, config){
-
-						$scope.alerts = { type: 'failure', msg: 'User not Created'};
-						$scope.showSuccessAlert = true;
-
-					});	
+						});	
+					});
 				}		
 			}	 	
 			else
@@ -146,8 +158,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 	$scope.oneditclick=function(){
 
-		console.log("Edit Clicked....");
-		
 		$scope.edituserDTO.username='';
 		$scope.edituserDTO.editusername='';
 		//$scope.edituserDTO.usertype = $scope.usertype[0].id;
@@ -225,8 +235,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 			$scope.edituser=function(edituserDTO){
 
-				console.log("inside Edit User..");
-
 				//$scope.edituserDTO.usertype=$scope.usertype;
 
 				//call user add service
@@ -264,6 +272,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 							{
 								$scope.alerts = { type: 'success', msg: 'User Updated!'};
 								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
 
 								$scope.edituserDTO.username='';
 								$scope.edituserDTO.editusername='';
@@ -278,13 +287,25 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 							{
 								$scope.alerts = { type: 'danger', msg: 'User not Updated!'};
 								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
 							}
 							else
 							{
-								$scope.alerts = { type: 'danger', msgtype: 'Error!'};
-								$scope.errdata=data[0];
-								$scope.showerror=true;
-								$scope.showSuccessAlert = false;
+								if(data.length>0)
+								{
+									$scope.alerts = { type: 'danger'};
+									$scope.errdata=data;
+									$scope.showerror=true;
+									$scope.showSuccessAlert = false;
+								}
+								else
+								{
+									$scope.alerts = { type: 'danger', msg: 'User not Updated!'};
+									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
+								}
+
+
 							}
 
 						}).error(function(data, status, headers, config){
@@ -323,8 +344,6 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 	$scope.onreportclick=function(){
 
-		console.log("Report Clicked......");
-		
 		$scope.search='';
 
 		//View Users - Report================================================================================================

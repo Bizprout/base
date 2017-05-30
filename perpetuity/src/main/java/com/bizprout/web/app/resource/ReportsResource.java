@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,14 +25,12 @@ public class ReportsResource
 
 	public ReportsResource() {
 		try {
-			logger.info(getClass().getSimpleName() + "Created..."+this.getClass());
+			logger.info(getClass().getSimpleName() + "Created...");
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 	}
-
-
 
 	@PostMapping({"/getdata"})
 	@ResponseBody 
@@ -39,24 +38,15 @@ public class ReportsResource
 	{
 		String repName = repdto.getReportName();
 
-
 		List<Object> data = null;
 		try {
-			logger.debug("Request......getCompany Trial Bal List......"+this.getClass());
+			logger.debug("Request......getCompany Trial Bal List......");
 			if (repName.equalsIgnoreCase("Trial Balance")) {
 				data = repService.getCmpTrialBal(repdto);
-				logger.debug(repName,this.getClass());
-			}
-			else if (repName.equalsIgnoreCase("Daybook")) {
-				data = repService.getCmpVchData(repdto);
-				logger.debug(repName,this.getClass());
-			}
-			else if (repName.equalsIgnoreCase("Payment Register")) {
-				data = repService.getPymtVchData(repdto);
-				logger.debug(repName,this.getClass());
+
 			}
 			else
-				logger.debug(repName+" Report not found..."+this.getClass());
+				data = repService.getCmpVchData(repdto);
 
 		}
 		catch (Exception e)
@@ -65,4 +55,23 @@ public class ReportsResource
 		}
 		return data;
 	}
+
+	@PostMapping({"/getledgerdata"})
+	@ResponseBody 
+	public List<Object> getVchLedgers(@RequestParam("vchdata") String voucherId)
+	{
+		List<Object> data = null;
+		try {
+			logger.debug("Request......getVchLedgers List......");
+			data = repService.getVchLedgers(voucherId);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return data;
+	}
+
+
+
 }

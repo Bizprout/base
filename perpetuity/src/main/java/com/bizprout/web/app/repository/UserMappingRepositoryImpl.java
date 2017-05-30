@@ -7,7 +7,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.AbstractBaseRepository;
 import com.bizprout.web.api.common.repository.BaseRepository;
@@ -34,15 +32,16 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@SuppressWarnings("unchecked")
 	public List<ScreensDTO> getScreenNameList()
 	{
 		Session session;
 		Query qry=null;
 		List<ScreensDTO> screenNames= null;
 		try {
-			logger.info("Inside UserRepositoryImpl......getScreenNameList method......."+this.getClass());
+			logger.info("Inside.....getScreenNameList method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			qry=session.createQuery(" from ScreensDTO");
 			screenNames=qry.list();
@@ -53,14 +52,15 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 		return screenNames;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<UserMappingDTO> getUserMapData(){
 		Session session;
 		Query qry=null;
 		List<UserMappingDTO> userAccess= null;
 		try {
-			logger.info("Inside UserRepositoryImpl......get User Mapping List method......."+this.getClass());
+			logger.info("Inside.....getUserMapData method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 			qry=session.createQuery("from UserMappingDTO");
 			userAccess=qry.list();
 
@@ -77,7 +77,7 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 
 		UserMappingDTO usermapDTO = null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(UserMappingDTO.class)
 					.add(Restrictions.eq("cmpId", cmpid))
@@ -94,6 +94,7 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 		return usermapDTO;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<UserMappingDTO> getCmpByuserid(int userid){
 
 		logger.info("Inside getCmpByuserid method......."+this.getClass());
@@ -102,9 +103,7 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 		Query qry=null;
 		List<UserMappingDTO> compmap= null;
 		try {
-			logger.info("Inside UserRepositoryImpl......get User Mapping List method......."+this.getClass());
-
-			session = factory.getCurrentSession();
+			session = getSession();
 			qry=session.createQuery("from UserMappingDTO where userid=:user");
 			qry.setParameter("user",userid);
 			compmap=qry.list();
@@ -118,23 +117,19 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 	public int deleteScreensByCmpidUserid(int cmpid, int userid)
 	{
 		int result = 0;
-		Transaction tx = null;
 		Session session;
 		Query qry=null;
 
 		try {
-			logger.info("Inside UserMappingRepositoryImpl......deleteScreensByCmpidUserid method......."+this.getClass());
+			logger.info("Inside.....deleteScreensByCmpidUserid method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-
-			tx=session.beginTransaction();
+			session = getSession();
 
 			qry=session.createQuery("Delete from UserMappingDTO where cmpId=:cmpid and userid=:userd");
 			qry.setParameter("cmpid",cmpid);
 			qry.setParameter("userd",userid);
 
 			result= qry.executeUpdate();
-			tx.commit();
 
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());

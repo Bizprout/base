@@ -1,15 +1,12 @@
 baseApp.controller("PPMasterController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage, $mdDialog) {
 
-	console.log("PPMasterController loaded...");
-	//TODO angular constants
-
 	$scope.cmpname=$localStorage.cmpname;
-	
+
 	if($localStorage.cmpid===undefined)
 	{
 		$location.path("/home");
 	}
-	
+
 	if($localStorage.userid===undefined)
 	{
 		$location.path("/");
@@ -69,8 +66,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 
 	//***********when Create tab is clicked**********************************
 	$scope.oncreateclick=function(){
-
-		console.log("Create Clicked....");
 
 		$scope.hidecostcat=true;
 
@@ -144,7 +139,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 				$scope.hidecostcat=true;
 				$scope.ppparentnames=["Contra","Credit Note","Debit Note","Delivery Note","Job Work In Order","Job Work Out Order","Journal","Material In","Material Out","Memorandum","Payment","Physical Stock","Purchase","Purchase Order","Receipt","Receipt Note","Rejections In","Rejections Out","Reversing Journal","Sales","Sales Order","Stock Journal"];
 			}
-			
+
 
 			$scope.oncategorychange=function(){
 
@@ -258,8 +253,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 		//Create pp Standard Masters=======================================================================================================
 		$scope.createppmasters=function(ppmasterDTO){
 
-			console.log("inside Create pp masters..");
-
 			//call pp master add service
 			if($scope.ppmasterDTO.mastertype.length!=0 || $scope.ppmasterDTO.ppmastername.length!=0 || $scope.ppmasterDTO.ppparentname.length!=0)
 			{	
@@ -316,12 +309,23 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						{
 							$scope.alerts = { type: 'danger' ,msg: 'PP Masters not Created'};
 							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 						}
 						else
 						{
-							$scope.alerts = { type: 'danger'};
-							$scope.errdata=data;
-							$scope.showerror=true;
+							if(data.length>0)
+							{
+								$scope.alerts = { type: 'danger'};
+								$scope.errdata=data;
+								$scope.showerror=true;
+								$scope.showSuccessAlert = false;
+							}
+							else
+							{
+								$scope.alerts = { type: 'danger' ,msg: 'PP Masters not Created'};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+							}
 						}
 					}).error(function(data, status, headers, config){
 
@@ -351,8 +355,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 	//***********when Edit tab is clicked**********************************
 	$scope.oneditclick=function(){
 		//to get pp masters list based on master type selection
-
-		console.log("Edit Clicked....");
 
 		$scope.editppmasterDTO.mastertype='';
 		$scope.editppmasterDTO.ppmastername='';
@@ -400,12 +402,12 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 			$scope.editppmasterDTO.editppmastername=$scope.editppmasterDTO.ppmastername;
 
 			$scope.isLoadingeditppmastername = false;
-			
+
 			$scope.ppparentnames=[];
-			
+
 			$scope.isLoadingselecteditcategory=true;
 			$scope.isLoadingeditppparentname=true;
-			
+
 			$http({
 				method : "POST",
 				url : "ppmaster/getppparentname",
@@ -475,7 +477,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 					}).success(function(data, status, headers, config){
 
 						$scope.ppparentnames.push($scope.editppmasterDTO.category);
-																	
+
 						for(var key in data){
 							$scope.ppparentnames.push(data[key]);
 						}	
@@ -518,7 +520,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 				else if($scope.editppmasterDTO.mastertype==="Cost Centre")
 				{
 					$scope.ppparentnames.push("Primary");				
-					
+
 					$http({
 						method : "POST",
 						url : "ppmaster/getppmastersnamebycostcategory",
@@ -550,7 +552,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 							'Content-Type' : 'application/json'
 						}
 					}).success(function(data, status, headers, config){
-						
+
 						//$scope.ppparentnames.push($scope.editppmasterDTO.category);
 
 						for(var key in data){
@@ -564,7 +566,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						// or server returns response with an error status.
 					});
 				}
-				
+
 				$scope.editppmasterDTO.ppparentname=datapop[0].ppparentname;
 
 			}).error(function(data, status, headers, config){
@@ -583,7 +585,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 			if($scope.editppmasterDTO.mastertype==="Ledger" || $scope.editppmasterDTO.mastertype==="Group")
 			{
 				$scope.tempmastertype="Group";
-				
+
 				$scope.ppparentnames.push($scope.editppmasterDTO.category);
 			}
 			else if($scope.editppmasterDTO.mastertype==="Cost Category")
@@ -624,8 +626,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 		};
 
 		$scope.editppmasters=function(editppmasterDTO){
-
-			console.log("inside Edit PP Masters..");
 
 			//$scope.edituserDTO.usertype=$scope.usertype;
 
@@ -683,12 +683,23 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 						{
 							$scope.alerts = { type: 'danger' ,msg: 'PP Masters not Updated!'};
 							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 						}
 						else
 						{
-							$scope.alerts = { type: 'danger'};
-							$scope.errdata=data;
-							$scope.showerror=true;
+							if(data.length>0)
+							{
+								$scope.alerts = { type: 'danger'};
+								$scope.errdata=data;
+								$scope.showerror=true;
+								$scope.showSuccessAlert = false;
+							}
+							else
+							{
+								$scope.alerts = { type: 'danger' ,msg: 'PP Masters not Updated!'};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+							}							
 						}
 
 					}).error(function(data, status, headers, config){
@@ -717,8 +728,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 
 	//***********when Import/Export tab is clicked**********************************
 	$scope.onimpexpclick=function(){
-		console.log("Import/Export clicked....");
-
+		
 		$http({
 			method : "POST",
 			url : "ppmaster/setsessioncmpid",
@@ -727,9 +737,9 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 				'Content-Type' : 'application/json'
 			}
 		}).success(function(data, status, headers, config){
-			
+
 		}).error(function(data, status, headers, config){
-			
+
 		});
 
 		$scope.exportppformat=function(){
@@ -748,8 +758,10 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 			});
 		};
 
-
 		$scope.ppmasterimport=function(file){
+
+			$scope.isLoadingimportfile=true;
+
 
 			var file = $scope.myFile;
 			var uploadUrl = "ppmaster/ppmasteruploadfile";
@@ -768,21 +780,33 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 
 						if(response[0]==="success")
 						{
-							$scope.alerts = { type: 'success' ,msg: "File - "+ file.name +" Uploaded Successfully!"};
+							$scope.alerts = { type: 'success' ,msg: "File - "+ file.name +" Updated Successfully!"};
 							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 						}
 						else if(response[0]==="failure")
 						{
-							$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Uploaded!"};
+							$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Updated!"};
 							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 						}
 						else
 						{
-							console.log(response);
-							$scope.alerts = { type: 'danger'};
-							$scope.errdata=response;
-							$scope.showerror=true;
+							if(response.length>0)
+							{
+								$scope.alerts = { type: 'danger'};
+								$scope.errdata=response;
+								$scope.showerror=true;
+								$scope.showSuccessAlert = false;
+							}
+							else
+							{
+								$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Updated!"};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+							}
 						}
+						$scope.isLoadingimportfile=false;
 
 					})
 					.error(function(response){
@@ -810,8 +834,6 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 	$scope.itemsPerPage=5;
 
 	$scope.onreportclick=function(){
-
-		console.log("Report clicked....");
 
 		$scope.search='';
 

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.UserService;
@@ -14,6 +15,7 @@ import com.bizprout.web.app.dto.UserEditVO;
 import com.bizprout.web.app.repository.UserRepositoryImpl;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService<UserDTO> {
 
 	@Autowired
@@ -27,8 +29,8 @@ public class UserServiceImpl implements UserService<UserDTO> {
 		int id=0;
 		try {
 			logger.info("inside CreateUser service " + t, this.getClass());
-			//t.setUsertype(UserConstant.PP_SUPER_ADMIN);
 			id=baseRepository.save(t);
+			System.out.println(id);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -84,7 +86,7 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public UserDTO getUserDataById(int Userid) {
 		UserDTO user = null;
 		try {
-			logger.info("inside getUserData method..."+this.getClass());
+			logger.info("inside getUserDataById method..."+this.getClass());
 			user = userRepository.getUserDataById(Userid);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -95,7 +97,7 @@ public class UserServiceImpl implements UserService<UserDTO> {
 	public int updatePassword(String password, int cmpid) {
 		int res = 0;
 		try {
-			logger.info("inside changerdPassword method..."+this.getClass());
+			logger.info("inside updatePassword method..."+this.getClass());
 			res = userRepository.updatePassword(password, cmpid);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());

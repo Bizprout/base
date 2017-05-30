@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bizprout.web.api.common.repository.BaseRepository;
 import com.bizprout.web.api.service.UserMappingService;
@@ -17,6 +18,7 @@ import com.bizprout.web.app.dto.UserMappingDTO;
 import com.bizprout.web.app.repository.UserMappingRepositoryImpl;
 
 @Service
+@Transactional
 public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 	
 	@Autowired  
@@ -29,6 +31,7 @@ public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 	
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@SuppressWarnings("unchecked")
 	public List<String> getCompanyList() {
 		
 		List<String> companylist = null;
@@ -67,7 +70,7 @@ public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 		int id=0;
 		try {
 			id=baseRepository.save(uMapDto); 
-			logger.info("inside UpdateCompany service " + uMapDto, this.getClass());
+			logger.info("inside updateUserMapping service " + uMapDto, this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -79,7 +82,7 @@ public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 		List<UserMappingDTO> companylist = null;
 
 		try {
-			logger.info("inside get user mapping method "+this.getClass());
+			logger.info("inside get user mapping getUserMapData method "+this.getClass());
 
 			companylist=usermappingrepository.getUserMapData();				
 
@@ -94,7 +97,7 @@ public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 		
 		UserMappingDTO usermapdto = null;
 		try {
-			logger.info("inside get user mapping method "+this.getClass());
+			logger.info("inside get user mapping getUserMapByCmpUser method "+this.getClass());
 
 			usermapdto=usermappingrepository.getUserMapByCmpUser(cmpid, userid);	////baseRepository.getList();			
 
@@ -124,7 +127,7 @@ public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 		
 		List<UserMappingDTO> usermapdto = null;
 		try {
-			logger.info("inside get user mapping method "+this.getClass());
+			logger.info("inside get user mapping getCmpByuserid method "+this.getClass());
 
 			usermapdto=usermappingrepository.getCmpByuserid(userid);	////baseRepository.getList();			
 

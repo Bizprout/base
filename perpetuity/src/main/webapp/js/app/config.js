@@ -57,12 +57,6 @@ baseApp
 							{
 								templateUrl : "html/changepassword/ChangePassword.html",
 								controller : "ChangePasswordController"
-							})
-					.when(
-							"/logoutsession",
-							{
-								templateUrl : "",
-								controller : "LogoutController"
-							})		;
+							});
 			$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 		});

@@ -1,14 +1,10 @@
 baseApp.controller("AddEditController", function($scope, $location, $http) {
 
-	console.log("AddEditController loaded.....");
-
 	$scope.showadd = true;
 	$scope.showedit = false;
 	
 
 	$scope.routedirect = function(value) {
-
-		console.log("inside routedirect..");
 
 		if('Add'===value)
 		{
@@ -35,7 +31,6 @@ baseApp.controller("AddEditController", function($scope, $location, $http) {
 	
 	//$scope.usertypemodel = $scope.usertypes[0];
 	/*$scope.usertype = function(){
-		console.log("User type say... " + $scope.usertypemodel);
 	};*/
 
 	$

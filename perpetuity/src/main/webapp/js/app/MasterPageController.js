@@ -12,7 +12,7 @@ baseApp.controller("MasterPageController", function($scope, $location, $http, $l
 	$scope.companybuttondisable=true;
 	$scope.ppmasterbuttondisable=true;
 
-	if($localStorage.cmpid===undefined)
+	if($localStorage.usertype!="PPsuperadmin" && $localStorage.cmpid===undefined)
 	{
 		$location.path("/home");
 	}
@@ -125,7 +125,15 @@ baseApp.controller("MasterPageController", function($scope, $location, $http, $l
 		$scope.userbuttondisable=false;
 		$scope.clientbuttondisable=false;
 		$scope.companybuttondisable=false;
-		$scope.ppmasterbuttondisable=false;
+		
+		if($localStorage.cmpid===undefined)
+		{
+			$scope.ppmasterbuttondisable=true;
+		}
+		else
+		{
+			$scope.ppmasterbuttondisable=false;
+		}
 		
 		$scope.isLoadingmasters=false;
 	}

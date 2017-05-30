@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -29,27 +28,96 @@ import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("deprecation")
 public class ExcelReadData {
+	
+	
+	public boolean checkExcelFormatPpMasters(MultipartFile filename)
+	{
+		Logger logger=LoggerFactory.getLogger(this.getClass());
 
-	public boolean searchJsonArray(JSONArray jsonArray, String itemtosearch){
-		boolean found = false;
+		Workbook workbook = null;
+		
+		boolean res = false;
+		
 		try {
-			for (int i = 0; i < jsonArray.length(); i++)
-			{
-				System.out.println(jsonArray.getString(i)+"....."+itemtosearch);
-				if (jsonArray.getString(i).equals(itemtosearch))
-				{
-					found = true;
-				}
-				else
-				{
-					found = false;
-				}
-			}
 
-		} catch (JSONException e) {
-			e.printStackTrace();
+			InputStream excelfile= filename.getInputStream();
+			workbook=new XSSFWorkbook(excelfile);
+			Sheet datatypesheet= workbook.getSheetAt(0);
+			
+			
+			if(datatypesheet.getRow(0).getCell(0).getStringCellValue().equals("Upload Format for Creating PP Masters") &&
+					datatypesheet.getRow(3).getCell(0).getStringCellValue().equals("Master Type") && 
+					datatypesheet.getRow(3).getCell(1).getStringCellValue().equals("PP Master Name") &&
+					datatypesheet.getRow(3).getCell(2).getStringCellValue().equals("Category") &&
+					datatypesheet.getRow(3).getCell(3).getStringCellValue().equals("PP Parent Name") &&
+					datatypesheet.getRow(1).getCell(0).getStringCellValue().contains("Company Name:"))
+			{
+				res=true;
+			}
+			else
+			{
+				res=false;
+			}
+			
 		}
-		return found;
+		catch (IOException e) {
+			logger.error(e.getMessage()+"...."+this.getClass());
+			res=false;
+		}
+		finally{
+			try {
+				workbook.close();
+			} catch (IOException e) {
+				logger.error(e.getMessage()+"...."+this.getClass());
+			}
+		}
+		return res;
+
+	}
+	
+	public boolean checkExcelFormatPpMastersMapping(MultipartFile filename)
+	{
+		Logger logger=LoggerFactory.getLogger(this.getClass());
+
+		Workbook workbook = null;
+		
+		boolean res = false;
+		
+		try {
+
+			InputStream excelfile= filename.getInputStream();
+			workbook=new XSSFWorkbook(excelfile);
+			Sheet datatypesheet= workbook.getSheetAt(0);
+			
+			
+			if(datatypesheet.getRow(0).getCell(0).getStringCellValue().equals("Upload Format for Mapping PP Masters") &&
+					datatypesheet.getRow(1).getCell(0).getStringCellValue().contains("Client Name:") &&
+					datatypesheet.getRow(2).getCell(0).getStringCellValue().contains("Company Name:") &&
+					datatypesheet.getRow(3).getCell(0).getStringCellValue().equals("Master Type") && 
+					datatypesheet.getRow(3).getCell(1).getStringCellValue().equals("Map to PP Master") &&
+					datatypesheet.getRow(3).getCell(2).getStringCellValue().equals("Tally Master Names"))
+			{
+				res=true;
+			}
+			else
+			{
+				res=false;
+			}
+			
+		}
+		catch (IOException e) {
+			logger.error(e.getMessage()+"...."+this.getClass());
+			res=false;
+		}
+		finally{
+			try {
+				workbook.close();
+			} catch (IOException e) {
+				logger.error(e.getMessage()+"...."+this.getClass());
+			}
+		}
+		return res;
+
 	}
 
 	public boolean checkCmp(MultipartFile filename, int sesscmpid){
@@ -74,7 +142,14 @@ public class ExcelReadData {
 			workbook=new XSSFWorkbook(excelfile);
 			Sheet datatypesheet= workbook.getSheetAt(0);
 
-			compname=datatypesheet.getRow(1).getCell(0).getStringCellValue().split("Company Name: ");
+			if(datatypesheet.getRow(1).getCell(0).getStringCellValue().contains("Company Name: "))
+			{
+				compname=datatypesheet.getRow(1).getCell(0).getStringCellValue().split("Company Name: ");
+			}
+			else
+			{
+				compname=datatypesheet.getRow(2).getCell(0).getStringCellValue().split("Company Name: ");
+			}		
 
 			//request to post cmpname and get cmp_id
 			DefaultHttpClient httpclientcmp= new DefaultHttpClient();
@@ -283,7 +358,7 @@ public class ExcelReadData {
 
 									JSONArray catspecppmasters=new JSONArray(linegrps1);
 
-									if(currentrow.getCell(3).getStringCellValue().equals("Assets") ||  searchJsonArray(catspecppmasters, currentrow.getCell(3).getStringCellValue())==true )
+									if(currentrow.getCell(3).getStringCellValue().equals("Assets") || catspecppmasters.toString().contains(currentrow.getCell(3).getStringCellValue()))
 									{
 										jsonobj.put("ppparentname", currentrow.getCell(3).getStringCellValue());
 									}
@@ -311,7 +386,7 @@ public class ExcelReadData {
 									}
 									JSONArray catspecppmasters=new JSONArray(linegrps1);
 
-									if(currentrow.getCell(3).getStringCellValue().equals("Liabilities") || searchJsonArray(catspecppmasters, currentrow.getCell(3).getStringCellValue())==true )
+									if(currentrow.getCell(3).getStringCellValue().equals("Liabilities") || catspecppmasters.toString().contains(currentrow.getCell(3).getStringCellValue()))
 									{
 										jsonobj.put("ppparentname", currentrow.getCell(3).getStringCellValue());
 									}
@@ -340,9 +415,9 @@ public class ExcelReadData {
 
 									JSONArray catspecppmasters=new JSONArray(linegrps1);
 
-									if(currentrow.getCell(3).getStringCellValue().equals("Expenses") || searchJsonArray(catspecppmasters, currentrow.getCell(3).getStringCellValue())==true )
+									if(currentrow.getCell(3).getStringCellValue().equals("Expenses") || catspecppmasters.toString().contains(currentrow.getCell(3).getStringCellValue()))
 									{
-										jsonobj.put("pp parentname", currentrow.getCell(3).getStringCellValue());
+										jsonobj.put("ppparentname", currentrow.getCell(3).getStringCellValue());
 									}
 									else
 									{
@@ -369,9 +444,9 @@ public class ExcelReadData {
 
 									JSONArray catspecppmasters=new JSONArray(linegrps1);
 
-									if(currentrow.getCell(3).getStringCellValue().equals("Income") || searchJsonArray(catspecppmasters, currentrow.getCell(3).getStringCellValue())==true )
+									if(currentrow.getCell(3).getStringCellValue().equals("Income") || catspecppmasters.toString().contains(currentrow.getCell(3).getStringCellValue()))
 									{
-										jsonobj.put("pp parentname", currentrow.getCell(3).getStringCellValue());
+										jsonobj.put("ppparentname", currentrow.getCell(3).getStringCellValue());
 									}
 									else
 									{
@@ -390,7 +465,7 @@ public class ExcelReadData {
 							{
 								jsonobj.put("category", currentrow.getCell(2).getStringCellValue());
 
-								if(currentrow.getCell(3).getStringCellValue().equals("Primary") || searchJsonArray(cstcat, currentrow.getCell(3).getStringCellValue())==true)
+								if(currentrow.getCell(3).getStringCellValue().equals("Primary") || cstcat.toString().contains(currentrow.getCell(3).getStringCellValue()))
 								{
 									jsonobj.put("ppparentname", currentrow.getCell(3).getStringCellValue());
 								}
@@ -406,10 +481,8 @@ public class ExcelReadData {
 						}
 						else if(currentrow.getCell(0).getStringCellValue().equals("Cost Centre"))
 						{
-							System.out.println(cstcat);
-
 							if(currentrow.getCell(2).getStringCellValue().equals("Primary") ||
-									searchJsonArray(cstcat, currentrow.getCell(2).getStringCellValue())==true)
+									cstcat.toString().contains(currentrow.getCell(2).getStringCellValue()))
 							{
 								jsonobj.put("category", currentrow.getCell(2).getStringCellValue());
 							}
@@ -418,7 +491,7 @@ public class ExcelReadData {
 								result.add("Category Does not match at row "+(currentrow.getRowNum()+1));
 							}
 
-							if(currentrow.getCell(3).getStringCellValue().equals("Primary") || searchJsonArray(cstcent, currentrow.getCell(3).getStringCellValue())==true)
+							if(currentrow.getCell(3).getStringCellValue().equals("Primary") || cstcent.toString().contains(currentrow.getCell(3).getStringCellValue()))
 							{
 								jsonobj.put("ppparentname", currentrow.getCell(3).getStringCellValue());
 							}
@@ -498,13 +571,22 @@ public class ExcelReadData {
 				while((line=rd.readLine())!=null)
 				{
 					logger.debug("post data response..."+line+"....class name..."+this.getClass());
-					if(line.contains("[failure]") || line.contains("[success]"))
-					{
-						line1=line;
-						result.add(line1);
-					}
+					line1=line;
 				}
 			}
+
+			if(result.isEmpty())
+			{
+				if(line1.contains("success"))
+				{
+					result.add("success");
+				}			
+				else
+				{
+					result.add("failure");
+				}
+			}
+
 		} catch (IOException | JSONException e) {
 			logger.error(e.getMessage()+"...."+this.getClass());
 		}
@@ -512,7 +594,8 @@ public class ExcelReadData {
 		return result;
 	}
 
-	public String excelReadDatamapping(String filename){
+	@SuppressWarnings("resource")
+	public List<Object> excelReadDatamapping(String filename){
 
 		Logger logger=LoggerFactory.getLogger(this.getClass());
 
@@ -525,16 +608,16 @@ public class ExcelReadData {
 		String line2=null;
 		String line3=null;
 		String line4=null;
+		String line5=null;
+		String line6=null;
 		String compdata=null;
 		String[] compname = null;
 		int cmpId=0;
-		String Mastertype=null;
-		String ppmastername=null;
-		String tallymastername=null;
 		JSONArray ppid = null;
 		JSONArray masterid = null;
 		int ppmasterid=0;
 		int tallymasterid=0;
+		List<Object> result=new ArrayList<Object>();
 
 		logger.debug("inside Excel ReadDatamapping class..."+this.getClass());
 		try {
@@ -548,89 +631,154 @@ public class ExcelReadData {
 
 			compname=datatypesheet.getRow(2).getCell(0).getStringCellValue().split("Company Name: ");
 
-			//request to get cmp_id
-			DefaultHttpClient httpclient= new DefaultHttpClient();
-			HttpGet request= new HttpGet("http://localhost:9090/perpetuity/company/getcompanyidname");
+			//request to post cmpname and get cmp_id
+			DefaultHttpClient httpclientcmp= new DefaultHttpClient();
+			HttpPost postcmp= new HttpPost("http://localhost:9090/perpetuity/company/getcompanyidbyname");
+			StringEntity inputcmp= new StringEntity("{\"tallyCmpName\":\"" + compname[1] + "\"}");					
+			inputcmp.setContentType("application/json");
+			postcmp.setEntity(inputcmp);
+			logger.debug("Posting excel data to get cmpid....."+this.getClass());
+			HttpResponse responsecmp=httpclientcmp.execute(postcmp);			
 
-			logger.debug("Posting excel data to company resource....."+this.getClass());
-			HttpResponse response=httpclient.execute(request);
-
-			BufferedReader rd= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-			if((line=rd.readLine())!=null)
+			BufferedReader rdcmp= new BufferedReader(new InputStreamReader(responsecmp.getEntity().getContent()));
+			if((line=rdcmp.readLine())!=null)
 			{
 				logger.debug("get company data response..."+line+"....class name..."+this.getClass());
 				compdata=line;
+			}						
+			JSONObject object = new JSONObject(compdata);
+			if(object.get("tallyCmpName").equals(compname[1]))
+			{
+				cmpId=object.getInt("cmpId");
 			}
 
-			JSONArray jArray = new JSONArray(compdata);       
-			for (int i = 0; i < jArray.length(); i++) {
-				JSONObject object = jArray.optJSONObject(i);
-				if(object.get("tallyCmpName").equals(compname[1]))
-				{
-					cmpId=object.getInt("cmpId");
+			if(cmpId==0)
+			{
+				result.add("Company Does not match!");
+			}
+
+			if(iterator.hasNext())
+			{
+				while (iterator.hasNext()) {
+					Row currentrow=iterator.next();
+
+					if(currentrow.getRowNum()>3)
+					{						
+						JSONObject jsonobj = new JSONObject();
+
+						jsonobj.put("cmpId", cmpId);
+
+						if(currentrow.getCell(0).getStringCellValue().equals("Ledger") ||
+								currentrow.getCell(0).getStringCellValue().equals("Group") ||
+								currentrow.getCell(0).getStringCellValue().equals("Cost Category") ||
+								currentrow.getCell(0).getStringCellValue().equals("Cost Centre") ||
+								currentrow.getCell(0).getStringCellValue().equals("Voucher Type"))
+						{
+
+						}
+						else
+						{
+							result.add("Master Type Does not match at row "+(currentrow.getRowNum()+1));
+						}
+
+						//get all the pp master for the master type and cmpid
+
+						//request to post mastertype and cmpid and get ppmaster names
+						DefaultHttpClient httpclientgrps1= new DefaultHttpClient();
+						HttpPost postgrps1= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/getppmasternames");
+						StringEntity inputgrps1= new StringEntity("{\"mastertype\":\""+currentrow.getCell(0).getStringCellValue()+"\",\"cmpid\":\""+cmpId+"\"}");					
+						inputgrps1.setContentType("application/json");
+						postgrps1.setEntity(inputgrps1);
+						logger.debug("Posting excel data to get all pp master names....."+this.getClass());
+						HttpResponse responsegrps1=httpclientgrps1.execute(postgrps1);
+
+						BufferedReader rdgrps1= new BufferedReader(new InputStreamReader(responsegrps1.getEntity().getContent()));
+						if((line1=rdgrps1.readLine())!=null)
+						{
+							logger.debug("get pp masters data response..."+line1+"....class name..."+this.getClass());
+						}
+
+						JSONArray ppmasternames=new JSONArray(line1);
+
+						if(ppmasternames.toString().contains(currentrow.getCell(1).getStringCellValue()))
+						{
+							//request to get pp_id
+							DefaultHttpClient httpclient1= new DefaultHttpClient();
+							HttpPost post1= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/getppmasteridnames");
+							StringEntity input1= new StringEntity("{\"cmpid\":\"" + cmpId + "\",\"mastertype\":\"" + currentrow.getCell(0).getStringCellValue() + "\",\"ppmastername\":\"" + currentrow.getCell(1).getStringCellValue() + "\"}");					
+							input1.setContentType("application/json");
+							post1.setEntity(input1);
+							logger.debug("Posting excel data to get ppid....."+this.getClass());
+							HttpResponse response1=httpclient1.execute(post1);
+
+							BufferedReader rd1= new BufferedReader(new InputStreamReader(response1.getEntity().getContent()));
+							if((line2=rd1.readLine())!=null)
+							{
+								logger.debug("post data ppid response..."+line2+"....class name..."+this.getClass());
+								ppid=new JSONArray(line2);
+
+								for (int i = 0; i < ppid.length(); ++i) {
+									JSONObject rec = ppid.getJSONObject(i);
+									ppmasterid = rec.getInt("masteridindex");
+								}
+							}
+
+							jsonobj.put("ppId", ppmasterid);
+						}
+						else
+						{
+							result.add("PP Masters Name Does not match at row "+(currentrow.getRowNum()+1));
+						}
+
+
+						//request to get all the tally master names for the master type
+						DefaultHttpClient httpclienttallymaster= new DefaultHttpClient();
+						HttpPost posttallymaster= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/gettallymasternames");
+						StringEntity inputtallymaster= new StringEntity("{\"masterType\":\""+currentrow.getCell(0).getStringCellValue()+"\",\"cmpId\":\""+cmpId+"\"}");					
+						inputtallymaster.setContentType("application/json");
+						posttallymaster.setEntity(inputtallymaster);
+						logger.debug("Posting excel data to get all cost centres....."+this.getClass());
+						HttpResponse responsetallymaster=httpclienttallymaster.execute(posttallymaster);
+
+						BufferedReader rdcstcent= new BufferedReader(new InputStreamReader(responsetallymaster.getEntity().getContent()));
+						if((line3=rdcstcent.readLine())!=null)
+						{
+							logger.debug("get tally master names data response..."+line3+"....class name..."+this.getClass());
+						}
+
+						JSONArray tallymasternames=new JSONArray(line3);
+
+						if(tallymasternames.toString().contains(currentrow.getCell(2).getStringCellValue()))
+						{
+							//request to get tally masters id
+							DefaultHttpClient httpclient2= new DefaultHttpClient();
+							HttpPost post2= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/gettallymasteridnames");
+							StringEntity input2= new StringEntity("{\"cmpId\":\"" + cmpId + "\",\"masterType\":\"" + currentrow.getCell(0).getStringCellValue() + "\",\"tallyMasterName\":\"" + currentrow.getCell(2).getStringCellValue() + "\"}");					
+							input2.setContentType("application/json");
+							post2.setEntity(input2);
+							logger.debug("Posting excel data to get ppid....."+this.getClass());
+							HttpResponse response2=httpclient2.execute(post2);
+
+							BufferedReader rd2= new BufferedReader(new InputStreamReader(response2.getEntity().getContent()));
+							if((line4=rd2.readLine())!=null)
+							{
+								logger.debug("post data ppid response..."+line4+"....class name..."+this.getClass());
+								masterid=new JSONArray(line4);
+
+								for (int i = 0; i < masterid.length(); ++i) {
+									JSONObject rec1 = masterid.getJSONObject(i);
+									tallymasterid = rec1.getInt("masterId");
+								}
+							}
+							jsonobj.put("tallyMasterId", tallymasterid);	
+						}
+						jsonarr.put(jsonobj);		
+					}				
 				}
 			}
-
-			while (iterator.hasNext()) {
-				Row currentrow=iterator.next();
-
-				if(currentrow.getRowNum()>3)
-				{						
-					JSONObject jsonobj = new JSONObject();
-
-					jsonobj.put("cmpId", cmpId);
-
-					Mastertype=currentrow.getCell(0).getStringCellValue();
-					ppmastername=currentrow.getCell(1).getStringCellValue();
-					tallymastername=currentrow.getCell(2).getStringCellValue();
-
-					//request to get pp_id
-					DefaultHttpClient httpclient1= new DefaultHttpClient();
-					HttpPost post1= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/getppmasteridnames");
-					StringEntity input1= new StringEntity("{\"cmpid\":\"" + cmpId + "\",\"mastertype\":\"" + Mastertype + "\",\"ppmastername\":\"" + ppmastername + "\"}");					
-					input1.setContentType("application/json");
-					post1.setEntity(input1);
-					logger.debug("Posting excel data to get ppid....."+this.getClass());
-					HttpResponse response1=httpclient1.execute(post1);
-
-					BufferedReader rd1= new BufferedReader(new InputStreamReader(response1.getEntity().getContent()));
-					if((line1=rd1.readLine())!=null)
-					{
-						logger.debug("post data ppid response..."+line1+"....class name..."+this.getClass());
-						ppid=new JSONArray(line1);
-
-						for (int i = 0; i < ppid.length(); ++i) {
-							JSONObject rec = ppid.getJSONObject(i);
-							ppmasterid = rec.getInt("masteridindex");
-						}
-					}
-
-					jsonobj.put("ppId", ppmasterid);
-
-					//request to get tally masters id
-					DefaultHttpClient httpclient2= new DefaultHttpClient();
-					HttpPost post2= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/gettallymasteridnames");
-					StringEntity input2= new StringEntity("{\"cmpId\":\"" + cmpId + "\",\"masterType\":\"" + Mastertype + "\",\"tallyMasterName\":\"" + tallymastername + "\"}");					
-					input2.setContentType("application/json");
-					post2.setEntity(input2);
-					logger.debug("Posting excel data to get ppid....."+this.getClass());
-					HttpResponse response2=httpclient2.execute(post2);
-
-					BufferedReader rd2= new BufferedReader(new InputStreamReader(response2.getEntity().getContent()));
-					if((line2=rd2.readLine())!=null)
-					{
-						logger.debug("post data ppid response..."+line2+"....class name..."+this.getClass());
-						masterid=new JSONArray(line2);
-
-						for (int i = 0; i < masterid.length(); ++i) {
-							JSONObject rec1 = masterid.getJSONObject(i);
-							tallymasterid = rec1.getInt("masterId");
-						}
-					}
-					jsonobj.put("tallyMasterId", tallymasterid);					
-
-					jsonarr.put(jsonobj);		
-				}				
+			else
+			{
+				result.add("No Data Filled");
 			}
 
 			// Create the JSON.
@@ -652,17 +800,30 @@ public class ExcelReadData {
 				HttpResponse response3=httpclient3.execute(post3);
 
 				BufferedReader rd3= new BufferedReader(new InputStreamReader(response3.getEntity().getContent()));
-				while((line3=rd3.readLine())!=null)
+				while((line5=rd3.readLine())!=null)
 				{
-					logger.debug("post data response..."+line3+"....class name..."+this.getClass());
-					line4=line3;
+					logger.debug("post data response..."+line5+"....class name..."+this.getClass());
+					line6=line5;
 				}
 			}
+
+			if(result.isEmpty())
+			{
+				if(line6.contains("success"))
+				{
+					result.add("success");
+				}			
+				else
+				{
+					result.add("failure");
+				}
+			}
+
 
 		} catch (IOException | JSONException e) {
 			logger.error(e.getMessage()+"...."+this.getClass());
 		}
 
-		return line4;
+		return result;
 	}
 }

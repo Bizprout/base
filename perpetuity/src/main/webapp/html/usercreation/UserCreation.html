@@ -100,6 +100,10 @@
 								ng-change="populateuserdata()" ng-model="edituserDTO.username"
 								autofocus></div>
 						</div>
+						<div class="col-xs-1">
+							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+								ng-show="isLoadingusername"></md-progress-circular>
+						</div>
 					</div>
 					<br>
 					<div class="row">
@@ -165,11 +169,6 @@
 					class="md-padding"> <!-- <h1 class="md-display-2">Tab Two</h1> -->
 				<div class="col-lg-12">
 					<div class="bs-component">
-						<!-- 					<div class="alert alert-info">
-						<p>Sort key: {{sortKey}}</p>
-						<p>Reverse: {{reverse}}</p>
-						<p>Search String : {{search}}</p>
-					</div> -->
 						<form class="form-inline">
 							<div class="form-group">
 								<input type="text" ng-model="search" class="form-control"

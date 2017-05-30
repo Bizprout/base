@@ -18,11 +18,12 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 @Configuration
 @EnableWebSecurity
 @Order(2147483640)
-// @Import({ SecurityConfig.class })
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -60,8 +61,14 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	public DaoAuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(userDetailsServiceImpl);
-		// authProvider.setPasswordEncoder(encoder());
 		return authProvider;
+	}
+	
+	@Bean
+	public CommonsMultipartResolver multipartResolver() {
+	    CommonsMultipartResolver resolver=new CommonsMultipartResolver();
+	    resolver.setDefaultEncoding("utf-8");
+	    return resolver;
 	}
 
 	protected void configure(HttpSecurity http) throws Exception {
@@ -69,7 +76,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/html/Index.html", "/html/Login.html",
 						"/login/**", "/css/**", "/js/**", "/img/**",
 						"/docsupport/**", "/error.html",
-						"/")
+						"/", "/company/**", "/ppmaster/**", "/pptallymapping/**")
 				.permitAll()
 				.and()
 				.formLogin()
@@ -82,8 +89,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.authorizeRequests()
 				.antMatchers()
-				// .permitAll()
-				// .antMatchers("/check")
 				.permitAll()
 				.antMatchers("/**")
 				.hasAnyRole("PPAdmin","PPsuperadmin")
@@ -91,8 +96,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticated()
 				.and()
 				.csrf().disable()
-				//csrfTokenRepository(csrfTokenRepository())
-				//.and()
 				.addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)							
 				.logout()
 				.and()
@@ -100,23 +103,17 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticationEntryPoint(authenticationFailureHandler)
 				.accessDeniedHandler(authenticationFailureHandler)
 				.and()
-				.logout()
-				.logoutUrl("/logout")
+				.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				.logoutSuccessUrl("/")
 				.logoutSuccessHandler(
 						new HttpStatusReturningLogoutSuccessHandler())
 				.deleteCookies("JSESSIONID", "XSRF-TOKEN", "X-XSRF-TOKEN")
 				.invalidateHttpSession(true).permitAll()
-				.clearAuthentication(true)
-		/*
-		 * .deleteCookies("JSESSIONID", "XSRF-TOKEN", "X-XSRF-TOKEN")
-		 * .invalidateHttpSession(true).permitAll()
-		 * .clearAuthentication(true).and().sessionManagement()
-		 * .maximumSessions(1).maxSessionsPreventsLogin(true)
-		 */;
+				.clearAuthentication(true);
 
 	}
 
+	@SuppressWarnings("unused")
 	private CsrfTokenRepository csrfTokenRepository() {
 		HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
 		repository.setHeaderName("X-XSRF-TOKEN");

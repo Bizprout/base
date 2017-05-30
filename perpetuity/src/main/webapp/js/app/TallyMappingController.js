@@ -1,7 +1,5 @@
 baseApp.controller("TallyMappingController", function($scope, $location, $http, $timeout, $q, $filter, $localStorage, $mdDialog) {
 
-	console.log("TallyMappingController loaded...");
-	//TODO angular constants
 
 	$scope.cmpname=$localStorage.cmpname;
 
@@ -66,8 +64,6 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 	$scope.onmapclick=function(){
 
-		console.log("Map Clicked....");
-
 		$scope.ppmapDTO.mastertype='';
 		$scope.ppmapDTO.tallyMasterId='';
 		$scope.ppmapDTO.ppId='';
@@ -76,8 +72,6 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 
 		$scope.masterchanged=function(ppmapDTO){
-
-			console.log("inside masterchanged...");
 			
 			$scope.isLoadingmaptoppmaster=true;
 			
@@ -223,12 +217,24 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 							{
 								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
 								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
 							}
 							else
 							{
-								$scope.alerts = { type: 'danger'};
-								$scope.errdata=successdata;
-								$scope.showerror=true;
+								if(successdata.length>0)
+								{
+									$scope.alerts = { type: 'danger'};
+									$scope.errdata=successdata;
+									$scope.showerror=true;
+									$scope.showSuccessAlert = false;
+								}
+								else
+								{
+									$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
+									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
+								}
+								
 							}
 
 						}).error(function(data, status, headers, config){
@@ -261,17 +267,29 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 	//***********when Import/Export tab is clicked**********************************
 	$scope.onimpexpclick=function(){
-		console.log("Import/Export clicked....");
+		
+		$http({
+			method : "POST",
+			url : "pptallymapping/setsessioncmpid",
+			data : {"cmpId":$localStorage.cmpid},
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config){
 
+		}).error(function(data, status, headers, config){
+
+		});
+		
 		$http({
 			method : "POST",
 			url : "company/getclientstatus",
-			data: {"tallyCmpName":$localStorage.cmpname},
+			data: {"cmpId":$localStorage.cmpid},
 			headers : {
 				'Content-Type' : 'application/json'
 			}
 		}).success(function(response, status, headers, config){
-
+			
 			//*******options for client Names*********
 
 			$scope.clientname=response.client.clientName;
@@ -298,6 +316,8 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 		};
 
 		$scope.onppmappingimport=function(file){
+			
+			$scope.isLoadingimportfile=true;
 
 			var file = $scope.myFile;
 			var uploadUrl = "pptallymapping/ppmastermappinguploadfile";
@@ -318,12 +338,32 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 						{
 							$scope.alerts = { type: 'success' ,msg: "File - "+ file.name +" Uploaded Successfully!"};
 							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
 						}
 						else if(response[0]==="failure")
 						{
 							$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Uploaded!"};
 							$scope.showSuccessAlert = true;
-						}						
+							$scope.showerror=false;
+						}
+						else
+						{
+							if(response.length>0)
+							{
+								$scope.alerts = { type: 'danger'};
+								$scope.errdata=response;
+								$scope.showerror=true;
+								$scope.showSuccessAlert=false;
+							}
+							else
+							{
+								$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Uploaded!"};
+								$scope.showSuccessAlert = true;
+								$scope.showerror=false;
+							}
+						}
+						
+						$scope.isLoadingimportfile=false;
 
 					})
 					.error(function(response){
@@ -349,7 +389,6 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 	$scope.itemsPerPage=10;
 
 	$scope.onreportclick=function(){
-		console.log("Report clicked....");
 
 		$scope.search='';
 

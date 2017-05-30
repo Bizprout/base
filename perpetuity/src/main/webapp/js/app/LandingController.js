@@ -1,7 +1,5 @@
 baseApp.controller("LandingController", function($scope, $location, $http, $rootScope, $mdDialog, $filter, $localStorage) {
 
-	console.log("LandingController loaded..");
-
 	if ("/" === $location.path()) {
 		$("#menu").hide();
 	} else {
@@ -44,10 +42,14 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 			emptyListText: 'Oops! The list is empty',
 			emptySearchResultText: 'Sorry, couldn\'t find "$0"'
 	};
+	
 
 	if($localStorage.cmpid===undefined || $localStorage.cmpid==='')
 	{
-		$scope.masterslinkenabled = false;
+		if($localStorage.usertype==="PPsuperadmin")
+		{
+			$scope.masterslinkenabled = true;
+		}
 		$scope.mappinglinkenabled = false;
 		$scope.reportslinkenabled = false;
 	}

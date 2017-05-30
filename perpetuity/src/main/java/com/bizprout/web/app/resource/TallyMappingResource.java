@@ -43,6 +43,8 @@ public class TallyMappingResource {
 
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 
+	int sesscmpid=0;
+
 	public TallyMappingResource() {
 		try {
 			logger.info(this.getClass().getSimpleName() + "Created..."+this.getClass());
@@ -101,7 +103,7 @@ public class TallyMappingResource {
 					.collect(Collectors.toList()));
 			return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);
 		}
-		
+
 		try {
 			logger.info("inside insertTallyMapping method....."+this.getClass());
 			tallymappingservice.insertTallyMapping(tallymappingdto);
@@ -115,7 +117,6 @@ public class TallyMappingResource {
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			logger.error("Exception in insertTallyMapping method \t" + e.getMessage(), this.getClass());
 		}
 
@@ -133,7 +134,7 @@ public class TallyMappingResource {
 					.collect(Collectors.toList()));
 			return new ResponseEntity<Object> (jsonresponse, HttpStatus.OK);
 		}
-		
+
 		int res=0;
 		try {
 			logger.info("inside updateTallyMapping method..."+this.getClass());
@@ -148,7 +149,6 @@ public class TallyMappingResource {
 				jsonresponse.add("failure");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			logger.error("Exception in updateTallyMapping method \t" + e.getMessage(), this.getClass());
 		}
 
@@ -167,14 +167,14 @@ public class TallyMappingResource {
 		}
 		return ppmapping;
 	}
-	
+
 	@PostMapping(value="/deleteppidcmpid")
 	public int deletePpidCmpid(@RequestBody TallyMappingDTO tallymappingdto)
 	{
 		int res=0;
 		try {
 			res=tallymappingservice.deletePpidCmpid(tallymappingdto.getCmpId(), tallymappingdto.getPpId());
-			logger.debug("Request......getTallyMasterids List......"+this.getClass());
+			logger.debug("Request......deletePpidCmpid List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -201,6 +201,8 @@ public class TallyMappingResource {
 		int result=0;
 		ResponseEntity<String> resp = null;
 		try {
+			
+			logger.debug("Request......updatePpMasterMapping......"+this.getClass());
 
 			result=tallymappingservice.savePpMasterMapping(tallymasterdto);
 
@@ -219,47 +221,89 @@ public class TallyMappingResource {
 		}
 		return resp;
 	}
-	
+
+	@PostMapping(value="/setsessioncmpid")
+	public void setsessioncmpid(@RequestBody CompanyDTO cmpdto)
+	{
+		try {
+			sesscmpid=cmpdto.getCmpId();
+			logger.debug("Request......setsessioncmpid......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+	}
+
 	@RequestMapping(value="/ppmastermappinguploadfile", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<Object> pPmastermappingFileUpload(@RequestParam("file") MultipartFile file){
-		
-		String response;
+
 		List<Object> jsonresponse=new ArrayList<Object>();
+
+		ExcelReadData excel= new ExcelReadData();
+		boolean cmpid;
+		boolean format;
+		
+		logger.debug("Request......pPmastermappingFileUpload......"+this.getClass());
 
 		if(!file.isEmpty())
 		{
 			try {				
 				byte[] bytes=file.getBytes();
 				
-				// Creating the directory to store file
-				String rootPath = System.getProperty("catalina.home");
-				File dir = new File(rootPath + File.separator + "tmpFiles");
-				if (!dir.exists())
-					dir.mkdirs();
-
-				// Create the file on server
-				File serverFile = new File(dir.getAbsolutePath()
-						+ File.separator + file.getOriginalFilename());
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(serverFile));
-				stream.write(bytes);
-				stream.close();
-
-				logger.info("Server File Location="
-						+ serverFile.getAbsolutePath(), this.getClass());
+				//check Excel Format
 				
-				ExcelReadData excel= new ExcelReadData();
-				response=excel.excelReadDatamapping(file.getOriginalFilename());
-								
-				if(response.contains("success"))
+				format=excel.checkExcelFormatPpMastersMapping(file);
+				
+				if(format==true)
 				{
-					jsonresponse.add("success");
+					//check file cmpid is same as session cmp id
+
+					cmpid=excel.checkCmp(file, sesscmpid);
+
+					if(cmpid==true)
+					{
+						// Creating the directory to store file
+						String rootPath = System.getProperty("catalina.home");
+						File dir = new File(rootPath + File.separator + "tmpFiles");
+						if (!dir.exists())
+							dir.mkdirs();
+
+						// Create the file on server
+						File serverFile = new File(dir.getAbsolutePath()
+								+ File.separator + file.getOriginalFilename());
+						BufferedOutputStream stream = new BufferedOutputStream(
+								new FileOutputStream(serverFile));
+						stream.write(bytes);
+						stream.close();
+
+						logger.info("Server File Location="
+								+ serverFile.getAbsolutePath(), this.getClass());
+
+						jsonresponse=excel.excelReadDatamapping(file.getOriginalFilename());
+
+						if(jsonresponse.contains("success"))
+						{
+							jsonresponse.add("success");
+						}
+						else if(jsonresponse.contains("failure"))
+						{
+							jsonresponse.add("failure");
+						}
+						else
+						{
+							return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+						}
+					}
+					else
+					{
+						jsonresponse.add("Company Name does not match with the session Company Name!");
+					}
 				}
 				else
 				{
-					jsonresponse.add("failure");
+					jsonresponse.add("The Excel File Uploaded was of Different Format! Please Check and Upload again.");
 				}
 				
+
 			} catch (Exception e) {
 				logger.error(e.getMessage()+"..."+this.getClass());
 			}
@@ -270,7 +314,7 @@ public class TallyMappingResource {
 		}
 		return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value="/getppmasteridnames")
 	public List<PpMasterDTO> getPpMasterIdNames(@RequestBody PpMasterDTO ppmasterdto)
 	{
@@ -283,7 +327,7 @@ public class TallyMappingResource {
 		}
 		return ppmasternames;
 	}
-	
+
 	@PostMapping(value="/gettallymasteridnames")
 	public List<TallyMastersDTO> getTallyMasterIdNames(@RequestBody TallyMastersDTO tallymasterdto)
 	{

@@ -1,6 +1,6 @@
 package com.bizprout.web.app.service;
 
-import java.util.List;
+import java.util.Date;
 
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -56,7 +56,22 @@ public class UserCounterServiceImpl implements UserCounterService<UserCounterDTO
 		
 		return usercounter;
 	}
+	
+	@Override
+	public int updateLogoutTime(int userid, Date logindatetime, Date logoutdatetime) {
+		
+		int result=0;
 
+		try {
+			logger.info("Inside updateLogoutTime method......."+this.getClass());
+
+			result=usercounterrepository.updateLogoutTime(userid, logindatetime, logoutdatetime);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		
+		return result;
+	}
 
 
 }

@@ -86,7 +86,7 @@ public class PpMasterResource {
 		List<String> ppmaster = null;
 		try {
 			ppmaster=ppmasterservice.getPpMastersNameall(ppmasterDTO.getMastertype(), ppmasterDTO.getCategory(), ppmasterDTO.getCmpid());
-			logger.debug("Request......getPpMastername List......"+this.getClass());
+			logger.debug("Request......getPpMastersNameall List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -112,7 +112,7 @@ public class PpMasterResource {
 		List<String> ppmaster = null;
 		try {
 			ppmaster=ppmasterservice.getPpMastersNamebyCostCategory(ppmasterDTO.getMastertype(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername());
-			logger.debug("Request......getPpMastername List......"+this.getClass());
+			logger.debug("Request......getPpMastersNameByCostCategory List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -125,7 +125,7 @@ public class PpMasterResource {
 		List<String> ppmaster = null;
 		try {
 			ppmaster=ppmasterservice.getPpMastersNameByCompany(ppmasterDTO.getMastertype(), ppmasterDTO.getCmpid());
-			logger.debug("Request......getPpMastername List......"+this.getClass());
+			logger.debug("Request......getPpMastersNameByCompany List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -205,6 +205,8 @@ public class PpMasterResource {
 		List<Object> jsonresponse=new ArrayList<Object>();
 		ExcelReadData excel= new ExcelReadData();
 		boolean cmpid;
+		boolean format;
+		
 		if(!file.isEmpty())
 		{
 			try {				
@@ -212,53 +214,61 @@ public class PpMasterResource {
 				logger.debug("inside pPmasterFileUpload method..."+this.getClass());
 				byte[] bytes=file.getBytes();
 				
-				//check file cmpid is same as session cmp id
-										
-				cmpid=excel.checkCmp(file, sesscmpid);
+				//check Excel Format
+								
+				format=excel.checkExcelFormatPpMasters(file);
 				
-				if(cmpid==true)
+				if(format==true)
 				{
-					// Creating the directory to store file
-					String rootPath = System.getProperty("catalina.home");
-					File dir = new File(rootPath + File.separator + "tmpFiles");
-					if (!dir.exists())
-						dir.mkdirs();
+					//check file cmpid is same as session cmp id
 
-					// Create the file on server
-					File serverFile = new File(dir.getAbsolutePath()
-							+ File.separator + file.getOriginalFilename());
-					BufferedOutputStream stream = new BufferedOutputStream(
-							new FileOutputStream(serverFile));
-					stream.write(bytes);
-					stream.close();
+					cmpid=excel.checkCmp(file, sesscmpid);
+					
+					if(cmpid==true)
+					{
+						// Creating the directory to store file
+						String rootPath = System.getProperty("catalina.home");
+						File dir = new File(rootPath + File.separator + "tmpFiles");
+						if (!dir.exists())
+							dir.mkdirs();
 
-					logger.info("Server File Location="
-							+ serverFile.getAbsolutePath(), this.getClass());
-					
-					jsonresponse=excel.excelReadData(file.getOriginalFilename());
-					
-					System.out.println(jsonresponse.toString());
-					
-					if(jsonresponse.contains("success"))
-					{
-						jsonresponse.add("success");
-					}
-					else if(jsonresponse.contains("failure"))
-					{
-						jsonresponse.add("failure");
+						// Create the file on server
+						File serverFile = new File(dir.getAbsolutePath()
+								+ File.separator + file.getOriginalFilename());
+						BufferedOutputStream stream = new BufferedOutputStream(
+								new FileOutputStream(serverFile));
+						stream.write(bytes);
+						stream.close();
+
+						logger.info("Server File Location="
+								+ serverFile.getAbsolutePath(), this.getClass());
+						
+						jsonresponse=excel.excelReadData(file.getOriginalFilename());
+											
+						if(jsonresponse.contains("success"))
+						{
+							jsonresponse.add("success");
+						}
+						else if(jsonresponse.contains("failure"))
+						{
+							jsonresponse.add("failure");
+						}
+						else
+						{
+							return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+						}
 					}
 					else
 					{
-						return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
+						jsonresponse.add("Company Name does not match with the session Company Name!");
 					}
 				}
 				else
 				{
-					jsonresponse.add("Company Name does not match with the session Company Name!");
+					jsonresponse.add("The Excel File Uploaded was of Different Format! Please Check and Upload again.");
 				}
 				
 			} catch (Exception e) {
-				e.printStackTrace();
 				logger.error(e.getMessage()+"..."+this.getClass());
 			}
 		}

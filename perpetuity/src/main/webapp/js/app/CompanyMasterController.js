@@ -5,11 +5,9 @@ baseApp.config(function($mdDateLocaleProvider) {
 });
 baseApp.controller("CompanyMasterController", function($scope, $location, $http, $timeout, $q, $filter, $mdpTimePicker, $localStorage, $mdDialog) {
 
-	console.log("CompanyMasterController loaded.....");
-
 	$scope.cmpname=$localStorage.cmpname;
 
-	if($localStorage.cmpid===undefined)
+	if($localStorage.usertype!="PPsuperadmin" && $localStorage.cmpid===undefined)
 	{
 		$location.path("/home");
 	}
@@ -18,8 +16,6 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 	{
 		$location.path("/");
 	}
-
-	console.log($localStorage.usertype);
 
 	if($localStorage.usertype!="PPsuperadmin")
 	{
@@ -70,8 +66,6 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 	};
 
 	$scope.oncreateeditclick=function(){
-
-		console.log("create clicked....");
 
 		$scope.companyDTO.appFromDate = new Date();
 		$scope.companyDTO.uploadTimer = new Date();
@@ -362,11 +356,7 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 		$scope.updatecompany=function(companyDTO)
 		{			
-			console.log("inside updatecompany..");
-
 			$scope.companyDTO.status=$scope.companyDTO.status;
-
-			console.log($scope.companyDTO.status);
 
 			if($scope.companyDTO.appFromDate!=null ||
 					$scope.companyDTO.uploadTimer!=null || 
@@ -439,13 +429,23 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 								{
 									$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
 								}
 								else
 								{
-									$scope.alerts = { type: 'danger', msgtype: 'Error!'};
-									$scope.errdata=data[0];
-									$scope.showerror=true;
-									$scope.showSuccessAlert = true;
+									if(data.length>0)
+									{
+										$scope.alerts = { type: 'danger'};
+										$scope.errdata=data;
+										$scope.showerror=true;
+										$scope.showSuccessAlert = false;
+									}
+									else
+									{
+										$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
+										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
+									}									
 								}
 
 							}).error(function(data, status, headers, config){
@@ -487,13 +487,23 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 									{
 										$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
 									}
 									else
 									{
-										$scope.alerts = { type: 'danger', msgtype: 'Error!'};
-										$scope.errdata=data[0];
-										$scope.showerror=true;
-										$scope.showSuccessAlert = true;
+										if(data.length>0)
+										{
+											$scope.alerts = { type: 'danger'};
+											$scope.errdata=data;
+											$scope.showerror=true;
+											$scope.showSuccessAlert = false;
+										}
+										else
+										{
+											$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
+											$scope.showSuccessAlert = true;
+											$scope.showerror=false;
+										}
 									}
 
 								}).error(function(data, status, headers, config){
@@ -526,13 +536,23 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 								{
 									$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 									$scope.showSuccessAlert = true;
+									$scope.showerror=false;
 								}
 								else
 								{
-									$scope.alerts = { type: 'danger', msgtype: 'Error!'};
-									$scope.errdata=data[0];
-									$scope.showerror=true;
-									$scope.showSuccessAlert = true;
+									if(data.length>0)
+									{
+										$scope.alerts = { type: 'danger'};
+										$scope.errdata=data;
+										$scope.showerror=true;
+										$scope.showSuccessAlert = false;
+									}
+									else
+									{
+										$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
+										$scope.showSuccessAlert = true;
+										$scope.showerror=false;
+									}
 								}
 
 							}).error(function(data, status, headers, config){
@@ -555,8 +575,6 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 	};
 
 	$scope.onreportclick=function(){
-
-		console.log("Report clicked...");
 
 		$scope.currentPage=1;
 		$scope.itemsPerPage=5;

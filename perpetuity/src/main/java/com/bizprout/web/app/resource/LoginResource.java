@@ -1,5 +1,10 @@
 package com.bizprout.web.app.resource;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,27 +35,52 @@ public class LoginResource {
 
 	public LoginResource() {
 		try {
-			System.out.println(this.getClass().getSimpleName() + "Created...");
 			logger.info(this.getClass().getSimpleName() + "Created...");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage()+"...."+this.getClass());
 		}
 	}
 
 	@PostMapping({ "security/account", "/login" })
 	public ResponseEntity<Object> user() {	
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		if (authentication.isAuthenticated()) {
-						
-			UserDTO userDTO = loginService.findByUsername(authentication.getName());
-			userDTO.setPassword(null);
-			userDTO.setAuthentication(authentication);
+		try {
+			Authentication authentication = SecurityContextHolder.getContext()
+					.getAuthentication();
+			if (authentication.isAuthenticated()) {
+							
+				UserDTO userDTO = loginService.findByUsername(authentication.getName());
+				userDTO.setPassword(null);
+				userDTO.setAuthentication(authentication);
+				
+				return new ResponseEntity<Object>(userDTO, HttpStatus.OK);
+			}
 			
-			return new ResponseEntity<Object>(userDTO, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"...."+this.getClass());
 		}
-		return new ResponseEntity<Object>("Auth Failed", HttpStatus.FORBIDDEN);
+		return new ResponseEntity<Object>("Auth Failed", HttpStatus.OK);
+	}
+	
+	@PostMapping(value="session/logout")
+	public void logoutSession(HttpServletRequest request, HttpServletResponse response)
+	{		
+		try {
+			HttpSession session=request.getSession(false);
+			SecurityContextHolder.clearContext();
+			session=request.getSession(false);
+			if(session != null)
+			{
+				session.invalidate();
+			}
+			
+			for(Cookie cookie : request.getCookies())
+			{
+				cookie.setMaxAge(0);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"...."+this.getClass());
+		}
+		
 	}
 
 }

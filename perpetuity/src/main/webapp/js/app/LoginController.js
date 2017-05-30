@@ -1,8 +1,38 @@
-baseApp.controller("LoginController", function($scope, $location, $http, $rootScope, $mdDialog, $filter, $localStorage) {
-
-	console.log("LoginController loaded..");
+baseApp.controller("LoginController", function($scope, $location, $route, $http, $rootScope, $mdDialog, $filter, $localStorage) {
 
 	//$localStorage.$reset();
+	
+	 var formLogin = angular.element('#login-form');
+     var formForgot = angular.element('#forgot-form');
+     var formOTP = angular.element('#otp-form');
+     var divForms = angular.element('#div-forms');
+     var modalAnimateTime = 400;
+     
+     $scope.forgotclick=function(){
+    	 modalAnimate(formLogin, formForgot);
+     };
+     
+     $scope.forgotclickemail=function(){
+    	 modalAnimate(formForgot, formOTP);
+     };
+     
+     $scope.home=function(){
+    	$location.path('/');
+    	$route.reload();
+    	window.location.reload(); 
+     };
+     
+     function modalAnimate(oldForm, newForm) {
+         var oldH = oldForm.height();
+         var newH = newForm.height();
+         divForms.css("height", oldH);
+         oldForm.fadeToggle(modalAnimateTime, function () {
+             divForms.animate({height: newH}, modalAnimateTime, function () {
+                 newForm.fadeToggle(modalAnimateTime);
+                 
+             });
+         });
+     }
 	
 	if ("/" === $location.path()) {
 		$("#menu").hide();
@@ -25,8 +55,6 @@ baseApp.controller("LoginController", function($scope, $location, $http, $rootSc
 	};
 
 	$scope.login = function(loginDTO) {
-		console.log("inside login..");
-
 		if($scope.loginDTO.username==="")
 		{
 			$scope.alerts = { type: 'danger' ,msg: 'Username cannot be Empty!'};
@@ -49,11 +77,9 @@ baseApp.controller("LoginController", function($scope, $location, $http, $rootSc
 				};
 			
 			$http.post('authenticate', '', config).success(function(data, status, headers, config){
-								
-				if (data.username) {
-					
-					//console.log(data.authentication.authorities[0].authority);				
-					
+				
+				 if (data.username) {
+										
 					$localStorage.user=data.username;
 					$localStorage.userid=data.userid;
 					$localStorage.usertype=data.usertype;
@@ -80,17 +106,18 @@ baseApp.controller("LoginController", function($scope, $location, $http, $rootSc
 					$scope.error = false;
 					$scope.isLoading=false;
 
-				} else {
+				}
 
+			}).error(function(data, status, headers, config){	
+				
+				if(data==="Auth Failed")
+				{
 					$location.path('/');
 					$scope.alerts = { type: 'danger' ,msg: 'Not a Valid User!'};
 					$scope.showSuccessAlert = true;
 					$scope.isLoading=false;
 				}
 
-			}).error(function(data, status, headers, config){
-				// called asynchronously if an error occurs
-				// or server returns response with an error status.
 			});
 		}
 	};

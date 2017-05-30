@@ -7,7 +7,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -30,13 +29,14 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 	
+	@SuppressWarnings("unchecked")
 	public List<CompanyDTO> getCompanyIdName(int clientid)
 	{
 		logger.info("Inside getCompanyIdName method......."+this.getClass());
 		
 		List<CompanyDTO> comp = null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(CompanyDTO.class)
 					.add(Restrictions.eq("clientId", clientid))
@@ -53,13 +53,14 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		return comp;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<TallyMastersDTO> getTallyMasterNames(String mastertype, int cmpid)
 	{
 	logger.info("Inside getTallyMasterNames method......."+this.getClass());
 		
 		List<TallyMastersDTO> tallymasters = null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(TallyMastersDTO.class)
 					.add(Restrictions.eq("masterType", mastertype))
@@ -78,13 +79,14 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		return tallymasters;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<PpMasterDTO> getPpMasterNames(String mastertype, int cmpid)
 	{
 	logger.info("Inside getPpMasterNames method......."+this.getClass());
 		
 		List<PpMasterDTO> ppmasternames = null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(PpMasterDTO.class)
 					.add(Restrictions.eq("mastertype", mastertype))
@@ -107,41 +109,33 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
-
 		try {
 			logger.info("Inside updateTallyMapping method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-
-			tx=session.beginTransaction();
+			session = getSession();
 			
 			Query qry=session.createQuery("UPDATE TallyMappingDTO set ppId=:ppid WHERE cmpId=:cmpid and tallyMasterId=:tallymasterid");
 			qry.setParameter("ppid", tallymappingdto.getPpId());
 			qry.setParameter("cmpid", tallymappingdto.getCmpId());
 			qry.setParameter("tallymasterid", tallymappingdto.getTallyMasterId());
 			result= qry.executeUpdate();
-			tx.commit();
+
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Integer> getPpMastersMapping(int cmpid, int ppid)
 	{
 		Session session;
 		Query qry=null;
 		List<Integer> ppmapping = null;
 		try {
-			logger.info("Inside TallyMappingRepositoryImpl......getPpMastersMapping method......."+this.getClass());
+			logger.info("Inside...getPpMastersMapping method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 
 			qry=session.createQuery("select tallyMasterId from TallyMappingDTO where cmpId=:cmpid and ppId=:ppid");
 			qry.setParameter("cmpid",cmpid);
@@ -157,23 +151,19 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 	public int deletePpidCmpid(int cmpid, int ppid)
 	{
 		int result = 0;
-		Transaction tx = null;
 		Session session;
 		Query qry=null;
 		
 		try {
-			logger.info("Inside TallyMappingRepositoryImpl......getPpMastersMapping method......."+this.getClass());
+			logger.info("Inside...deletePpidCmpid method......."+this.getClass());
 
-			session = factory.getCurrentSession();
+			session = getSession();
 			
-			tx=session.beginTransaction();
-
 			qry=session.createQuery("Delete from TallyMappingDTO where cmpId=:cmpid and ppId=:ppid");
 			qry.setParameter("cmpid",cmpid);
 			qry.setParameter("ppid",ppid);
 			
 			result= qry.executeUpdate();
-			tx.commit();
 			
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -181,6 +171,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype)
 	{
 		List<TallyMastersDTO> tallyppmappingdata = null;
@@ -188,7 +179,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		try {
 			logger.info("Inside getTallyPpMappingData method......."+this.getClass());
 
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			qry= session.createQuery("from TallyMastersDTO where cmpId=:companyid and masterType=:mastertyp");
 			qry.setParameter("companyid", cmpid);
@@ -206,14 +197,10 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 	{
 		int result = 0;
 		Session session = null;
-		Transaction tx = null;
-
 		try {
 			logger.info("Inside savePpMasterMapping method......."+this.getClass());
 
-			session = factory.getCurrentSession();
-
-			tx=session.beginTransaction();
+			session = getSession();
 			
 			for (TallyMastersDTO temp : tallymasterdto) {
 				
@@ -223,26 +210,21 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 				qry.setParameter("tallymasterid", temp.getMasterId());
 				result= qry.executeUpdate();
 			}	
-			
-			tx.commit();
-			
+						
 		} catch (HibernateException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
-			tx.rollback();
-		}
-		finally {
-			session.close();
 		}
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<PpMasterDTO> getPpMasterIdNames(int cmpid, String mastertype, String ppmastername)
 	{
 	logger.info("Inside getPpMasterIdNames method......."+this.getClass());
 		
 		List<PpMasterDTO> ppmasternames = null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(PpMasterDTO.class)
 					.add(Restrictions.eq("mastertype", mastertype))
@@ -260,13 +242,14 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		return ppmasternames;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<TallyMastersDTO> getTallyMasterIdNames(String mastertype, int cmpid, String tallymastername)
 	{
 	logger.info("Inside getTallyMasterIdNames method......."+this.getClass());
 		
 		List<TallyMastersDTO> tallymasters = null;
 		try {
-			Session session = factory.getCurrentSession();
+			Session session = getSession();
 
 			Criteria cr = session.createCriteria(TallyMastersDTO.class)
 					.add(Restrictions.eq("masterType", mastertype))

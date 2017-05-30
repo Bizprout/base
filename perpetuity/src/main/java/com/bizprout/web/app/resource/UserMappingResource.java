@@ -60,7 +60,7 @@ public class UserMappingResource {
 		List<ScreensDTO> udto = null;
 		try {
 			udto=usermappingservice.getScreensList();
-			logger.debug("Request......getUsernameList......"+this.getClass());
+			logger.debug("Request......getScreens......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -79,13 +79,11 @@ public class UserMappingResource {
 	      return new ResponseEntity<Object>(jsonresponse, HttpStatus.OK);
 	    }
 	    
-//		ResponseEntity<String> resp = null;
-		try {
-			
+		try {			
 			
 			int res = usermappingservice.updateUserMapping(userMapDto);
 			
-			logger.debug("update Mapping method......"+this.getClass());
+			logger.debug("update User Mapping method......"+this.getClass());
 
 			if(res>0)
 			{
@@ -109,7 +107,7 @@ public class UserMappingResource {
 		List<UserMappingDTO> udto = null;
 		try {
 			udto=usermappingservice.getUserMapData();
-			logger.debug("Request......getUsernameList......"+this.getClass());
+			logger.debug("Request......getUserScreens......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -122,7 +120,7 @@ public class UserMappingResource {
 		UserMappingDTO usermapdto=null;
 		try {
 			usermapdto=usermappingservice.getUserMapByCmpUser(userMapDto.getCmpId(), userMapDto.getUserid());
-			logger.info("Request.......getLastLoginDateTime method......"+this.getClass());
+			logger.info("Request.......getUserMapByCmpUser method......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -135,7 +133,7 @@ public class UserMappingResource {
 		List<UserMappingDTO> usermapdto=null;
 		try {
 			usermapdto=usermappingservice.getCmpByuserid(userMapDto.getUserid());
-			logger.info("Request.......getLastLoginDateTime method......"+this.getClass());
+			logger.info("Request.......getCmpByuserid method......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
@@ -149,7 +147,7 @@ public class UserMappingResource {
 		int result=0;
 		try {
 			result=usermappingservice.deleteScreensByCmpidUserid(userMapDto.getCmpId(), userMapDto.getUserid());
-			logger.info("Request.......getLastLoginDateTime method......"+this.getClass());
+			logger.info("Request.......deleteScreensByCmpidUserid method......"+this.getClass());
 			
 			if(result>0)
 			{

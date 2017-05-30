@@ -55,8 +55,8 @@ public class ClientResource {
 		}
 
 		try {
-			baseService.testService(clientdto);
-			logger.info("Request.......adduser method......"+this.getClass());
+			clientService.testService(clientdto);
+			logger.info("Request.......addClient method......"+this.getClass());
 
 			if(clientdto.getClientId()>0)
 			{
@@ -152,7 +152,7 @@ public class ClientResource {
 	{
 		List<ClientDTO> listOfClients = null;
 		try {
-			logger.info("Request.......get user method......"+this.getClass());
+			logger.info("Request.......getClient method......"+this.getClass());
 			listOfClients = new ArrayList<ClientDTO>();        
 			listOfClients = clientService.getService();
 		} catch (Exception e) {
