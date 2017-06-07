@@ -50,8 +50,8 @@ baseApp.controller("MappingPageController", function($scope, $location, $http, $
 
 				//*******options for user names and default selected option**********************************
 								
-				var usermappingscreen=$filter('filter')(datascreens, {screenName: "User Mapping"})[0];
-				var ppmappingscreen=$filter('filter')(datascreens, {screenName: "PP Mapping"})[0];
+				var usermappingscreen=$filter('filter')(datascreens, {screenName: "User Mapping"}, true)[0];
+				var ppmappingscreen=$filter('filter')(datascreens, {screenName: "PP Mapping"}, true)[0];
 				
 				if(screenidsmapped.indexOf(usermappingscreen.sid.toString()) !== -1)
 				{
@@ -69,6 +69,11 @@ baseApp.controller("MappingPageController", function($scope, $location, $http, $
 				else
 				{
 					$scope.hideppmapping=true;
+				}
+				
+				if(screenidsmapped.indexOf(usermappingscreen.sid.toString()) === -1 && screenidsmapped.indexOf(ppmappingscreen.sid.toString()) === -1)
+				{
+					$location.path("/home");
 				}
 				
 				$scope.isLoadingmapping=false;

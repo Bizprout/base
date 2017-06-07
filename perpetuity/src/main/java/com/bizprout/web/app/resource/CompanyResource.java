@@ -101,6 +101,20 @@ public class CompanyResource {
 		return compdto;
 	}
 	
+	@GetMapping(value="/getallCompanyActive")
+	@ResponseBody
+	public List<CompanyDTO> getallCompanyActive()
+	{
+		List<CompanyDTO> compdto = null;
+		try {
+			compdto=companyservice.getallCompanyActive();
+			logger.debug("Request......getallCompanyActive......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compdto;
+	}
+	
 	@PostMapping(value="/getcompanyidbyname")
 	public CompanyDTO getCompanyIdByName(@RequestBody CompanyDTO cmpdto)
 	{
@@ -144,6 +158,20 @@ public class CompanyResource {
 		try {
 			compdto=companyservice.getCompanyIdName();
 			logger.debug("Request......getCompanyIdName......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compdto;
+	}
+	
+	@GetMapping(value="/getcompanydataall")
+	@ResponseBody
+	public List<CompanyDTO> getCompanyDataall()
+	{
+		List<CompanyDTO> compdto = null;
+		try {
+			compdto=companyservice.getCompanyDataall();
+			logger.debug("Request......getCompanyDataall......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

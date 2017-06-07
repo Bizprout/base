@@ -1,8 +1,5 @@
 package com.bizprout.web.app.resource;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,7 +68,7 @@ public class TallyMappingResource {
 	{
 		List<TallyMastersDTO> tallymasters = null;
 		try {
-			tallymasters=tallymappingservice.getTallyMasterNames(tallymasterdto.getMasterType(), tallymasterdto.getCmpId());
+			tallymasters=tallymappingservice.getTallyMasterNames(tallymasterdto.getMasterType(), tallymasterdto.getCmpId(), tallymasterdto.getCategory());
 			logger.debug("Request......getTallyMasterNames List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -85,6 +82,19 @@ public class TallyMappingResource {
 		List<PpMasterDTO> ppmasternames = null;
 		try {
 			ppmasternames=tallymappingservice.getPpMasterNames(ppmasterdto.getMastertype(), ppmasterdto.getCmpid());
+			logger.debug("Request......getTallyMasterNames List......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return ppmasternames;
+	}
+	
+	@PostMapping(value="/getppmasternamesbycategory")
+	public List<PpMasterDTO> getPpMasterNamesByCategory(@RequestBody PpMasterDTO ppmasterdto)
+	{
+		List<PpMasterDTO> ppmasternames = null;
+		try {
+			ppmasternames=tallymappingservice.getPpMasterNamesByCategory(ppmasterdto.getMastertype(), ppmasterdto.getCmpid(), ppmasterdto.getCategory());
 			logger.debug("Request......getTallyMasterNames List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -156,11 +166,11 @@ public class TallyMappingResource {
 	}
 
 	@PostMapping(value="/gettallymasterids")
-	public List<Integer> getPpMastersMapping(@RequestBody TallyMappingDTO tallymappingdto)
+	public List<Integer> getPpMastersMapping(@RequestBody TallyMastersDTO tallymastersdto)
 	{
 		List<Integer> ppmapping = null;
 		try {
-			ppmapping=tallymappingservice.getPpMastersMapping(tallymappingdto.getCmpId(), tallymappingdto.getPpId());
+			ppmapping=tallymappingservice.getPpMastersMapping(tallymastersdto.getCmpId(), tallymastersdto.getPpid(), tallymastersdto.getCategory());
 			logger.debug("Request......getTallyMasterids List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -186,7 +196,33 @@ public class TallyMappingResource {
 	{
 		List<TallyMastersDTO> tallymasterdata = null;
 		try {
-			tallymasterdata=tallymappingservice.getTallyPpMappingData(tallymasterdto.getCmpId(), tallymasterdto.getMasterType());
+			tallymasterdata=tallymappingservice.getTallyPpMappingData(tallymasterdto.getCmpId(), tallymasterdto.getMasterType(), tallymasterdto.getCategory());
+			logger.debug("Request......getPpMasterData......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return tallymasterdata;
+	}
+	
+	@PostMapping(value="/gettallyppmappingdataMastertype")
+	public List<TallyMastersDTO> getPpMasterDataMastertype(@RequestBody TallyMastersDTO tallymasterdto)
+	{
+		List<TallyMastersDTO> tallymasterdata = null;
+		try {
+			tallymasterdata=tallymappingservice.getTallyPpMappingDataMastertype(tallymasterdto.getCmpId(), tallymasterdto.getMasterType());
+			logger.debug("Request......getPpMasterData......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return tallymasterdata;
+	}
+	
+	@PostMapping(value="/gettallyppmappingdatawithoutcategory")
+	public List<TallyMastersDTO> getTallyPpMappingDataWithoutCategory(@RequestBody TallyMastersDTO tallymasterdto)
+	{
+		List<TallyMastersDTO> tallymasterdata = null;
+		try {
+			tallymasterdata=tallymappingservice.getTallyPpMappingDataWithoutCategory(tallymasterdto.getCmpId(), tallymasterdto.getMasterType());
 			logger.debug("Request......getPpMasterData......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -247,8 +283,6 @@ public class TallyMappingResource {
 		if(!file.isEmpty())
 		{
 			try {				
-				byte[] bytes=file.getBytes();
-				
 				//check Excel Format
 				
 				format=excel.checkExcelFormatPpMastersMapping(file);
@@ -260,25 +294,8 @@ public class TallyMappingResource {
 					cmpid=excel.checkCmp(file, sesscmpid);
 
 					if(cmpid==true)
-					{
-						// Creating the directory to store file
-						String rootPath = System.getProperty("catalina.home");
-						File dir = new File(rootPath + File.separator + "tmpFiles");
-						if (!dir.exists())
-							dir.mkdirs();
-
-						// Create the file on server
-						File serverFile = new File(dir.getAbsolutePath()
-								+ File.separator + file.getOriginalFilename());
-						BufferedOutputStream stream = new BufferedOutputStream(
-								new FileOutputStream(serverFile));
-						stream.write(bytes);
-						stream.close();
-
-						logger.info("Server File Location="
-								+ serverFile.getAbsolutePath(), this.getClass());
-
-						jsonresponse=excel.excelReadDatamapping(file.getOriginalFilename());
+					{						
+						jsonresponse=excel.excelReadDatamapping(file);
 
 						if(jsonresponse.contains("success"))
 						{

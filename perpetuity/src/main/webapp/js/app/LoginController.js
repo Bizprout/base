@@ -55,6 +55,9 @@ baseApp.controller("LoginController", function($scope, $location, $route, $http,
 	};
 
 	$scope.login = function(loginDTO) {
+		
+		$localStorage.$reset();
+		
 		if($scope.loginDTO.username==="")
 		{
 			$scope.alerts = { type: 'danger' ,msg: 'Username cannot be Empty!'};
@@ -66,7 +69,7 @@ baseApp.controller("LoginController", function($scope, $location, $route, $http,
 			$scope.showSuccessAlert = true;
 		}
 		else
-		{
+		{			
 			$scope.isLoading=true;
 			var config = {
 					params : {

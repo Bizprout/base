@@ -11,10 +11,10 @@
 			</p>
 			<div class="text">Choose Your Option for Masters</div>
 		</div>
-		<div class="app-section" align="center">
+		<div class="app-section" style="text-align:center;">
 			<md-progress-circular md-mode="indeterminate" md-diameter="50px"
 				ng-show="isLoadingmasters"></md-progress-circular>
-			<div class="app-section-container path" ng-hide="hideusers"
+			<div class="app-section-container path" style="border:1px solid #000; display:inline-block;" ng-hide="hideusers"
 				role="button" data-toggle="modal" data-target="#last-step-modal">
 				<div class="app-type">
 					<div class="title">Users</div>
@@ -24,7 +24,7 @@
 						type="button" class="btn btn-success"
 						ng-disabled="userbuttondisable">Continue</button></a>
 			</div>
-			<div class="app-section-container path" ng-hide="hideclients"
+			<div class="app-section-container path" style="border:1px solid #000; display:inline-block;" ng-hide="hideclients"
 				role="button" data-toggle="modal" data-target="#last-step-modal">
 				<div class="app-type">
 					<div class="title">Clients</div>
@@ -34,19 +34,19 @@
 						type="button" class="btn btn-success"
 						ng-disabled="clientbuttondisable">Continue</button></a>
 			</div>
-			<div class="app-section-container path" ng-hide="hidecompany"
+			<div class="app-section-container path" style="border:1px solid #000; display:inline-block;" ng-hide="hidecompany"
 				role="button" data-toggle="modal" data-target="#last-step-modal">
 				<div class="app-type">
-					<div class="title">Company</div>
+					<div class="title">Tally Database</div>
 				</div>
-				<div class="content" style="margin-bottom: 45px;">Manage
-					Individual Tally Companies.</div>
+				<div class="content" style="margin-bottom: 45px;">Manage Tally Databases.</div>
 				<a href="#newcompany" style="text-decoration: none;"><button
 						type="button" class="btn btn-success"
 						ng-disabled="companybuttondisable">Continue</button></a>
 			</div>
-			<div class="app-section-container path" ng-hide="hideppmasters"
+			<div class="app-section-container path" style="border:1px solid #000; display:inline-block;" ng-hide="hideppmasters"
 				role="button" data-toggle="modal" data-target="#last-step-modal">
+
 				<div class="app-type">
 					<div class="title">PP Masters</div>
 				</div>

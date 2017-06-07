@@ -1,5 +1,8 @@
 package com.bizprout.web.app.resource;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -15,43 +18,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Email {
-	
+
 	Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	// Sender's email ID needs to be mentioned	
-	public static final String from = "epacc_hrms@bizprout.com";
-	
-	// Assuming you are sending email from localhost
-	public static final String host = "103.224.23.175";
 
 	public void sendEmail(String toaddress, String user, String password){
-		
-		logger.debug("inside sendEmail method ......"+this.getClass());
-
-		// Recipient's email ID needs to be mentioned.
-		String to = toaddress;
-
-		String wlink="http://localhost:9090/perpetuity/#/";
-
-		// Get system properties
-		Properties properties = System.getProperties();
-
-		// Setup mail server
-		properties.setProperty("mail.smtp.auth", "true");
-		properties.setProperty("mail.smtp.host", host);
-		properties.setProperty("mail.user", from);
-		properties.setProperty("mail.password", "Rqt45@2013");
-		properties.setProperty("mail.smtp.port", "587");
-		
-
-		// Get the default Session object.
-		Session session = Session.getDefaultInstance(properties, new Authenticator() {
-			 protected PasswordAuthentication getPasswordAuthentication() {
-	               return new PasswordAuthentication(properties.getProperty("mail.user"), properties.getProperty("mail.password"));
-		   }
-		});
 
 		try {
+
+			Properties prop = new Properties();
+			InputStream inprop = null;
+
+			inprop = new FileInputStream("Emailconfig.properties");
+
+			// load a properties file
+			prop.load(inprop);
+
+			// Sender's email ID needs to be mentioned	
+			String from =prop.getProperty("fromemailid");
+
+			// Assuming you are sending email from server
+			String host = prop.getProperty("emailhost");
+
+			logger.debug("inside sendEmail method ......"+this.getClass());
+
+			// Recipient's email ID needs to be mentioned.
+			String to = toaddress;
+
+			String wlink=prop.getProperty("applink");
+
+			// Get system properties
+			Properties properties = System.getProperties();
+
+			// Setup mail server
+			properties.setProperty("mail.smtp.auth", "true");
+			properties.setProperty("mail.smtp.host", host);
+			properties.setProperty("mail.user", from);
+			properties.setProperty("mail.password", prop.getProperty("emailpassword"));
+			properties.setProperty("mail.smtp.port", prop.getProperty("emailport"));
+
+
+			// Get the default Session object.
+			Session session = Session.getDefaultInstance(properties, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(properties.getProperty("mail.user"), properties.getProperty("mail.password"));
+				}
+			});
+
+
 			// Create a default MimeMessage object.
 			MimeMessage message = new MimeMessage(session);
 
@@ -77,43 +90,57 @@ public class Email {
 
 			// Send message
 			Transport.send(message);
-			
+
 			logger.debug("Email Sent Successfully to "+ to);
-						
-		}catch (MessagingException e) {
+
+		}catch (MessagingException | IOException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 
 	}
-	
+
 	public void usernameChangeEmail(String user, String password){
-		
-		logger.debug("inside usernameChangeEmail method ......"+this.getClass());
 
-		// Recipient's email ID needs to be mentioned.
-		String to = user;
+		try {	
+			Properties prop = new Properties();
+			InputStream inprop = null;
 
-		String wlink="http://localhost:9090/perpetuity/#/";
+			inprop = new FileInputStream("Emailconfig.properties");
 
-		// Get system properties
-		Properties properties = System.getProperties();
+			// load a properties file
+			prop.load(inprop);
 
-		// Setup mail server
-		properties.setProperty("mail.smtp.auth", "true");
-		properties.setProperty("mail.smtp.host", host);
-		properties.setProperty("mail.user", from);
-		properties.setProperty("mail.password", "Rqt45@2013");
-		properties.setProperty("mail.smtp.port", "587");
-		
+			// Sender's email ID needs to be mentioned	
+			String from =prop.getProperty("fromemailid");
 
-		// Get the default Session object.
-		Session session = Session.getDefaultInstance(properties, new Authenticator() {
-			 protected PasswordAuthentication getPasswordAuthentication() {
-	               return new PasswordAuthentication(properties.getProperty("mail.user"), properties.getProperty("mail.password"));
-		   }
-		});
+			// Assuming you are sending email from server
+			String host = prop.getProperty("emailhost");
 
-		try {
+			logger.debug("inside usernameChangeEmail method ......"+this.getClass());
+
+			// Recipient's email ID needs to be mentioned.
+			String to = user;
+
+			String wlink=prop.getProperty("applink");
+
+			// Get system properties
+			Properties properties = System.getProperties();
+
+			// Setup mail server
+			properties.setProperty("mail.smtp.auth", "true");
+			properties.setProperty("mail.smtp.host", host);
+			properties.setProperty("mail.user", from);
+			properties.setProperty("mail.password", prop.getProperty("emailpassword"));
+			properties.setProperty("mail.smtp.port", prop.getProperty("emailport"));
+
+
+			// Get the default Session object.
+			Session session = Session.getDefaultInstance(properties, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(properties.getProperty("mail.user"), properties.getProperty("mail.password"));
+				}
+			});
+
 			// Create a default MimeMessage object.
 			MimeMessage message = new MimeMessage(session);
 
@@ -136,47 +163,62 @@ public class Email {
 					+ "Regards,<br>"
 					+ "<b>Team Bizprout.</b>"
 					+ "<p>This is an auto-generated e-mail. Please do not reply to this email.</p>", "text/html");
-			
-		
+
+
 			// Send message
 			Transport.send(message);			
-			
+
 			logger.debug("Email Sent Successfully to "+ to);
-						
-		}catch (MessagingException e) {
+
+		}catch (MessagingException | IOException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 
 	}
-	
+
 	public void sendForgotPasswordEmail(String user, String password){
-		
-		logger.debug("inside usernameChangeEmail method ......"+this.getClass());
 
-		// Recipient's email ID needs to be mentioned.
-		String to = user;
+		try {	
+			Properties prop = new Properties();
+			InputStream inprop = null;
 
-		String wlink="http://localhost:9090/perpetuity/#/";
+			inprop = new FileInputStream("Emailconfig.properties");
 
-		// Get system properties
-		Properties properties = System.getProperties();
+			// load a properties file
+			prop.load(inprop);
 
-		// Setup mail server
-		properties.setProperty("mail.smtp.auth", "true");
-		properties.setProperty("mail.smtp.host", host);
-		properties.setProperty("mail.user", from);
-		properties.setProperty("mail.password", "Rqt45@2013");
-		properties.setProperty("mail.smtp.port", "587");
-		
+			// Sender's email ID needs to be mentioned	
+			String from =prop.getProperty("fromemailid");
 
-		// Get the default Session object.
-		Session session = Session.getDefaultInstance(properties, new Authenticator() {
-			 protected PasswordAuthentication getPasswordAuthentication() {
-	               return new PasswordAuthentication(properties.getProperty("mail.user"), properties.getProperty("mail.password"));
-		   }
-		});
+			// Assuming you are sending email from server
+			String host = prop.getProperty("emailhost");
 
-		try {
+			logger.debug("inside usernameChangeEmail method ......"+this.getClass());
+
+			// Recipient's email ID needs to be mentioned.
+			String to = user;
+
+			String wlink=prop.getProperty("applink");
+
+			// Get system properties
+			Properties properties = System.getProperties();
+
+			// Setup mail server
+			properties.setProperty("mail.smtp.auth", "true");
+			properties.setProperty("mail.smtp.host", host);
+			properties.setProperty("mail.user", from);
+			properties.setProperty("mail.password", prop.getProperty("emailpassword"));
+			properties.setProperty("mail.smtp.port", prop.getProperty("emailport"));
+
+
+			// Get the default Session object.
+			Session session = Session.getDefaultInstance(properties, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(properties.getProperty("mail.user"), properties.getProperty("mail.password"));
+				}
+			});
+
+
 			// Create a default MimeMessage object.
 			MimeMessage message = new MimeMessage(session);
 
@@ -198,14 +240,107 @@ public class Email {
 					+ "Regards,<br>"
 					+ "<b>Team Bizprout.</b>"
 					+ "<p>This is an auto-generated e-mail. Please do not reply to this email.</p>", "text/html");
-			
-		
+
+
 			// Send message
 			Transport.send(message);			
-			
+
 			logger.debug("Email Sent Successfully to "+ to);
-						
-		}catch (MessagingException e) {
+
+		}catch (MessagingException | IOException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+
+	}
+
+	public void sendClientEmailSyncError(String clientemail, String synctype, String cmpname){
+
+		try {
+			Properties prop = new Properties();
+			InputStream inprop = null;
+
+			inprop = new FileInputStream("Emailconfig.properties");
+
+			// load a properties file
+			prop.load(inprop);
+
+			// Sender's email ID needs to be mentioned	
+			String from =prop.getProperty("fromemailid");
+
+			// Assuming you are sending email from server
+			String host = prop.getProperty("emailhost");
+
+			logger.debug("inside sendClientEmailSyncError method ......"+this.getClass());
+
+			String message1=null;
+
+			// Recipient's email ID needs to be mentioned.
+			String to = clientemail;
+
+			// Get system properties
+			Properties properties = System.getProperties();
+
+			// Setup mail server
+			properties.setProperty("mail.smtp.auth", "true");
+			properties.setProperty("mail.smtp.host", host);
+			properties.setProperty("mail.user", from);
+			properties.setProperty("mail.password", prop.getProperty("emailpassword"));
+			properties.setProperty("mail.smtp.port", prop.getProperty("emailport"));
+
+
+			// Get the default Session object.
+			Session session = Session.getDefaultInstance(properties, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(properties.getProperty("mail.user"), properties.getProperty("mail.password"));
+				}
+			});
+
+
+			// Create a default MimeMessage object.
+			MimeMessage message = new MimeMessage(session);
+
+			// Set From: header field of the header.
+			message.setFrom(new InternetAddress(from));
+
+			// Set To: header field of the header.
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+			// Set Subject: header field
+
+			if(synctype=="Masters")
+			{
+				message.setSubject("Tally Masters Synchronization Error");
+
+				message1="Synchronization of Tally Masters Failed";
+			}
+			else if(synctype=="Voucher")
+			{
+				message.setSubject("Tally Vouchers Synchronization Error");
+
+				message1="Synchronization of Tally Vouchers Failed";
+			}
+			else if(synctype=="Both")
+			{
+				message.setSubject("Tally Masters and Vouchers Synchronization Error");
+
+				message1="Synchronization of Tally Masters and Vouchers Failed";
+			}
+
+
+			// Now set the actual message
+			message.setContent("Dear "+ clientemail + ",<br><br>"
+					+ message1 + " for <b>"+ cmpname + "</b><br><br>"
+					+ "Regards,<br>"
+					+ "<b>Team Bizprout.</b>"
+					+ "<p>This is an auto-generated e-mail. Please do not reply to this email.</p>", "text/html");
+
+
+			// Send message
+			Transport.send(message);			
+
+			logger.debug("Email Sent Successfully to "+ to);
+
+		}catch (MessagingException | IOException e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 

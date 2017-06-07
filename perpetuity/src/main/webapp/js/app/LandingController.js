@@ -17,6 +17,10 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 
 	//last logged on
 
+	$scope.demo = {
+			tipDirection: 'bottom'
+	};
+
 	$http({
 		method : "POST",
 		url : "usercounter/getlastlogindatetime",
@@ -30,7 +34,7 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 		{
 			$scope.lastlogin=datalogin.logindatetime;
 		}
-		
+
 
 	}).error(function(data, status, headers, config){
 		// called asynchronously if an error occurs
@@ -42,21 +46,30 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 			emptyListText: 'Oops! The list is empty',
 			emptySearchResultText: 'Sorry, couldn\'t find "$0"'
 	};
-	
 
-	if($localStorage.cmpid===undefined || $localStorage.cmpid==='')
+	if($localStorage.cmpid===undefined || $localStorage.cmpid===0)
 	{
 		if($localStorage.usertype==="PPsuperadmin")
 		{
+			$scope.mastershide=false;
+			$scope.mappinghide=true;
+			$scope.reportshide=true;
+			
 			$scope.masterslinkenabled = true;
+			$scope.mappinglinkenabled = false;
+			$scope.reportslinkenabled = false;
 		}
-		$scope.mappinglinkenabled = false;
-		$scope.reportslinkenabled = false;
 	}
 	else
-	{
+	{		
 		if($localStorage.usertype!="PPsuperadmin")
-		{	
+		{
+			$scope.mastershide=true;
+			$scope.mappinghide=true;
+			$scope.reportshide=true;
+			
+			$scope.isLoadinglandingscreens=true;	
+			
 			//get the screens mapped for the userid and cmpid
 			$http({
 				method : "POST",
@@ -73,7 +86,7 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 				{
 					var screenidsmapped = datascreenids.screenId.split(',');
 				}
-				
+
 				//get all the screens list and ids
 
 				$http({
@@ -85,45 +98,53 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 				}).success(function(datascreens, status, headers, config){
 
 					//*******options for user names and default selected option**********************************
-									
-					var userscreen=$filter('filter')(datascreens, {screenName: "User Master"})[0];
-					var clientscreen=$filter('filter')(datascreens, {screenName: "Client Master"})[0];
-					var companyscreen=$filter('filter')(datascreens, {screenName: "Company Master"})[0];
-					var ppscreen=$filter('filter')(datascreens, {screenName: "PP Master"})[0];
-					var usermappingscreen=$filter('filter')(datascreens, {screenName: "User Mapping"})[0];
-					var ppmappingscreen=$filter('filter')(datascreens, {screenName: "PP Mapping"})[0];
-					var reportscreen=$filter('filter')(datascreens, {screenName: "Reports"})[0];
-					
+
+					var userscreen=$filter('filter')(datascreens, {screenName: "User Master"}, true)[0];
+					var clientscreen=$filter('filter')(datascreens, {screenName: "Client Master"}, true)[0];
+					var companyscreen=$filter('filter')(datascreens, {screenName: "Company Master"}, true)[0];
+					var ppscreen=$filter('filter')(datascreens, {screenName: "PP Master"}, true)[0];
+					var usermappingscreen=$filter('filter')(datascreens, {screenName: "User Mapping"}, true)[0];
+					var ppmappingscreen=$filter('filter')(datascreens, {screenName: "PP Mapping"}, true)[0];
+					var reportscreen=$filter('filter')(datascreens, {screenName: "Reports"}, true)[0];
+
 					if(screenidsmapped.indexOf(userscreen.sid.toString()) !== -1 || 
 							screenidsmapped.indexOf(clientscreen.sid.toString()) !== -1 ||
 							screenidsmapped.indexOf(companyscreen.sid.toString()) !== -1 ||
 							screenidsmapped.indexOf(ppscreen.sid.toString()) !== -1)
 					{
+						$scope.mastershide=false;
 						$scope.masterslinkenabled = true;
 					}
 					else
 					{
+						$scope.mastershide=true;
 						$scope.masterslinkenabled = false;
 					}
 
 					if(screenidsmapped.indexOf(usermappingscreen.sid.toString()) !== -1 ||
 							screenidsmapped.indexOf(ppmappingscreen.sid.toString()) !== -1)
 					{
+						$scope.mappinghide=false;
 						$scope.mappinglinkenabled = true;
 					}
 					else
 					{
+						$scope.mappinghide=true;
 						$scope.mappinglinkenabled = false;
 					}
 
 					if(screenidsmapped.indexOf(reportscreen.sid.toString()) !== -1)
 					{
+						$scope.reportshide=false;
 						$scope.reportslinkenabled = true;
 					}
 					else
 					{
+						$scope.reportshide=true;
 						$scope.reportslinkenabled = false;
 					}
+					
+					$scope.isLoadinglandingscreens=false;
 
 				}).error(function(datascreens, status, headers, config){
 					// called asynchronously if an error occurs
@@ -137,9 +158,17 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 		}
 		else
 		{
-			$scope.masterslinkenabled = true;
-			$scope.mappinglinkenabled = true;
-			$scope.reportslinkenabled = true;
+			if($localStorage.cmpid!=0)
+			{
+				$scope.mastershide=false;
+				$scope.mappinghide=false;
+				$scope.reportshide=false;
+				
+				$scope.masterslinkenabled = true;
+				$scope.mappinglinkenabled = true;
+				$scope.reportslinkenabled = true;
+			}
+
 		}
 	}
 
@@ -149,7 +178,7 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 	//check companies mapped for the logged in user
 
 	$scope.companies=[];
-	
+
 	$scope.isLoadinglandcomp=true;
 
 	$http({
@@ -166,22 +195,8 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 			angular.forEach(datacomp, function(comp){
 				$scope.companies.push(comp.compdto);
 			});
-			
-			$scope.isLoadinglandcomp=false;
 
-			if ("/home" === $location.path() && $localStorage.cmpid===undefined) {
-				$mdDialog.show(
-						$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.title('Hi '+$scope.user+'!')
-						.textContent('Please Select the Company on the top right Corner to Continue...')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.openFrom('#left')
-						.closeTo('#right')
-				);
-			}
+			$scope.isLoadinglandcomp=false;
 
 		}
 		else if($localStorage.usertype==="PPsuperadmin" && datacomp.length===0)
@@ -196,32 +211,36 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 
 				//*******options for company names********************************
 				$scope.companies=data;
+
+				$scope.companies.push({"cmpId":0, "tallyCmpName":"Not Applicable"});
 				
+				if($localStorage.cmpid===undefined)
+				{
+					$scope.landingcmpId=0;
+					
+					$scope.masterslinkenabled = true;
+					$scope.mappinglinkenabled = false;
+					$scope.reportslinkenabled = false;
+				}
+
+
+				$localStorage.cmpid =$scope.landingcmpId;
+				
+				$scope.cmp=$filter('filter')($scope.companies, {cmpId:$localStorage.cmpid}, true)[0];
+				
+				$localStorage.cmpname=$scope.cmp.tallyCmpName;
+
 				$scope.isLoadinglandcomp=false;
 
 			}).error(function(data, status, headers, config){
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
 			});
-
-			if ("/home" === $location.path() && $localStorage.cmpid===undefined) {
-				$mdDialog.show(
-						$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.title('Hi '+$scope.user+'!')
-						.textContent('Please Select the Company on the top right Corner to Continue...')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.openFrom('#left')
-						.closeTo('#right')
-				);
-			}
 		}
 		else
 		{			
-			if ("/home" === $location.path() && $localStorage.cmpid===undefined) {
-				
+			if ("/home" === $location.path() && datacomp.length===0) {
+
 				var confirm = $mdDialog.alert()
 				.parent(angular.element(document.querySelector('#popupContainer')))
 				.clickOutsideToClose(true)
@@ -230,16 +249,16 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 				.ok('Ok')
 				.openFrom('#left')
 				.closeTo('#right');
-				
+
 				$scope.isLoadinglandcomp=false;
 
 				$mdDialog.show(confirm).then(function() {
 					$localStorage.$reset();
 					$location.path("/");
-				});			
+				});	
 			}
 		}
-		
+
 	}).error(function(data, status, headers, config){
 		// called asynchronously if an error occurs
 		// or server returns response with an error status.
@@ -247,20 +266,23 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 
 
 	$scope.landingcompanychange=function(){
+				
+		$localStorage.cmpid =$scope.landingcmpId;
 
-		$rootScope.cmpid=$scope.landingcmpId;
+		$scope.cmp=$filter('filter')($scope.companies, {cmpId:$localStorage.cmpid}, true)[0];
 
-		$localStorage.cmpid =$rootScope.cmpid;
+		$localStorage.cmpname=$scope.cmp.tallyCmpName;
 
-		$scope.cmp=$filter('filter')($scope.companies, {cmpId:$rootScope.cmpid})[0];
 
-		$rootScope.cmpname=$scope.cmp.tallyCmpName;
-
-		$localStorage.cmpname=$rootScope.cmpname;
-
-		
 		if($localStorage.usertype!="PPsuperadmin")
-		{	
+		{							
+			
+			$scope.mastershide=true;
+			$scope.mappinghide=true;
+			$scope.reportshide=true;
+					
+			$scope.isLoadinglandingscreens=true;
+			
 			//get the screens mapped for the userid and cmpid
 			$http({
 				method : "POST",
@@ -277,7 +299,7 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 				{
 					var screenidsmapped = datascreenids.screenId.split(',');
 				}
-				
+
 				//get all the screens list and ids
 
 				$http({
@@ -289,45 +311,53 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 				}).success(function(datascreens, status, headers, config){
 
 					//*******options for user names and default selected option**********************************
-									
-					var userscreen=$filter('filter')(datascreens, {screenName: "User Master"})[0];
-					var clientscreen=$filter('filter')(datascreens, {screenName: "Client Master"})[0];
-					var companyscreen=$filter('filter')(datascreens, {screenName: "Company Master"})[0];
-					var ppscreen=$filter('filter')(datascreens, {screenName: "PP Master"})[0];
-					var usermappingscreen=$filter('filter')(datascreens, {screenName: "User Mapping"})[0];
-					var ppmappingscreen=$filter('filter')(datascreens, {screenName: "PP Mapping"})[0];
-					var reportscreen=$filter('filter')(datascreens, {screenName: "Reports"})[0];
-					
+
+					var userscreen=$filter('filter')(datascreens, {screenName: "User Master"}, true)[0];
+					var clientscreen=$filter('filter')(datascreens, {screenName: "Client Master"}, true)[0];
+					var companyscreen=$filter('filter')(datascreens, {screenName: "Company Master"}, true)[0];
+					var ppscreen=$filter('filter')(datascreens, {screenName: "PP Master"}, true)[0];
+					var usermappingscreen=$filter('filter')(datascreens, {screenName: "User Mapping"}, true)[0];
+					var ppmappingscreen=$filter('filter')(datascreens, {screenName: "PP Mapping"}, true)[0];
+					var reportscreen=$filter('filter')(datascreens, {screenName: "Reports"}, true)[0];
+
 					if(screenidsmapped.indexOf(userscreen.sid.toString()) !== -1 || 
 							screenidsmapped.indexOf(clientscreen.sid.toString()) !== -1 ||
 							screenidsmapped.indexOf(companyscreen.sid.toString()) !== -1 ||
 							screenidsmapped.indexOf(ppscreen.sid.toString()) !== -1)
 					{
+						$scope.mastershide=false;
 						$scope.masterslinkenabled = true;
 					}
 					else
 					{
+						$scope.mastershide=true;
 						$scope.masterslinkenabled = false;
 					}
 
 					if(screenidsmapped.indexOf(usermappingscreen.sid.toString()) !== -1 ||
 							screenidsmapped.indexOf(ppmappingscreen.sid.toString()) !== -1)
 					{
+						$scope.mappinghide=false;
 						$scope.mappinglinkenabled = true;
 					}
 					else
 					{
+						$scope.mappinghide=true;
 						$scope.mappinglinkenabled = false;
 					}
 
 					if(screenidsmapped.indexOf(reportscreen.sid.toString()) !== -1)
 					{
+						$scope.reportshide=false;
 						$scope.reportslinkenabled = true;
 					}
 					else
 					{
+						$scope.reportshide=true;
 						$scope.reportslinkenabled = false;
 					}
+					
+					$scope.isLoadinglandingscreens=false;
 
 				}).error(function(datascreens, status, headers, config){
 					// called asynchronously if an error occurs
@@ -341,11 +371,27 @@ baseApp.controller("LandingController", function($scope, $location, $http, $root
 		}
 		else
 		{
+			if($localStorage.cmpid===0)
+			{
+				$scope.mappinghide=true;
+				$scope.reportshide=true;
+				
+				$scope.mappinglinkenabled = false;
+				$scope.reportslinkenabled = false;
+			}
+			else
+			{
+				$scope.mappinghide=false;
+				$scope.reportshide=false;
+				
+				$scope.mappinglinkenabled = true;
+				$scope.reportslinkenabled = true;
+			}
 			$scope.masterslinkenabled = true;
-			$scope.mappinglinkenabled = true;
-			$scope.reportslinkenabled = true;
-		}
+
 		
+		}
+
 	};
 
 });

@@ -166,15 +166,16 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<PpMasterDTO> getPpmasterData(int cmpid) {
+	public List<PpMasterDTO> getPpmasterData(int cmpid, String mastertype) {
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
 			logger.info("Inside getPpmasterData method......."+this.getClass());
 
 			Session session = getSession();
 
-			Query q= session.createQuery("from PpMasterDTO where cmpid=:cmp");
+			Query q= session.createQuery("from PpMasterDTO where cmpid=:cmp and mastertype=:mastertyp");
 			q.setParameter("cmp", cmpid);
+			q.setParameter("mastertyp", mastertype);
 			ppmasterdata=q.list();
 
 		} catch (HibernateException e) {

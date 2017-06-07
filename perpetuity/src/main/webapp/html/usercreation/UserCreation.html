@@ -13,8 +13,12 @@
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
+			
+			<md-progress-linear md-mode="indeterminate" ng-show="isLoadingresponse"></md-progress-linear>
+			
 				<div ng-class="'alert alert-' + (alerts.type || 'warning')"
 					ng-show="showSuccessAlert">
+					
 					<button type="button" class="close"
 						data-ng-click="switchBool('showSuccessAlert')">x</button>
 					<strong>{{alerts.msg}}</strong>
@@ -25,13 +29,14 @@
 						data-ng-click="switchBool('showerror')">x</button>
 					<ul>
 						<strong><li ng-repeat="err in errdata">{{err}}</li></strong>
-					</ul>
+					</ul>					
 				</div>
 			</div>
 			<div ng-cloak>
 				<md-content> <md-tabs md-border-bottom> <md-tab
 					label="Add" md-on-select="onaddclick()"> <md-content
 					class="md-padding"> <!-- <h1 class="md-display-2">Add</h1> -->
+					
 				<form id="cu-form" action="" name="usercreate"
 					enctype="multipart/form-data" novalidate>
 					<div class="row">
@@ -39,45 +44,15 @@
 							<div class="cu-section-content">
 								Username: <span style="color: red; font-size: 20px;">*</span>
 								<input type="email" name="username" id="username"
-									ng-model="userDTO.username" class="form-control" required
-									placeholder="Email ID" autofocus>
-								<!-- 		<br> Email ID: <span style="color: red; font-size: 20px;">*</span>
-								<input type="text" name="emailid" id="emailid"
-									ng-model="userDTO.emailid" class="form-control" required
-									placeholder="Email ID" autofocus> -->
+									ng-model="userDTO.username" ng-pattern="emailFormat"
+									class="form-control" required placeholder="Email ID" autofocus>
 								<br> Mobile No.:
 								<input type="text" name="mobile" id="mobile"
 									ng-model="userDTO.mobile" maxlength="10"
 									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-									class="form-control" required placeholder="Mobile No."
-									autofocus>
-								<!-- <br> <span>Password:</span>
-								<input type="Password" name="password" id="password"
-									ng-model="userDTO.password" class="form-control" required
-									placeholder="Password" autofocus>
-								<br> <span>Confirm Password:</span>
-								<input type="Password" name="confirmpassword"
-									id="confirmpassword" ng-model="userDTO.confirmpassword"
-									class="form-control" required placeholder="Confirm Password"
-									autofocus> -->
-								<br>
-								<!-- <span>User Type:</span><br>
-						<div
-							custom-select="ut.id as ut.name for ut in usertype | filter: { name: $searchTerm } track by ut.id"
-							ng-model="userDTO.usertype" autofocus>
-						</div> -->
-								<!-- <span>Access Rights to all Companies:</span><br>
-								<div
-									custom-select="ust.id as ust.name for ust in userstatus | filter: { name: $searchTerm } track by ust.id"
-									custom-select-options="userstatusselectOptions"
-									ng-model="userDTO.userstatus" autofocus>
-								</div> -->
-								<!-- <span>User Status:</span><br>
-								<div
-									custom-select="ust for ust in userstatus | filter: $searchTerm"
-									custom-select-options="userstatusselectOptions"
-									ng-model="userDTO.userstatus" autofocus></div> -->
-								<br />
+									class="form-control" ng-pattern="/^[7-9][0-9]{9}$/" required
+									placeholder="Mobile No." autofocus>
+								<br> <br />
 								<button submit-button type="button" class="btn btn-success"
 									ng-click="createuser(userDTO)">Create</button>
 								<button type="reset" class="btn btn-success" ng-click="clear()">Clear</button>
@@ -88,8 +63,8 @@
 				</form>
 				</md-content> </md-tab> <md-tab label="Edit" md-on-select="oneditclick()"> <md-content
 					class="md-padding"> <!-- <h1 class="md-display-2">Tab Two</h1> -->
-				<form id="cu-form1" action="" name="" enctype="multipart/form-data"
-					novalidate>
+				<form id="cu-form1" action="" name="useredit"
+					enctype="multipart/form-data" novalidate>
 					<div class="row">
 						<div class="col-xs-4">
 							<span>Select Username: <span
@@ -108,15 +83,12 @@
 					<br>
 					<div class="row">
 						<div class="col-xs-4">
-							<!-- Email ID: <span style="color: red; font-size: 20px;">*</span>
-							<input type="text" name="emailid" id="emailid"
-								ng-model="edituserDTO.emailid" class="form-control" required
-								placeholder="Email ID" autofocus> -->
 							<span>Edit Username:<span
 								style="color: red; font-size: 20px;">*</span></span><br>
 							<input type="email" name="editusername" id="editusername"
-								ng-model="edituserDTO.editusername" class="form-control"
-								required placeholder="Edit Username" autofocus>
+								ng-model="edituserDTO.editusername" ng-pattern="emailFormat"
+								class="form-control" required placeholder="Edit Username"
+								autofocus>
 						</div>
 						<div class="col-xs-1">
 							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
@@ -127,7 +99,8 @@
 							<input type="text" name="mobile" id="mobile"
 								ng-model="edituserDTO.mobile" maxlength="10"
 								onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-								class="form-control" required placeholder="Mobile No." autofocus>
+								class="form-control" ng-pattern="/^[7-9][0-9]{9}$/" required
+								placeholder="Mobile No." autofocus>
 						</div>
 						<div class="col-xs-1">
 							<md-progress-circular md-mode="indeterminate" md-diameter="20px"
@@ -135,11 +108,6 @@
 						</div>
 					</div>
 					<br>
-					<!-- <span>User Type:</span><br>
-						<div
-							custom-select="ut.id as ut.name for ut in usertype | filter: { name: $searchTerm } track by ut.id"
-							ng-model="edituserDTO.usertype" autofocus>
-						</div> -->
 					<div class="row">
 						<div class="col-xs-4">
 							<span>User Status:<span
@@ -226,8 +194,11 @@
 						</div>
 						<div id="exportableall" ng-hide="true">
 							<table border="1">
-							<b>Perpetuity - User Masters Report</b><br>
-							<b>List of Users</b><br/><br>							
+								<b>Perpetuity - User Masters Report</b>
+								<br>
+								<b>List of Users</b>
+								<br />
+								<br>
 								<thead>
 									<tr>
 										<th style="text-align: left;">Sl. No.</th>

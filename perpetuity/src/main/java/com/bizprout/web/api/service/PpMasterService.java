@@ -21,6 +21,6 @@ public interface PpMasterService<T> {
 	
 	public int UpdatePpMasters(EditPpMasterDTO t);
 	
-	public List<PpMasterDTO> getPpMasterdata(int cmpid);
+	public List<PpMasterDTO> getPpMasterdata(int cmpid, String mastertype);
 
 }

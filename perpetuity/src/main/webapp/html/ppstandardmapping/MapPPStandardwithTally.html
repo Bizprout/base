@@ -13,6 +13,8 @@
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
+				<md-progress-linear md-mode="indeterminate"
+					ng-show="isLoadingresponse"></md-progress-linear>
 				<div ng-class="'alert alert-' + (alerts.type || 'warning')"
 					ng-show="showSuccessAlert">
 					<button type="button" class="close"
@@ -138,12 +140,20 @@
 				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
 					class="md-padding">
 				<div class="row">
-					<div class="col-xs-3" style="padding-left: 32px;">
+					<div class="col-xs-4" style="padding-left: 32px;">
 						<span>Select Master Type:</span><br>
 						<div
 							custom-select="mt for mt in mastertypes | filter: $searchTerm"
-							custom-select-options="mastertypeselectOptions"
-							ng-change="reportmasterchanged()" ng-model="reportmastertype"
+							custom-select-options="mastertypeselectOptions" ng-change="onmastertypechanged()"
+							ng-model="repoDTO.mastertype"
+							autofocus></div>
+					</div>
+					<div class="col-xs-5" ng-show="reportcategoryvisible">
+						<span>Select Category:</span><br>
+						<div
+							custom-select="ccat for ccat in categories |  filter: $searchTerm"
+							custom-select-options="catselectOptions"
+							ng-change="onreportcategorychange()" ng-model="repoDTO.category"
 							autofocus></div>
 					</div>
 				</div>
@@ -151,11 +161,6 @@
 				<br>
 				<div class="col-lg-12">
 					<div class="bs-component">
-						<!-- 					<div class="alert alert-info">
-						<p>Sort key: {{sortKey}}</p>
-						<p>Reverse: {{reverse}}</p>
-						<p>Search String : {{search}}</p>
-					</div> -->
 						<form class="form-inline">
 							<div class="form-group">
 								<input type="text" ng-model="search" class="form-control"
@@ -174,29 +179,40 @@
 											class="glyphicon sort-icon" ng-show="sortKey=='id'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">Tally Masters Mapped<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th ng-click="sort('tallymastersmapped')">Tally Masters
+											Mapped<span class="glyphicon sort-icon"
+											ng-show="sortKey=='tallymastersmapped'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
-										<th ng-click="sort('hobby')">PP Master Name<span
-											class="glyphicon sort-icon" ng-show="sortKey=='hobby'"
+										<th ng-click="sort('basegroupname')">Base Group Name<span
+											class="glyphicon sort-icon"
+											ng-show="sortKey=='basegroupname'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('category')">Category<span
+											class="glyphicon sort-icon" ng-show="sortKey=='category'"
+											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+										</th>
+										<th ng-click="sort('ppmastername')">PP Master Name<span
+											class="glyphicon sort-icon" ng-show="sortKey=='ppmastername'"
 											ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 										</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr
-										dir-paginate="(key, value) in tallyppmapdata | orderBy:sortKey:reverse |filter:search|itemsPerPage:10"
+										dir-paginate="tallydata in tallyppmapdata | orderBy:sortKey:reverse |filter:search|itemsPerPage:10"
 										current-page="currentPage">
 										<td>{{itemsPerPage * (currentPage-1)+$index+1}}</td>
-										<td>{{tallyppmapdata[itemsPerPage *
-											(currentPage-1)+key].tallyMasterName}}</td>
+										<td>{{tallydata.tallyMasterName}}</td>
+										<td>{{tallydata.basegroupname}}</td>
+										<td>{{tallydata.category}}</td>
 										<td ng-hide="true"
-											ng-model="tallyppmapdata[itemsPerPage * (currentPage-1)+key].masterId">{{tallyppmapdata[key].masterId}}</td>
+											ng-model="tallydata.masterId">{{tallydata.masterId}}</td>
 										<td><div
 												custom-select="reppmn.masteridindex as reppmn.ppmastername for reppmn in reportppmasternames | filter: {ppmastername: $searchTerm} track by reppmn.masteridindex"
 												custom-select-options="ppmasterselectOptions"
-												ng-model="tallyppmapdata[itemsPerPage * (currentPage-1)+key].ppid"
+												ng-model="tallydata.ppid"
 												style="width: 140px;"></div></td>
 									</tr>
 								</tbody>
@@ -221,6 +237,8 @@
 									<tr>
 										<th style="text-align: left;">Sl. No.</th>
 										<th style="text-align: left;">Tally Masters Mapped</th>
+										<th style="text-align: left;">Base Group Name</th>
+										<th style="text-align: left;">category</th>
 										<th style="text-align: left;">PP Master Name</th>
 									</tr>
 								</thead>
@@ -228,6 +246,8 @@
 									<tr ng-repeat="(key, value) in tallyppmapdata">
 										<td>{{key+1}}</td>
 										<td>{{tallyppmapdata[key].tallyMasterName}}</td>
+										<td>{{tallyppmapdata[key].basegroupname}}</td>
+										<td>{{tallyppmapdata[key].category}}</td>
 										<td>{{tallyppmapdata[key].ppmasterdto.ppmastername}}</td>
 									</tr>
 								</tbody>
@@ -235,7 +255,7 @@
 						</div>
 						<dir-pagination-controls max-size="5" direction-links="true"
 							boundary-links="true"> </dir-pagination-controls>
-						<br> <a style="margin-bottom: 65px;" href="#masters"
+						<br> <a style="margin-bottom: 65px;" href="#mapping"
 							class="btn btn-success">Back</a>
 					</div>
 				</div>

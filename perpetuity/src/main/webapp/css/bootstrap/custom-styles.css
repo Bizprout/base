@@ -1249,7 +1249,6 @@ a {
 
 .dashboard-page .right .app-section {
 	padding: 30px 0;
-	display: flex;
 }
 
 .dashboard-page .right .app-section .app-section-container {
@@ -1268,13 +1267,13 @@ a {
 
 .dashboard-page .right .app-section .app-section-container+.app-section-container
 	{
-	margin-left: 30px;
+	margin-left: 15px;
 	/* display: inline-table; */
 }
 
 .dashboard-page .right .app-section .app-section-container:nth-child(4n+2)
 	{
-	margin-left: 35px;
+	margin-left: 15px;
 }
 
 .dashboard-page .right .app-section .app-section-container .app-type {
@@ -3734,6 +3733,7 @@ scale
     
 }
 }
+
 @media ( min-width : 768px) {
 }
 

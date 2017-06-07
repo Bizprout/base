@@ -4,7 +4,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 	$scope.cmpname=$localStorage.cmpname;
 
 
-	if($localStorage.cmpid===undefined)
+	if($localStorage.cmpid===undefined || $localStorage.cmpid===0)
 	{
 		$location.path("/home");
 	}
@@ -12,6 +12,58 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 	if($localStorage.userid===undefined)
 	{
 		$location.path("/");
+	}
+	
+	//get the screens mapped for the userid and cmpid
+
+	if($localStorage.usertype!="PPsuperadmin")
+	{
+		$http({
+			method : "POST",
+			url : "usermapping/getScreensMapped",
+			data: {"cmpId":$localStorage.cmpid, "userid":$localStorage.userid},
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(datascreenids, status, headers, config){
+
+			//*******options for client Names*********
+
+			if(datascreenids!="")
+			{
+				var screenidsmapped = datascreenids.screenId.split(',');
+			}
+			else
+			{
+				$location.path("/home");
+			}
+
+			//get all the screens list and ids
+
+			$http({
+				method : "GET",
+				url : "usermapping/getscreens",
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(datascreens, status, headers, config){
+
+				var ppmappingscreen=$filter('filter')(datascreens, {screenName: "PP Mapping"}, true)[0];
+
+
+				if(screenidsmapped.indexOf(ppmappingscreen.sid.toString()) === -1)
+				{
+					$location.path("/home");
+				}
+
+			}).error(function(data, status, headers, config){
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});	
 	}
 
 	// **********switch flag for success message**********
@@ -54,6 +106,13 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 			emptySearchResultText: 'Sorry, couldn\'t find "$0"'
 	};
 
+	//******Autocomplete dropdown default options for Select pp parent name********
+	$scope.catselectOptions = {
+			displayText: 'Select Category',
+			emptyListText: 'Oops! The list is empty',
+			emptySearchResultText: 'Sorry, couldn\'t find "$0"'
+	};
+
 	//*******DTO to store the form values for tally masters mapping to PP masters**********
 	$scope.ppmapDTO = {
 			"cmpId" : $localStorage.cmpid,
@@ -70,11 +129,12 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 		$scope.mastertypes = ["Ledger","Group","Cost Category","Cost Centre","Voucher Type"];
 
+		$scope.categorypp="";
 
 		$scope.masterchanged=function(ppmapDTO){
-			
+
 			$scope.isLoadingmaptoppmaster=true;
-			
+
 			$http({
 				method : "POST",
 				url : "pptallymapping/getppmasternames",
@@ -87,30 +147,8 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 				//*******options for client Names*********
 
 				$scope.ppmasternames=datappmasternames;
-				
+
 				$scope.isLoadingmaptoppmaster=false;
-
-			}).error(function(data, status, headers, config){
-				// called asynchronously if an error occurs
-				// or server returns response with an error status.
-			});
-			
-			$scope.isLoadingtallymasternames=true;
-			
-			$http({
-				method : "POST",
-				url : "pptallymapping/gettallymasternames",
-				data: {"masterType":$scope.ppmapDTO.mastertype, "cmpId":$scope.ppmapDTO.cmpId},
-				headers : {
-					'Content-Type' : 'application/json'
-				}
-			}).success(function(datatallymasternames, status, headers, config){
-
-				//*******options for client Names*********
-
-				$scope.tallymasternames=datatallymasternames;
-				
-				$scope.isLoadingtallymasternames=false;
 
 			}).error(function(data, status, headers, config){
 				// called asynchronously if an error occurs
@@ -120,12 +158,40 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 		$scope.ppmasternamechanged=function(ppmapDTO){
 
+
+			$scope.categorypp=$filter('filter')($scope.ppmasternames, {masteridindex: $scope.ppmapDTO.ppId}, true)[0];
+
 			$scope.isLoadingtallymasternames=true;
-			
+
+			//get category of selected pp master name
+
+			$http({
+				method : "POST",
+				url : "pptallymapping/gettallymasternames",
+				data: {"masterType":$scope.ppmapDTO.mastertype, "cmpId":$scope.ppmapDTO.cmpId, "category":$scope.categorypp.category},
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(datatallymasternames, status, headers, config){
+
+				//*******options for client Names*********
+
+				$scope.tallymasternames=datatallymasternames;
+
+				$scope.isLoadingtallymasternames=false;
+
+			}).error(function(data, status, headers, config){
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+
+
+			$scope.isLoadingtallymasternames=true;
+
 			$http({
 				method : "POST",
 				url : "pptallymapping/gettallymasterids",
-				data: {"cmpId":$scope.ppmapDTO.cmpId, "ppId":$scope.ppmapDTO.ppId},
+				data: {"cmpId":$scope.ppmapDTO.cmpId, "ppid":$scope.ppmapDTO.ppId, "category":$scope.categorypp.category},
 				headers : {
 					'Content-Type' : 'application/json'
 				}
@@ -136,7 +202,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 				$scope.ppmapDTO.tallyMasterId=datatallymasterids;
 
 				$scope.datamapid=datatallymasterids;			
-				
+
 				$scope.isLoadingtallymasternames=false;
 
 			}).error(function(data, status, headers, config){
@@ -168,84 +234,67 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 				//call insert
 				else
 				{
-					//delete the records for the cmpid and ppid
+					$scope.isLoadingresponse=true;
 
-					if($scope.datamapid.length>0)
-					{
-						$http({
-							method : "POST",
-							url : "pptallymapping/deleteppidcmpid",
-							data: {"ppId":$scope.ppmapDTO.ppId,"cmpId":$scope.ppmapDTO.cmpId},
-							headers : {
-								'Content-Type' : 'application/json'
-							}
-						}).success(function(deldata, status, headers, config){
+					//updating tally masters table with ppid
 
-						}).error(function(deldata, status, headers, config){
+					$scope.mappingdata = [];
 
-						});
+					angular.forEach($scope.ppmapDTO.tallyMasterId, function(mainobj) {
 
-					}
-
-					angular.forEach($scope.ppmapDTO.tallyMasterId, function(value, key) {
-
-						$http({
-							method : "POST",
-							url : "pptallymapping/insert",
-							data: {"ppId":$scope.ppmapDTO.ppId,"cmpId":$scope.ppmapDTO.cmpId, "tallyMasterId":$scope.ppmapDTO.tallyMasterId[key]},
-							headers : {
-								'Content-Type' : 'application/json'
-							}
-						}).success(function(successdata, status, headers, config){
-
-							//*******options for client Names*********
-
-							if(successdata[0]==='success')
-							{
-								$scope.alerts = { type: 'success' ,msg: 'PP Masters to tally Mapped'};
-								$scope.showSuccessAlert = true;
-								$scope.showerror=false;
-
-								$scope.ppmapDTO.client='';
-								$scope.ppmapDTO.mastertype='';
-								$scope.ppmapDTO.tallyMasterId='';
-								$scope.ppmapDTO.ppId='';
-
-								$scope.onmapclick();
-							}
-							else if(successdata[0]==='failure')
-							{
-								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
-								$scope.showSuccessAlert = true;
-								$scope.showerror=false;
-							}
-							else
-							{
-								if(successdata.length>0)
-								{
-									$scope.alerts = { type: 'danger'};
-									$scope.errdata=successdata;
-									$scope.showerror=true;
-									$scope.showSuccessAlert = false;
-								}
-								else
-								{
-									$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
-									$scope.showSuccessAlert = true;
-									$scope.showerror=false;
-								}
-								
-							}
-
-						}).error(function(data, status, headers, config){
-							if (data === "failure") {		
-
-								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
-								$scope.showSuccessAlert = true;
-							}
-						});
+						if(mainobj!=null)
+						{
+							$scope.mappingdata.push({'cmpId':$scope.ppmapDTO.cmpId, 'masterId':mainobj, 'ppid':$scope.ppmapDTO.ppId});
+						}
 
 					});
+
+					$http({
+						method : "POST",
+						url : "pptallymapping/saveppmapping",
+						data: $scope.mappingdata,
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(successdata, status, headers, config){
+
+						if(successdata==='success')
+						{
+							$scope.alerts = { type: 'success' ,msg: 'PP Masters to tally Mapped'};
+							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
+
+							$scope.ppmapDTO.client='';
+							$scope.ppmapDTO.mastertype='';
+							$scope.ppmapDTO.tallyMasterId='';
+							$scope.ppmapDTO.ppId='';
+
+							$scope.isLoadingresponse=false;
+
+							$scope.onmapclick();
+						}
+						else if(successdata==='failure')
+						{
+							$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
+							$scope.showSuccessAlert = true;
+							$scope.showerror=false;
+
+							$scope.isLoadingresponse=false;
+						}
+
+
+					}).error(function(data, status, headers, config){
+
+						if (data === "failure") {		
+
+							$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
+							$scope.showSuccessAlert = true;
+
+							$scope.isLoadingresponse=false;
+						}
+
+					});
+
 				}
 			}
 			else
@@ -267,7 +316,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 	//***********when Import/Export tab is clicked**********************************
 	$scope.onimpexpclick=function(){
-		
+
 		$http({
 			method : "POST",
 			url : "pptallymapping/setsessioncmpid",
@@ -280,7 +329,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 		}).error(function(data, status, headers, config){
 
 		});
-		
+
 		$http({
 			method : "POST",
 			url : "company/getclientstatus",
@@ -289,7 +338,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 				'Content-Type' : 'application/json'
 			}
 		}).success(function(response, status, headers, config){
-			
+
 			//*******options for client Names*********
 
 			$scope.clientname=response.client.clientName;
@@ -316,8 +365,8 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 		};
 
 		$scope.onppmappingimport=function(file){
-			
-			$scope.isLoadingimportfile=true;
+
+			$scope.isLoadingresponse=true;
 
 			var file = $scope.myFile;
 			var uploadUrl = "pptallymapping/ppmastermappinguploadfile";
@@ -339,12 +388,16 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 							$scope.alerts = { type: 'success' ,msg: "File - "+ file.name +" Uploaded Successfully!"};
 							$scope.showSuccessAlert = true;
 							$scope.showerror=false;
+
+							$scope.isLoadingresponse=false;
 						}
 						else if(response[0]==="failure")
 						{
 							$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Uploaded!"};
 							$scope.showSuccessAlert = true;
 							$scope.showerror=false;
+
+							$scope.isLoadingresponse=false;
 						}
 						else
 						{
@@ -354,17 +407,20 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 								$scope.errdata=response;
 								$scope.showerror=true;
 								$scope.showSuccessAlert=false;
+
+								$scope.isLoadingresponse=false;
 							}
 							else
 							{
 								$scope.alerts = { type: 'danger' ,msg: "File- "+ file.name +" not Uploaded!"};
 								$scope.showSuccessAlert = true;
 								$scope.showerror=false;
+
+								$scope.isLoadingresponse=false;
 							}
 						}
-						
-						$scope.isLoadingimportfile=false;
 
+						$scope.isLoadingresponse=false;
 					})
 					.error(function(response){
 
@@ -390,32 +446,47 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 
 	$scope.onreportclick=function(){
 
+		$scope.repoDTO={
+				"mastertype":"",
+				"category":""
+		}
+
 		$scope.search='';
+		$scope.repoDTO.mastertype='';
 
 		//View tally pp mapping - Report================================================================================================
 
 
-		$scope.savereportdata=function(){
-
-			if($scope.reportmastertype===undefined)
-			{
-				$scope.alerts = { type: 'danger' ,msg: 'Master Type is Required!'};
-				$scope.showSuccessAlert = true;
-			}
-		}
-
 		$scope.tallyppmapdata=[];
 
-		$scope.reportmasterchanged=function(){
-			
-			$scope.isLoading=true;
-			
-			if($localStorage.cmpid>0 && $scope.reportmastertype.length!=0)
+		$scope.categories=[];
+
+
+		$scope.reportcategoryvisible=false;
+
+		$scope.onmastertypechanged=function(){		
+
+			$scope.tallyppmapdata="";
+
+			$scope.repoDTO.category='';
+
+
+			if($scope.repoDTO.mastertype==="Ledger" || $scope.repoDTO.mastertype==="Group")
 			{
+				$scope.reportcategoryvisible=true;
+
+				$scope.categories=["All Categories","Assets","Liabilities","Expenses","Income"];
+			}
+			else if($scope.repoDTO.mastertype==="Cost Centre")
+			{
+				$scope.reportcategoryvisible=false;				
+
+				$scope.isLoading=true;
+
 				$http({
 					method : "POST",
-					url : "pptallymapping/gettallyppmappingdata",
-					data: {"cmpId":$localStorage.cmpid, "masterType":$scope.reportmastertype},
+					url : "pptallymapping/gettallyppmappingdatawithoutcategory",
+					data: {"cmpId":$localStorage.cmpid, "masterType":$scope.repoDTO.mastertype},
 					headers : {
 						'Content-Type' : 'application/json'
 					}
@@ -428,7 +499,7 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 					$http({
 						method : "POST",
 						url : "pptallymapping/getppmasternames",
-						data: {"mastertype":$scope.reportmastertype, "cmpid":$localStorage.cmpid},
+						data: {"mastertype":$scope.repoDTO.mastertype, "cmpid":$localStorage.cmpid},
 						headers : {
 							'Content-Type' : 'application/json'
 						}
@@ -437,9 +508,9 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 						//*******options for client Names*********
 
 						$scope.reportppmasternames=reportdatappmasternames;
-						
+
 						$scope.isLoading=false;
-						
+
 					}).error(function(data, status, headers, config){
 						// called asynchronously if an error occurs
 						// or server returns response with an error status.
@@ -449,66 +520,271 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 					// called asynchronously if an error occurs
 					// or server returns response with an error status.
 				});
-						
+			}
+			else
+			{
+				$scope.reportcategoryvisible=false;				
 
-				$scope.savereportdata=function(){			
+				if($scope.repoDTO.mastertype==="Cost Category")
+				{
+					$scope.repoDTO.category="Cost Category";
+				}
+				else if($scope.repoDTO.mastertype==="Voucher Type")
+				{
+					$scope.repoDTO.category="Voucher Type";
+				}
 
-					if($scope.reportmastertype!=undefined)
+				$scope.isLoading=true;
+
+				$http({
+					method : "POST",
+					url : "pptallymapping/gettallyppmappingdata",
+					data: {"cmpId":$localStorage.cmpid, "masterType":$scope.repoDTO.mastertype, "category":$scope.repoDTO.category},
+					headers : {
+						'Content-Type' : 'application/json'
+					}
+				}).success(function(reportdata, status, headers, config){
+
+					//*******options for client Names*********
+
+					$scope.tallyppmapdata=reportdata;
+
+					$http({
+						method : "POST",
+						url : "pptallymapping/getppmasternamesbycategory",
+						data: {"mastertype":$scope.repoDTO.mastertype, "cmpid":$localStorage.cmpid, "category":$scope.repoDTO.category},
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(reportdatappmasternames, status, headers, config){
+
+						//*******options for client Names*********
+
+						$scope.reportppmasternames=reportdatappmasternames;
+
+						$scope.isLoading=false;
+
+					}).error(function(data, status, headers, config){
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
+
+				}).error(function(data, status, headers, config){
+					// called asynchronously if an error occurs
+					// or server returns response with an error status.
+				});
+
+			}
+		};
+
+		$scope.onreportcategorychange=function(){
+
+			$scope.isLoading=true;
+
+			if($localStorage.cmpid>0 && $scope.repoDTO.mastertype.length!=0)
+			{
+
+				if(($scope.repoDTO.mastertype==="Ledger" || $scope.repoDTO.mastertype==="Group") && $scope.repoDTO.category!="All Categories")
+				{
+					if($scope.repoDTO.category==="")
 					{
-						$scope.datapushed = [];
-						angular.forEach($scope.tallyppmapdata, function (mainobj) {
-
-							if(mainobj.ppid!=null)
-							{
-								$scope.datapushed.push({'cmpId':mainobj.cmpId, 'masterId':mainobj.masterId, 'ppid':mainobj.ppid});
-							}						
-						});
-
+						$scope.alerts = { type: 'danger' ,msg: 'Category is Required!'};
+						$scope.showSuccessAlert = true;
+					}
+					else
+					{
 						$http({
 							method : "POST",
-							url : "pptallymapping/saveppmapping",
-							data: $scope.datapushed,
+							url : "pptallymapping/gettallyppmappingdata",
+							data: {"cmpId":$localStorage.cmpid, "masterType":$scope.repoDTO.mastertype, "category":$scope.repoDTO.category},
 							headers : {
 								'Content-Type' : 'application/json'
 							}
-						}).success(function(successdata, status, headers, config){
+						}).success(function(reportdata, status, headers, config){
 
 							//*******options for client Names*********
 
-							if(successdata==='success')
-							{
-								$scope.alerts = { type: 'success' ,msg: 'PP Masters to tally Mapped'};
-								$scope.showSuccessAlert = true;
+							$scope.tallyppmapdata=reportdata;
 
-								$scope.reportmastertype='';
-								$scope.tallyppmapdata=[];
-							}
-							else
-							{
-								$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
-								$scope.showSuccessAlert = true;
-							}
+							$http({
+								method : "POST",
+								url : "pptallymapping/getppmasternamesbycategory",
+								data: {"mastertype":$scope.repoDTO.mastertype, "cmpid":$localStorage.cmpid, "category":$scope.repoDTO.category},
+								headers : {
+									'Content-Type' : 'application/json'
+								}
+							}).success(function(reportdatappmasternames, status, headers, config){
 
+								//*******options for client Names*********
+
+								$scope.reportppmasternames=reportdatappmasternames;
+
+								$scope.isLoading=false;
+
+							}).error(function(data, status, headers, config){
+								// called asynchronously if an error occurs
+								// or server returns response with an error status.
+							});
+
+						}).error(function(data, status, headers, config){
+							// called asynchronously if an error occurs
+							// or server returns response with an error status.
+						});			
+					}					
+				}	
+				else if($scope.repoDTO.category==="All Categories")
+				{
+					$http({
+						method : "POST",
+						url : "pptallymapping/gettallyppmappingdataMastertype",
+						data: {"cmpId":$localStorage.cmpid, "masterType":$scope.repoDTO.mastertype},
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(reportdata, status, headers, config){
+
+						//*******options for client Names*********
+
+						$scope.tallyppmapdata=reportdata;
+
+						$http({
+							method : "POST",
+							url : "pptallymapping/getppmasternames",
+							data: {"mastertype":$scope.repoDTO.mastertype, "cmpid":$localStorage.cmpid},
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(reportdatappmasternames, status, headers, config){
+
+							//*******options for client Names*********
+
+							$scope.reportppmasternames=reportdatappmasternames;
+
+							$scope.isLoading=false;
 
 						}).error(function(data, status, headers, config){
 							// called asynchronously if an error occurs
 							// or server returns response with an error status.
 						});
+
+					}).error(function(data, status, headers, config){
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
+				}					
+				else
+				{
+					$http({
+						method : "POST",
+						url : "pptallymapping/gettallyppmappingdata",
+						data: {"cmpId":$localStorage.cmpid, "masterType":$scope.repoDTO.mastertype, "category":$scope.repoDTO.category},
+						headers : {
+							'Content-Type' : 'application/json'
+						}
+					}).success(function(reportdata, status, headers, config){
+
+						//*******options for client Names*********
+
+						$scope.tallyppmapdata=reportdata;
+
+						$http({
+							method : "POST",
+							url : "pptallymapping/getppmasternamesbycategory",
+							data: {"mastertype":$scope.repoDTO.mastertype, "cmpid":$localStorage.cmpid, "category":$scope.repoDTO.category},
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(reportdatappmasternames, status, headers, config){
+
+							//*******options for client Names*********
+
+							$scope.reportppmasternames=reportdatappmasternames;
+
+							$scope.isLoading=false;
+
+						}).error(function(data, status, headers, config){
+							// called asynchronously if an error occurs
+							// or server returns response with an error status.
+						});
+
+					}).error(function(data, status, headers, config){
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
+				}
+			};			
+		};
+
+		$scope.savereportdata=function(){			
+
+			if($scope.repoDTO.mastertype==="")
+			{
+				$scope.alerts = { type: 'danger' ,msg: 'Master Type is Required!'};
+				$scope.showSuccessAlert = true;
+			}
+			else if(($scope.repoDTO.mastertype==="Ledger" || $scope.repoDTO.mastertype==="Group" || $scope.repoDTO.mastertype==="Cost Centre") && $scope.repoDTO.category==="")
+			{
+				$scope.alerts = { type: 'danger' ,msg: 'Category is Required!'};
+				$scope.showSuccessAlert = true;
+			}					
+			else if($scope.repoDTO.mastertype!="")
+			{
+				$scope.isLoadingresponse=true;
+
+				$scope.datapushed = [];
+				angular.forEach($scope.tallyppmapdata, function (mainobj) {
+
+					if(mainobj.ppid!=null)
+					{
+						$scope.datapushed.push({'cmpId':mainobj.cmpId, 'masterId':mainobj.masterId, 'ppid':mainobj.ppid});
+					}						
+				});
+
+				$http({
+					method : "POST",
+					url : "pptallymapping/saveppmapping",
+					data: $scope.datapushed,
+					headers : {
+						'Content-Type' : 'application/json'
+					}
+				}).success(function(successdata, status, headers, config){
+
+					//*******options for client Names*********
+
+					if(successdata==='success')
+					{
+						$scope.alerts = { type: 'success' ,msg: 'PP Masters to tally Mapped'};
+						$scope.showSuccessAlert = true;
+
+						$scope.repoDTO.mastertype='';
+						$scope.repoDTO.category='';
+						$scope.reportcategoryvisible=false;
+
+						$scope.tallyppmapdata=[];
+
+						$scope.isLoadingresponse=false;
 					}
 					else
 					{
-						$scope.alerts = { type: 'danger' ,msg: 'All Mandatory Fields should be Filled up!'};
+						$scope.alerts = { type: 'danger' ,msg: 'PP Masters to tally not Mapped'};
 						$scope.showSuccessAlert = true;
+
+						$scope.isLoadingresponse=false;
 					}
 
-				};				
+
+				}).error(function(data, status, headers, config){
+					// called asynchronously if an error occurs
+					// or server returns response with an error status.
+				});
 			}
 			else
 			{
-				$scope.alerts = { type: 'danger' ,msg: 'All Mandatory Fields should be Filled up.'};
+				$scope.alerts = { type: 'danger' ,msg: 'All Mandatory Fields should be Filled up!'};
 				$scope.showSuccessAlert = true;
 			}
-		};		
+
+		};
 
 		$scope.sort = function(keyname){
 			$scope.sortKey = keyname;   //set the sortKey to the param passed
@@ -532,6 +808,6 @@ baseApp.controller("TallyMappingController", function($scope, $location, $http, 
 			}
 
 		};
+	};		
 
-	};
 });

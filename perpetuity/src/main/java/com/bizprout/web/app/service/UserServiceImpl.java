@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService<UserDTO> {
 		try {
 			logger.info("inside CreateUser service " + t, this.getClass());
 			id=baseRepository.save(t);
-			System.out.println(id);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

@@ -127,12 +127,38 @@ public class UserMappingResource {
 		return usermapdto;
 	}
 	
+	@PostMapping(value="/getScreensMappedList")
+	public List<UserMappingDTO> getUserMapByCmpUserList(@RequestBody UserMappingDTO userMapDto)
+	{
+		List<UserMappingDTO> usermapdto=null;
+		try {
+			usermapdto=usermappingservice.getUserMapByCmpUserList(userMapDto.getCmpId(), userMapDto.getUserid());
+			logger.info("Request.......getUserMapByCmpUser method......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return usermapdto;
+	}
+	
 	@PostMapping(value="/getCompaniesMapped")
 	public List<UserMappingDTO> getCmpByuserid(@RequestBody UserMappingDTO userMapDto)
 	{
 		List<UserMappingDTO> usermapdto=null;
 		try {
 			usermapdto=usermappingservice.getCmpByuserid(userMapDto.getUserid());
+			logger.info("Request.......getCmpByuserid method......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return usermapdto;
+	}
+	
+	@PostMapping(value="/getScreensMappedByCmpid")
+	public List<UserMappingDTO> getScreensMappedByCmpid(@RequestBody UserMappingDTO userMapDto)
+	{
+		List<UserMappingDTO> usermapdto=null;
+		try {
+			usermapdto=usermappingservice.getScreensMappedByCmpid(userMapDto.getCmpId());
 			logger.info("Request.......getCmpByuserid method......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());

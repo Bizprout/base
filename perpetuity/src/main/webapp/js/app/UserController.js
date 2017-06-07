@@ -7,7 +7,11 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 		$scope[value] = !$scope[value];
 	};
 
-	if($localStorage.usertype!="PPsuperadmin" && $localStorage.cmpid===undefined)
+	if($localStorage.usertype!="PPsuperadmin" && ($localStorage.cmpid===undefined))
+	{
+		$location.path("/home");
+	}
+	else if($localStorage.usertype==="PPsuperadmin" && ($localStorage.cmpid===undefined || $localStorage.cmpid!=0))
 	{
 		$location.path("/home");
 	}
@@ -16,6 +20,60 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 	{
 		$location.path("/");
 	}
+
+
+	//get the screens mapped for the userid and cmpid
+
+	if($localStorage.usertype!="PPsuperadmin")
+	{
+		$http({
+			method : "POST",
+			url : "usermapping/getScreensMapped",
+			data: {"cmpId":$localStorage.cmpid, "userid":$localStorage.userid},
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(datascreenids, status, headers, config){
+
+			//*******options for client Names*********
+
+			if(datascreenids!="")
+			{
+				var screenidsmapped = datascreenids.screenId.split(',');
+			}
+			else
+			{
+				$location.path("/home");
+			}
+
+			//get all the screens list and ids
+
+			$http({
+				method : "GET",
+				url : "usermapping/getscreens",
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(datascreens, status, headers, config){
+
+				var userscreen=$filter('filter')(datascreens, {screenName: "User Master"}, true)[0];
+
+
+				if(screenidsmapped.indexOf(userscreen.sid.toString()) === -1)
+				{
+					$location.path("/home");
+				}
+
+			}).error(function(data, status, headers, config){
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});	
+	}
+
 
 	//*******DTO to store the form values for add when populated**********
 	$scope.userDTO = {
@@ -36,6 +94,8 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			"userstatus" : ""
 	};	
 
+	$scope.emailFormat = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+
 	// **********************When Add tab is clicked*****************************************************************
 
 	$scope.onaddclick=function(){
@@ -50,38 +110,37 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 				emptySearchResultText: 'Sorry, couldn\'t find "$0"'
 		};
 
-		//*******options for user types and default selected option*********
-		/*$scope.usertype = [{name:"Select User Type", id:"null"}, {name:"PP Admin", id:0}, {name:"PP SuperAdmin", id:1}];
-		$scope.userDTO.usertype = $scope.usertype[0].id;*/
-
 		//*******options for user status and default selected option*********
 		$scope.userstatus = ["Active", "Inactive"];
-		/*$scope.userDTO.userstatus = $scope.userstatus[0];*/	
-
-		/*	//*******options for Access rights to all companies or screens*********
-		$scope.access = [{name:"Yes", id:0}, {name:"No", id:1}];
-		$scope.userDTO.access = $scope.access[0].id;*/
 
 		//*********Clear all the fields when clear button pressed*******
 		$scope.clear=function(){
 
 			$scope.userDTO.username='';
-			//$scope.userDTO.usertype = $scope.usertype[0].id;
-			//$scope.userDTO.emailid='';
 			$scope.userDTO.mobile='';
 		}
 
 		//************when submit button is pressed validate and post to the service************
 
 		//Create user=======================================================================================================
-		$scope.createuser=function(userDTO){
+		$scope.createuser=function(userDTO){	
 
-			if($scope.userDTO.username!="")
-			{
+			if($scope.userDTO.username!="" )
+			{				
 				//call user add service
-				if($scope.userDTO.username==="") //&& $scope.userDTO.usertype!="null"
+				if($scope.userDTO.username==="")
 				{
 					$scope.alerts = { type: 'danger' ,msg: 'Username is Required!'};
+					$scope.showSuccessAlert = true;
+				}
+				else if($scope.userDTO.username===undefined || $scope.usercreate.username.$error.pattern)
+				{
+					$scope.alerts = { type: 'danger' ,msg: 'Username Should be a Valid Email ID!'};
+					$scope.showSuccessAlert = true;
+				}
+				else if($scope.userDTO.mobile!="" && $scope.usercreate.mobile.$error.pattern)
+				{
+					$scope.alerts = { type: 'danger' ,msg: 'Mobile Number should be Min 10 Char!'};
 					$scope.showSuccessAlert = true;
 				}
 				else
@@ -95,6 +154,9 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 					.cancel('Cancel');
 
 					$mdDialog.show(confirm).then(function() {
+
+						$scope.isLoadingresponse=true;
+
 						$http({
 							method : "POST",
 							url : "user/add",
@@ -111,30 +173,35 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 								$scope.showerror=false;
 
 								$scope.userDTO.username='';
-								//$scope.userDTO.usertype = $scope.usertype[0].id;
-								//$scope.userDTO.emailid='';
 								$scope.userDTO.mobile='';
+
+								$scope.isLoadingresponse=false;
 							}
 							else if (data[0] === "failure") {		
 
 								$scope.alerts = { type: 'danger', msg: 'User not Created!'};
 								$scope.showSuccessAlert = true;
 								$scope.showerror=false;
+
+								$scope.isLoadingresponse=false;
 							}
 							else
 							{
 								if(data.length>0)
 								{
 									$scope.alerts = { type: 'danger'};
-									$scope.errdata=data;
+									$scope.errdata=data[0];
 									$scope.showerror=true;
 									$scope.showSuccessAlert = false;
+									$scope.isLoadingresponse=false;
 								}
 								else
 								{
 									$scope.alerts = { type: 'danger', msg: 'User not Created'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
+
+									$scope.isLoadingresponse=false;
 								}
 							}
 						}).error(function(data, status, headers, config){
@@ -142,6 +209,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 							$scope.alerts = { type: 'failure', msg: 'User not Created'};
 							$scope.showSuccessAlert = true;
 
+							$scope.isLoadingresponse=false;
 						});	
 					});
 				}		
@@ -150,6 +218,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 			{
 				$scope.alerts = { type: 'danger', msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
+				$scope.isLoadingresponse=false;
 			}
 		};
 	};
@@ -195,7 +264,7 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 		$scope.edituser=function(edituserDTO){
 
-			if($scope.edituserDTO.username==="" && $scope.edituserDTO.editusername==="" && $scope.edituserDTO.userstatus==="")
+			if($scope.edituserDTO.username==="" || ($scope.edituserDTO.editusername==="" || $scope.edituserDTO.editusername===undefined) || $scope.edituserDTO.userstatus==="")
 			{
 				$scope.alerts = { type: 'danger', msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
@@ -235,12 +304,10 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 			$scope.edituser=function(edituserDTO){
 
-				//$scope.edituserDTO.usertype=$scope.usertype;
-
 				//call user add service
 				if($scope.edituserDTO.username!=undefined || $scope.edituserDTO.editusername!=undefined || $scope.edituserDTO.userstatus!=undefined)
 				{
-					if($scope.edituserDTO.username===undefined)//&& $scope.edituserDTO.usertype!="null"
+					if($scope.edituserDTO.username===undefined)
 					{
 						$scope.alerts = { type: 'danger', msg: 'Username is Mandatory!'};
 						$scope.showSuccessAlert = true;
@@ -250,6 +317,11 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 						$scope.alerts = { type: 'danger', msg: 'Edit Username Should be a Valid Email ID!'};
 						$scope.showSuccessAlert = true;
 					}
+					else if($scope.useredit.mobile.$error.pattern)
+					{
+						$scope.alerts = { type: 'danger', msg: 'Mobile Number Should be Min 10 Char!'};
+						$scope.showSuccessAlert = true;
+					}
 					else if($scope.edituserDTO.userstatus===undefined)
 					{
 						$scope.alerts = { type: 'danger', msg: 'User Status is Mandatory!'};
@@ -257,6 +329,8 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 					}
 					else
 					{
+						$scope.isLoadingresponse=true;
+						
 						$scope.edituserDTO.emailid=$scope.edituserDTO.editusername;
 
 						$http({
@@ -276,10 +350,10 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 								$scope.edituserDTO.username='';
 								$scope.edituserDTO.editusername='';
-								//$scope.edituserDTO.usertype = $scope.usertype[0].id;
 								$scope.edituserDTO.userstatus = '';
-								//$scope.edituserDTO.emailid='';
 								$scope.edituserDTO.mobile='';
+
+								$scope.isLoadingresponse=false;
 
 								$scope.oneditclick();
 							}
@@ -288,24 +362,28 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 								$scope.alerts = { type: 'danger', msg: 'User not Updated!'};
 								$scope.showSuccessAlert = true;
 								$scope.showerror=false;
+
+								$scope.isLoadingresponse=false;
 							}
 							else
 							{
 								if(data.length>0)
 								{
 									$scope.alerts = { type: 'danger'};
-									$scope.errdata=data;
+									$scope.errdata=data[0];
 									$scope.showerror=true;
 									$scope.showSuccessAlert = false;
+
+									$scope.isLoadingresponse=false;
 								}
 								else
 								{
 									$scope.alerts = { type: 'danger', msg: 'User not Updated!'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
+
+									$scope.isLoadingresponse=false;
 								}
-
-
 							}
 
 						}).error(function(data, status, headers, config){
@@ -314,13 +392,15 @@ baseApp.controller("UserController", function($scope, $location, $http, $timeout
 
 							$scope.alerts = { type: 'danger', msg: 'User not Updated!'};
 							$scope.showSuccessAlert = true;
-						});
+							$scope.isLoadingresponse=false;
+						});	
 					}
 				}
 				else
 				{
 					$scope.alerts = { type: 'danger', msg: 'All Fields should be Filled up.'};
 					$scope.showSuccessAlert = true;
+					$scope.isLoadingresponse=false;
 				}
 			};
 

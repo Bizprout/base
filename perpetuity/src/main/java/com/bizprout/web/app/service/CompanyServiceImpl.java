@@ -22,7 +22,7 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 	Logger logger=LoggerFactory.getLogger(this.getClass());
 
 	public CompanyDTO getClientStatus(int cmpid) {
-		
+
 		CompanyDTO compDTO = null ;
 		try {
 			logger.info("inside getClientStatus service method "+this.getClass());
@@ -33,6 +33,31 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 		return compDTO;
 	}
 
+	public List<CompanyDTO> getCompanyDataall() {
+
+		List<CompanyDTO> compDTO = null ;
+		try {
+			logger.info("inside getCompanyDataall service method "+this.getClass());
+			compDTO= companyrepository.getCompanyDataall();
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compDTO;
+	}
+	
+	public List<CompanyDTO> getallCompanyActive() {
+
+		List<CompanyDTO> compDTO = null ;
+		try {
+			logger.info("inside getallCompanyActive service method "+this.getClass());
+			compDTO= companyrepository.getallCompanyActive();
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compDTO;
+	}
+
+
 	public int updateCompany(CompanyDTO companyDTO)
 	{
 		try {
@@ -42,7 +67,7 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 		}
 		return companyrepository.updateCompany(companyDTO);
 	}
-	
+
 	public List<CompanyDTO> getCompanyData(int cmpid)
 	{
 		try {
@@ -52,7 +77,7 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 		}
 		return companyrepository.getCompanyData(cmpid);
 	}
-	
+
 	public int updateCompanyStatus(CompanyDTO companyDTO)
 	{
 		try {
@@ -62,7 +87,7 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 		}
 		return companyrepository.updateCompanyStatus(companyDTO);
 	}
-	
+
 	public List<CompanyDTO> getCompanyIdName()
 	{
 		try {
@@ -72,7 +97,7 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 		}
 		return companyrepository.getCompanyIdName();
 	}
-	
+
 	public List<CompanyDTO> getCompanyIdNameall()
 	{
 		try {
@@ -87,7 +112,7 @@ public class CompanyServiceImpl implements CompanyService<CompanyDTO> {
 	public CompanyDTO getCompanyIdByName(String cmpname) {
 		try {
 			logger.info("inside getCompanyIdByName service "+this.getClass());
-			
+
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

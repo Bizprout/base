@@ -26,7 +26,7 @@ public class UserDTO {
 	@Pattern(regexp="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", message="Username Should be a Valid Email ID!")
 	@NotBlank(message="Username cannot be Empty!")
 	@Column(name = "username")
-	@Email
+	@Email(message="Username Should be an Email ID!")
 	private String username;
 	
 	@Column(name = "password")

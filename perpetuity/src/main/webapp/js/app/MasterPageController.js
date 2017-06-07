@@ -1,7 +1,7 @@
 baseApp.controller("MasterPageController", function($scope, $location, $http, $localStorage, $mdDialog, $filter) {
 
 	$scope.cmpname=$localStorage.cmpname;
-	
+		
 	$scope.hideusers=true;
 	$scope.hideclients=true;
 	$scope.hidecompany=true;
@@ -55,10 +55,10 @@ baseApp.controller("MasterPageController", function($scope, $location, $http, $l
 
 				//*******options for user names and default selected option**********************************
 								
-				var userscreen=$filter('filter')(datascreens, {screenName: "User Master"})[0];
-				var clientscreen=$filter('filter')(datascreens, {screenName: "Client Master"})[0];
-				var companyscreen=$filter('filter')(datascreens, {screenName: "Company Master"})[0];
-				var ppscreen=$filter('filter')(datascreens, {screenName: "PP Master"})[0];
+				var userscreen=$filter('filter')(datascreens, {screenName: "User Master"}, true)[0];
+				var clientscreen=$filter('filter')(datascreens, {screenName: "Client Master"}, true)[0];
+				var companyscreen=$filter('filter')(datascreens, {screenName: "Company Master"}, true)[0];
+				var ppscreen=$filter('filter')(datascreens, {screenName: "PP Master"}, true)[0];
 				
 				if(screenidsmapped.indexOf(userscreen.sid.toString()) !== -1)
 				{
@@ -96,6 +96,14 @@ baseApp.controller("MasterPageController", function($scope, $location, $http, $l
 					$scope.hideppmasters=true;
 				}
 				
+				if(screenidsmapped.indexOf(userscreen.sid.toString()) === -1 && 
+						screenidsmapped.indexOf(clientscreen.sid.toString()) === -1 &&
+						screenidsmapped.indexOf(companyscreen.sid.toString()) === -1 &&
+						screenidsmapped.indexOf(ppscreen.sid.toString()) === -1)
+				{
+					$location.path("/home");
+				}
+				
 				$scope.isLoadingmasters=false;
 				
 				$scope.userbuttondisable=false;
@@ -117,21 +125,30 @@ baseApp.controller("MasterPageController", function($scope, $location, $http, $l
 	{
 		$scope.isLoadingmasters=true;
 		
-		$scope.hideusers=false;
-		$scope.hideclients=false;
-		$scope.hidecompany=false;
-		$scope.hideppmasters=false;
-		
-		$scope.userbuttondisable=false;
-		$scope.clientbuttondisable=false;
-		$scope.companybuttondisable=false;
-		
-		if($localStorage.cmpid===undefined)
+		if($localStorage.cmpid===0)
 		{
+			$scope.userbuttondisable=false;
+			$scope.clientbuttondisable=false;
+			$scope.companybuttondisable=false;
+			
+			$scope.hideusers=false;
+			$scope.hideclients=false;
+			$scope.hidecompany=false;
+			$scope.hideppmasters=true;
+			
 			$scope.ppmasterbuttondisable=true;
 		}
 		else
 		{
+			$scope.hideusers=true;
+			$scope.hideclients=true;
+			$scope.hidecompany=true;
+			$scope.hideppmasters=false;
+			
+			$scope.userbuttondisable=true;
+			$scope.clientbuttondisable=true;
+			$scope.companybuttondisable=true;
+			
 			$scope.ppmasterbuttondisable=false;
 		}
 		

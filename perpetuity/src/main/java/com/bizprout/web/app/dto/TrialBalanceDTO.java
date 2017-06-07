@@ -7,7 +7,9 @@ import javax.persistence.Id;
 @Entity
 @javax.persistence.Table(name = "TB_Summary")
 public class TrialBalanceDTO {
+	
 	@Id
+	private int tbid;
 	@Column(name = "cmp_id")
 	private int cmpId;
 	@Column(name = "name")
@@ -101,4 +103,16 @@ public class TrialBalanceDTO {
 	public void setVchCrAmt(Double vchCrAmt) {
 		this.vchCrAmt = vchCrAmt;
 	}
+
+	public int getTbid() {
+		return tbid;
+	}
+
+	public void setTbid(int tbid) {
+		this.tbid = tbid;
+	}
+	
+	
+	
 }
+

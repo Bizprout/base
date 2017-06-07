@@ -18,5 +18,9 @@ public interface CompanyService<T> {
 	
 	public List<CompanyDTO> getCompanyIdNameall();
 	
+	public List<CompanyDTO> getallCompanyActive();
+	
+	public List<CompanyDTO> getCompanyDataall();
+	
 	public CompanyDTO getCompanyIdByName(String cmpname);
 }

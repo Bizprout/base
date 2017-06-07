@@ -76,7 +76,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/html/Index.html", "/html/Login.html",
 						"/login/**", "/css/**", "/js/**", "/img/**",
 						"/docsupport/**", "/error.html",
-						"/", "/company/**", "/ppmaster/**", "/pptallymapping/**")
+						"/", "/company/**", "/ppmaster/**", "/pptallymapping/**", "/synclog/**")
 				.permitAll()
 				.and()
 				.formLogin()

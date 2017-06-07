@@ -11,14 +11,14 @@
 			</p>
 			<div class="text">Choose Your Option for Mapping</div>
 		</div>
-		<div class="app-section">
+		<div class="app-section" style="text-align:center;">
 			<md-progress-circular md-mode="indeterminate" md-diameter="50px"
 				ng-show="isLoadingmapping"></md-progress-circular>
-			<div class="app-section-container path" ng-hide="hideusermapping"
+			<div class="app-section-container path" style="border:1px solid #000; display:inline-block;" ng-hide="hideusermapping"
 				role="button" data-toggle="modal" data-target="#last-step-modal"
-				style="width: calc(( 100% - 90px - 28px)/2);">
+				style="">
 				<div class="app-type">
-					<div class="title">Users Mapping to Company</div>
+					<div class="title">Users Mapping to Clients</div>
 				</div>
 				<div class="content">Manage Add, Remove, View Reports for
 					Mapping Users to Clients.</div>
@@ -26,9 +26,9 @@
 						type="button" ng-disabled="usermapbuttondisable"
 						class="btn btn-success">Continue</button></a>
 			</div>
-			<div class="app-section-container path" ng-hide="hideppmapping"
+			<div class="app-section-container path" style="border:1px solid #000; display:inline-block;" ng-hide="hideppmapping"
 				role="button" data-toggle="modal" data-target="#last-step-modal"
-				style="width: calc(( 100% - 90px - 28px)/2);">
+				style="">
 				<div class="app-type">
 					<div class="title">PP Mapping to Tally</div>
 				</div>

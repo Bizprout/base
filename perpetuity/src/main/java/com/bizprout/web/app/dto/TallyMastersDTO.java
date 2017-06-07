@@ -38,9 +38,15 @@ public class TallyMastersDTO {
 	@Column(name="name")
 	private String tallyMasterName;
 	
+	@Column(name="category")
+	private String category;
+	
 	@NotNull(message="PP Master Name cannot be Blank!")
 	@Column(name="pp_id")
 	private Integer ppid;
+	
+	@Column(name="base_group_name")
+	private String basegroupname;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="pp_id", nullable=false, insertable=false, updatable=false)
@@ -103,6 +109,22 @@ public class TallyMastersDTO {
 
 	public void setPpmasterdto(PpMasterDTO ppmasterdto) {
 		this.ppmasterdto = ppmasterdto;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getBasegroupname() {
+		return basegroupname;
+	}
+
+	public void setBasegroupname(String basegroupname) {
+		this.basegroupname = basegroupname;
 	}
 
 /*	public List<VouchersDTO> getVouchersdto() {

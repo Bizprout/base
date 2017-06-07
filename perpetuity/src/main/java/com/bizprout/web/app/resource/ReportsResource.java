@@ -41,8 +41,9 @@ public class ReportsResource
 		List<Object> data = null;
 		try {
 			logger.debug("Request......getCompany Trial Bal List......");
-			if (repName.equalsIgnoreCase("Trial Balance")) {
+			if (repName.contains("Trial Balance")) {
 				data = repService.getCmpTrialBal(repdto);
+				
 
 			}
 			else
@@ -64,6 +65,7 @@ public class ReportsResource
 		try {
 			logger.debug("Request......getVchLedgers List......");
 			data = repService.getVchLedgers(voucherId);
+			
 		}
 		catch (Exception e)
 		{

@@ -46,6 +46,26 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 		return compDTO;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<CompanyDTO> getCompanyDataall()
+	{		
+		Session session;
+		Query qry=null;
+		List<CompanyDTO> compDTO = null;
+		try {
+			logger.info("Inside CompanyRepositoryImpl......getCompanyDataall method......."+this.getClass());
+
+			session = getSession();
+
+			qry=session.createQuery("from CompanyDTO");
+			compDTO=qry.list();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compDTO;
+	}
+	
 	public CompanyDTO getCompanyIdByName(String cmpname)
 	{		
 		Session session;
@@ -107,6 +127,25 @@ public class CompanyRepositoryImpl extends AbstractBaseRepository<CompanyDTO>{
 
 			Query q=session.createQuery(" from CompanyDTO where cmpId=:cmp");	
 			q.setParameter("cmp", cmpid);
+			compDTO=q.list();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compDTO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CompanyDTO> getallCompanyActive()
+	{
+		Session session;
+		List<CompanyDTO> compDTO = null;
+		try {
+			logger.info("Inside CompanyRepositoryImpl......getCompanyData method......."+this.getClass());
+
+			session = getSession();
+
+			Query q=session.createQuery(" from CompanyDTO where status='Active'");	
 			compDTO=q.list();
 
 		} catch (HibernateException e) {

@@ -108,6 +108,21 @@ public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 		
 	}
 	
+	public List<UserMappingDTO> getUserMapByCmpUserList(int cmpid, int userid) {
+		
+		List<UserMappingDTO> usermapdto = null;
+		try {
+			logger.info("inside get user mapping getUserMapByCmpUser method "+this.getClass());
+
+			usermapdto=usermappingrepository.getUserMapByCmpUserList(cmpid, userid);	////baseRepository.getList();			
+
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return usermapdto;
+		
+	}
+	
 	public int deleteScreensByCmpidUserid(int cmpid, int userid)
 	{
 		int result=0;
@@ -130,6 +145,21 @@ public class UserMappingServiceImpl implements UserMappingService<CompanyDTO>{
 			logger.info("inside get user mapping getCmpByuserid method "+this.getClass());
 
 			usermapdto=usermappingrepository.getCmpByuserid(userid);	////baseRepository.getList();			
+
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return usermapdto;
+	}
+	
+	@Override
+	public List<UserMappingDTO> getScreensMappedByCmpid(int cmpid) {
+		
+		List<UserMappingDTO> usermapdto = null;
+		try {
+			logger.info("inside get user mapping getCmpByuserid method "+this.getClass());
+
+			usermapdto=usermappingrepository.getScreensMappedByCmpid(cmpid);	////baseRepository.getList();			
 
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());

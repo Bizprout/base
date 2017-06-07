@@ -93,6 +93,27 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 
 		return usermapDTO;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserMappingDTO> getUserMapByCmpUserList(int cmpid, int userid){
+
+		logger.info("Inside getCmpByuserid method......."+this.getClass());
+
+		Session session;
+		Query qry=null;
+		List<UserMappingDTO> compmap= null;
+		try {
+			session = getSession();
+			qry=session.createQuery("from UserMappingDTO where userid=:user and cmpId=:cmp");
+			qry.setParameter("user",userid);
+			qry.setParameter("cmp",cmpid);
+			compmap=qry.list();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compmap;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<UserMappingDTO> getCmpByuserid(int userid){
@@ -106,6 +127,26 @@ public class UserMappingRepositoryImpl extends AbstractBaseRepository<UserMappin
 			session = getSession();
 			qry=session.createQuery("from UserMappingDTO where userid=:user");
 			qry.setParameter("user",userid);
+			compmap=qry.list();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return compmap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserMappingDTO> getScreensMappedByCmpid(int cmpid){
+
+		logger.info("Inside getCmpByuserid method......."+this.getClass());
+
+		Session session;
+		Query qry=null;
+		List<UserMappingDTO> compmap= null;
+		try {
+			session = getSession();
+			qry=session.createQuery("from UserMappingDTO where cmpId=:cmp");
+			qry.setParameter("cmp",cmpid);
 			compmap=qry.list();
 
 		} catch (HibernateException e) {

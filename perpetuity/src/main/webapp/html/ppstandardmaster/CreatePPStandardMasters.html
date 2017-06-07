@@ -13,6 +13,8 @@
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
+				<md-progress-linear md-mode="indeterminate"
+					ng-show="isLoadingresponse"></md-progress-linear>
 				<div ng-class="'alert alert-' + (alerts.type || 'warning')"
 					ng-show="showSuccessAlert">
 					<button type="button" class="close"
@@ -54,13 +56,13 @@
 							style="color: red; font-size: 20px;">*</span>
 						<input type="text" name="pp_mastername" id="pp_mastername"
 							ng-model="ppmasterDTO.ppmastername" class="form-control"
-							placeholder="PP Master Name" required autofocus
+							placeholder="{{ppmasternamelabel}} Name" required autofocus
 							style="width: 346px;">
 					</div>
 				</div>
 				<div class="row" ng-hide="hidecostcat">
 					<br>
-					<div class="col-xs-5">
+					<div class="col-xs-3">
 						<span>Select Category:</span><span
 							style="color: red; font-size: 20px;">*</span><br>
 						<div
@@ -71,7 +73,7 @@
 					</div>
 					<div class="col-xs-1">
 						<md-progress-circular md-mode="indeterminate" md-diameter="20px"
-							ng-show="isLoadingcostcat"></md-progress-circular>
+							ng-show="isLoadingcat"></md-progress-circular>
 					</div>
 				</div>
 				<br>
@@ -224,12 +226,18 @@
 				</div>
 				</md-content> </md-tab> <md-tab label="Report" md-on-select="onreportclick()"> <md-content
 					class="md-padding">
+				<div class="row">
+					<div class="col-xs-3" style="padding-left: 32px;">
+						<span>Master Type:</span><br>
+						<div
+							custom-select="mt for mt in mastertypes |  filter: $searchTerm"
+							custom-select-options="mastertypeselectOptions"
+							ng-change="repomastertypechanged()" ng-model="repomastertype"
+							autofocus></div>
+					</div>
+				</div>
+				<br>
 				<div class="col-lg-12">
-					<!-- 					<div class="alert alert-info">
-						<p>Sort key: {{sortKey}}</p>
-						<p>Reverse: {{reverse}}</p>
-						<p>Search String : {{search}}</p>
-					</div> -->
 					<form class="form-inline">
 						<div class="form-group">
 							<input type="text" ng-model="search" class="form-control"
@@ -286,7 +294,7 @@
 							<br>
 							<b>Company: {{cmpname}}</b>
 							<br>
-							<b>List of PP Masters</b>
+							<b>List of PP Masters: {{repomastertype}}</b>
 							<br />
 							<br>
 							<thead>

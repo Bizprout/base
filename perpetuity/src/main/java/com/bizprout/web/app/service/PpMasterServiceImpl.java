@@ -107,12 +107,12 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		return PpRepository.UpdatePpMaster(editppmasterDTO);
 	}
 
-	public List<PpMasterDTO> getPpMasterdata(int cmpid) {
+	public List<PpMasterDTO> getPpMasterdata(int cmpid, String mastertype) {
 
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
 			logger.info("inside getPpMasterdata method ", this.getClass());
-			ppmasterdata = PpRepository.getPpmasterData(cmpid);
+			ppmasterdata = PpRepository.getPpmasterData(cmpid, mastertype);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

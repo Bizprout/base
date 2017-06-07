@@ -7,7 +7,11 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 	$scope.cmpname=$localStorage.cmpname;
 
-	if($localStorage.usertype!="PPsuperadmin" && $localStorage.cmpid===undefined)
+	if($localStorage.usertype!="PPsuperadmin" && ($localStorage.cmpid===undefined))
+	{
+		$location.path("/home");
+	}
+	else if($localStorage.usertype==="PPsuperadmin" && ($localStorage.cmpid===undefined || $localStorage.cmpid!=0))
 	{
 		$location.path("/home");
 	}
@@ -15,6 +19,58 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 	if($localStorage.userid===undefined)
 	{
 		$location.path("/");
+	}
+	
+	//get the screens mapped for the userid and cmpid
+
+	if($localStorage.usertype!="PPsuperadmin")
+	{
+		$http({
+			method : "POST",
+			url : "usermapping/getScreensMapped",
+			data: {"cmpId":$localStorage.cmpid, "userid":$localStorage.userid},
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(datascreenids, status, headers, config){
+
+			//*******options for client Names*********
+
+			if(datascreenids!="")
+			{
+				var screenidsmapped = datascreenids.screenId.split(',');
+			}
+			else
+			{
+				$location.path("/home");
+			}
+
+			//get all the screens list and ids
+
+			$http({
+				method : "GET",
+				url : "usermapping/getscreens",
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(datascreens, status, headers, config){
+
+				var companyscreen=$filter('filter')(datascreens, {screenName: "Company Master"}, true)[0];
+
+
+				if(screenidsmapped.indexOf(companyscreen.sid.toString()) === -1)
+				{
+					$location.path("/home");
+				}
+
+			}).error(function(data, status, headers, config){
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});	
 	}
 
 	if($localStorage.usertype!="PPsuperadmin")
@@ -363,8 +419,14 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 					$scope.companyDTO.dnldTimer!=null ||
 					$scope.companyDTO.maxRetrial!=null ||
 					$scope.companyDTO.status.length!=0) 
-			{	
-				if($scope.companyDTO.appFromDate===null)
+			{
+				
+				if($scope.companyDTO.cmpId===0 && $localStorage.usertype==="PPsuperadmin")
+				{
+					$scope.alerts = { type: 'danger', msg: 'Company Selection is Required!'};
+					$scope.showSuccessAlert = true;
+				}
+				else if($scope.companyDTO.appFromDate===null)
 				{
 					$scope.alerts = { type: 'danger', msg: 'Sync Date From is Required!'};
 					$scope.showSuccessAlert = true;
@@ -406,6 +468,8 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 						$mdDialog.show(confirm).then(function() {
 
+							$scope.isLoadingresponse=true;
+							
 							$http({
 								method : "POST",
 								url : "company/update",
@@ -420,6 +484,8 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 									$scope.alerts = { type: 'success', msg: 'Company Updated!'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
+									
+									$scope.isLoadingresponse=false;
 
 									$localStorage.cmpid='';
 									$localStorage.cmpname='';
@@ -430,21 +496,27 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 									$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
+									
+									$scope.isLoadingresponse=false;
 								}
 								else
 								{
 									if(data.length>0)
 									{
 										$scope.alerts = { type: 'danger'};
-										$scope.errdata=data;
+										$scope.errdata=data[0];
 										$scope.showerror=true;
 										$scope.showSuccessAlert = false;
+										
+										$scope.isLoadingresponse=false;
 									}
 									else
 									{
 										$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 										$scope.showSuccessAlert = true;
 										$scope.showerror=false;
+										
+										$scope.isLoadingresponse=false;
 									}									
 								}
 
@@ -452,12 +524,13 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 								$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 								$scope.showSuccessAlert = true;
+								
+								$scope.isLoadingresponse=false;
 							});
 						});
 					}
 					else
 					{
-
 						if($scope.companyDTO.status==="Inactive")
 						{
 							var confirm = $mdDialog.confirm()
@@ -466,6 +539,9 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 							.cancel('Cancel');
 
 							$mdDialog.show(confirm).then(function() {
+								
+								$scope.isLoadingresponse=true;
+								
 								$http({
 									method : "POST",
 									url : "company/update",
@@ -480,6 +556,8 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 										$scope.alerts = { type: 'success', msg: 'Company Updated!'};
 										$scope.showSuccessAlert = true;
 										$scope.showerror=false;
+										
+										$scope.isLoadingresponse=false;
 
 										$scope.oncreateeditclick();
 									}
@@ -494,15 +572,19 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 										if(data.length>0)
 										{
 											$scope.alerts = { type: 'danger'};
-											$scope.errdata=data;
+											$scope.errdata=data[0];
 											$scope.showerror=true;
 											$scope.showSuccessAlert = false;
+											
+											$scope.isLoadingresponse=false;
 										}
 										else
 										{
 											$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 											$scope.showSuccessAlert = true;
 											$scope.showerror=false;
+											
+											$scope.isLoadingresponse=false;
 										}
 									}
 
@@ -510,11 +592,15 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 									$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 									$scope.showSuccessAlert = true;
+									
+									$scope.isLoadingresponse=false;
 								});
 							});
 						}
 						else
 						{
+							$scope.isLoadingresponse=true;
+							
 							$http({
 								method : "POST",
 								url : "company/update",
@@ -529,6 +615,8 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 									$scope.alerts = { type: 'success', msg: 'Company Updated!'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
+									
+									$scope.isLoadingresponse=false;
 
 									$scope.oncreateeditclick();
 								}
@@ -537,21 +625,27 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 									$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
+									
+									$scope.isLoadingresponse=false;
 								}
 								else
 								{
 									if(data.length>0)
 									{
 										$scope.alerts = { type: 'danger'};
-										$scope.errdata=data;
+										$scope.errdata=data[0];
 										$scope.showerror=true;
 										$scope.showSuccessAlert = false;
+										
+										$scope.isLoadingresponse=false;
 									}
 									else
 									{
 										$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 										$scope.showSuccessAlert = true;
 										$scope.showerror=false;
+										
+										$scope.isLoadingresponse=false;
 									}
 								}
 
@@ -559,6 +653,8 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 								$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
 								$scope.showSuccessAlert = true;
+								
+								$scope.isLoadingresponse=false;
 							});
 						}
 
@@ -585,24 +681,43 @@ baseApp.controller("CompanyMasterController", function($scope, $location, $http,
 
 		$scope.company = []; //declare an empty array
 		$scope.isLoading=true;
+		
+		if($localStorage.cmpid===0)
+		{
+			$http({
+				method : "GET",
+				url : "company/getcompanydataall",
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(reportdata, status, headers, config){
 
-		$http({
-			method : "POST",
-			url : "company/getcompanydata",
-			data : {"cmpId":$localStorage.cmpid},
-			headers : {
-				'Content-Type' : 'application/json'
-			}
-		}).success(function(reportdata, status, headers, config){
+				$scope.company = reportdata;  //ajax request to fetch data into $scope.data
+				$scope.isLoading=false;
 
-			$scope.company = reportdata;  //ajax request to fetch data into $scope.data
-			$scope.isLoading=false;
+			}).error(function(data, status, headers, config){
 
-		}).error(function(data, status, headers, config){
+			});		
 
-			$scope.alerts = { type: 'danger', msg: 'Company not Updated!'};
-			$scope.showSuccessAlert = true;
-		});		
+		}
+		else
+		{
+			$http({
+				method : "POST",
+				url : "company/getcompanydata",
+				data : {"cmpId":$localStorage.cmpid},
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(reportdata, status, headers, config){
+
+				$scope.company = reportdata;  //ajax request to fetch data into $scope.data
+				$scope.isLoading=false;
+
+			}).error(function(data, status, headers, config){
+
+			});	
+		}	
 
 		$scope.sort = function(keyname){
 			$scope.sortKey = keyname;   //set the sortKey to the param passed

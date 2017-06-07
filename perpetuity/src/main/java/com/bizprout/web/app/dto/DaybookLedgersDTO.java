@@ -1,5 +1,7 @@
 package com.bizprout.web.app.dto;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -16,6 +18,14 @@ public class DaybookLedgersDTO {
 	private int cmpId;
 	@Column(name="vch_id")
 	private String vchId;
+	@Column(name="vch_date")
+	private Date vchDate;
+	/*@Column(name="vch_type")
+	private String vchType;*/
+	@Column(name="vch_name")
+	private String vchType;
+	@Column(name="vch_number")
+	private String vchNumber;
 	@Column(name="name")
 	private String ledgerName;
 	@Column(name="amount")
@@ -60,6 +70,32 @@ public class DaybookLedgersDTO {
 	public void setVledid(int vledid) {
 		this.vledid = vledid;
 	}
+/*	public String getVchName() {
+		return vchName;
+	}
+	public void setVchName(String vchName) {
+		this.vchName = vchName;
+	}*/
+
+	public Date getVchDate() {
+		return vchDate;
+	}
+	public void setVchDate(Date vchDate) {
+		this.vchDate = vchDate;
+	}
+	public String getVchType() {
+		return vchType;
+	}
+	public void setVchType(String vchType) {
+		this.vchType = vchType;
+	}
+	public String getVchNumber() {
+		return vchNumber;
+	}
+	public void setVchNumber(String vchNumber) {
+		this.vchNumber = vchNumber;
+	}
 
 
+	
 }

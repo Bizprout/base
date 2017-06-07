@@ -1,8 +1,5 @@
 package com.bizprout.web.app.resource;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -180,7 +177,7 @@ public class PpMasterResource {
 	{
 		List<PpMasterDTO> ppmasterdata = null;
 		try {
-			ppmasterdata=ppmasterservice.getPpMasterdata(ppmasterDTO.getCmpid());
+			ppmasterdata=ppmasterservice.getPpMasterdata(ppmasterDTO.getCmpid(), ppmasterDTO.getMastertype());
 			logger.debug("Request......getPpMasterData......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
@@ -211,9 +208,7 @@ public class PpMasterResource {
 		{
 			try {				
 				
-				logger.debug("inside pPmasterFileUpload method..."+this.getClass());
-				byte[] bytes=file.getBytes();
-				
+				logger.debug("inside pPmasterFileUpload method..."+this.getClass());				
 				//check Excel Format
 								
 				format=excel.checkExcelFormatPpMasters(file);
@@ -226,24 +221,7 @@ public class PpMasterResource {
 					
 					if(cmpid==true)
 					{
-						// Creating the directory to store file
-						String rootPath = System.getProperty("catalina.home");
-						File dir = new File(rootPath + File.separator + "tmpFiles");
-						if (!dir.exists())
-							dir.mkdirs();
-
-						// Create the file on server
-						File serverFile = new File(dir.getAbsolutePath()
-								+ File.separator + file.getOriginalFilename());
-						BufferedOutputStream stream = new BufferedOutputStream(
-								new FileOutputStream(serverFile));
-						stream.write(bytes);
-						stream.close();
-
-						logger.info("Server File Location="
-								+ serverFile.getAbsolutePath(), this.getClass());
-						
-						jsonresponse=excel.excelReadData(file.getOriginalFilename());
+						jsonresponse=excel.excelReadData(file);
 											
 						if(jsonresponse.contains("success"))
 						{

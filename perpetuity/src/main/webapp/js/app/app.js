@@ -33,21 +33,30 @@ baseApp.directive('myLink', function() {
 });
 
 
-baseApp.run(function($rootScope, $localStorage, $location,$http, USER_ROLES, $q, $timeout,
+baseApp.run(function($rootScope, $mdDialog, $localStorage, $location,$http, USER_ROLES, $q, $timeout,
 		AuthSharedService) {
 	var lastDigestRun = new Date();
-	setInterval(function () {
+	var intervalId = setInterval(function () {
 		var now = Date.now();
-		if (now - lastDigestRun > 10 * 60 * 1000) {
+				
+		if ((now - lastDigestRun > 10 * 60 * 1000) && "/" != $location.path()) {
 			$localStorage.$reset();
 			$location.path('/');
+
+			$mdDialog.show(
+					$mdDialog.alert()
+					.clickOutsideToClose(true)
+					.title('Session Timed Out')
+					.textContent('Your Session has been Timed out. Please Login Again!')
+					.ok('Ok')
+			);
 		}
 	}, 1000);
 
 	$rootScope.$watch(function() {
 		lastDigestRun = new Date();
 	});
-	
+
 	$rootScope.$on('event:auth-forbidden', function(rejection) {
 		$rootScope.$evalAsync(function() {
 			$location.path('/login').replace();
@@ -72,7 +81,7 @@ baseApp.constant('USER_ROLES', {
 
 baseApp.factory('AuthSharedService', function( $rootScope, $http,$localStorage,
 		authService) {
-	
+
 	return {
 		// other functions ...
 		getAccount : function() {
@@ -86,7 +95,7 @@ baseApp.factory('AuthSharedService', function( $rootScope, $http,$localStorage,
 				authorizedRoles = [ authorizedRoles ];
 			}
 			var isAuthorized = false;
-			
+
 			angular.forEach(authorizedRoles, function(authorizedRole) {						
 				var authorized = (authorizedRole==='ROLE_PPAdmin');
 				if (authorized) {

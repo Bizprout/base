@@ -38,12 +38,12 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		return comp;
 	}
 	
-	public List<TallyMastersDTO> getTallyMasterNames(String mastertype, int cmpid)
+	public List<TallyMastersDTO> getTallyMasterNames(String mastertype, int cmpid, String category)
 	{
 		List<TallyMastersDTO> tallymasters = null;
 		try {
 			logger.info("inside getTallyMasterNames method "+this.getClass());
-			tallymasters = tallymappingrepo.getTallyMasterNames(mastertype, cmpid);
+			tallymasters = tallymappingrepo.getTallyMasterNames(mastertype, cmpid, category);
 		} catch (Exception e) {
 			logger.error("Exception in getTallyMasterNames method \t" + e.getMessage(), this.getClass());
 		}
@@ -62,6 +62,18 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		return tallymasters;
 	}
 	
+	public List<PpMasterDTO> getPpMasterNamesByCategory(String mastertype, int cmpid, String category)
+	{
+		List<PpMasterDTO> tallymasters = null;
+		try {
+			logger.info("inside getPpMasterNamesByCategory method "+this.getClass());
+			tallymasters = tallymappingrepo.getPpMasterNamesByCategory(mastertype, cmpid, category);
+		} catch (Exception e) {
+			logger.error("Exception in getPpMasterNamesByCategory method \t" + e.getMessage(), this.getClass());
+		}
+		return tallymasters;
+	}
+	
 	public void insertTallyMapping(TallyMappingDTO tallymappingdto)
 	{
 		try {
@@ -72,12 +84,12 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		}
 	}
 	
-	public List<Integer> getPpMastersMapping(int cmpid, int ppid)
+	public List<Integer> getPpMastersMapping(int cmpid, int ppid, String category)
 	{
 		List<Integer> ppmapping=null;
 		try {
 			logger.info("inside getPpMasterMapping method "+this.getClass());
-			ppmapping=tallymappingrepo.getPpMastersMapping(cmpid, ppid);
+			ppmapping=tallymappingrepo.getPpMastersMapping(cmpid, ppid, category);
 		} catch (Exception e) {
 			logger.error("Exception in getPpMasterMapping method \t" + e.getMessage(), this.getClass());
 		}
@@ -109,13 +121,39 @@ public class TallyMappingServiceImpl implements TallyMappingService<TallyMapping
 		return result;
 	}
 	
-	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype)
+	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype, String category)
 	{
 		List<TallyMastersDTO> tallyppmappingdata=null;
 		
 		try {
 			logger.info("inside getTallyPpMappingData method "+this.getClass());
-			tallyppmappingdata = tallymappingrepo.getTallyPpMappingData(cmpid, mastertype);
+			tallyppmappingdata = tallymappingrepo.getTallyPpMappingData(cmpid, mastertype, category);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return tallyppmappingdata;
+	}
+	
+	public List<TallyMastersDTO> getTallyPpMappingDataMastertype(int cmpid, String mastertype)
+	{
+		List<TallyMastersDTO> tallyppmappingdata=null;
+		
+		try {
+			logger.info("inside getTallyPpMappingData method "+this.getClass());
+			tallyppmappingdata = tallymappingrepo.getTallyPpMappingDataMastertype(cmpid, mastertype);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return tallyppmappingdata;
+	}
+	
+	public List<TallyMastersDTO> getTallyPpMappingDataWithoutCategory(int cmpid, String mastertype)
+	{
+		List<TallyMastersDTO> tallyppmappingdata=null;
+		
+		try {
+			logger.info("inside getTallyPpMappingData method "+this.getClass());
+			tallyppmappingdata = tallymappingrepo.getTallyPpMappingDataWithoutCategory(cmpid, mastertype);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

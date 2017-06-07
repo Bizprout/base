@@ -21,7 +21,8 @@ public class ApplicationWebXml implements WebApplicationInitializer {
 		rootContext.setDisplayName("application");
 
 		servletContext.addListener(new ContextLoaderListener(rootContext));
-
+		servletContext.addListener(new com.bizprout.web.app.resource.QuartzScheduler());
+		
 		ServletRegistration.Dynamic dispatcher = servletContext.addServlet(
 				"dispatcher", new DispatcherServlet(rootContext));
 		dispatcher.setLoadOnStartup(1);

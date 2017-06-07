@@ -2,7 +2,7 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 
 	$scope.cmpname=$localStorage.cmpname;
 
-	if($localStorage.cmpid===undefined)
+	if($localStorage.cmpid===undefined || $localStorage.cmpid===0)
 	{
 		$location.path("/home");
 	}
@@ -16,6 +16,57 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 		vote.show = true;
 	}
 
+	//get the screens mapped for the userid and cmpid
+
+	if($localStorage.usertype!="PPsuperadmin")
+	{
+		$http({
+			method : "POST",
+			url : "usermapping/getScreensMapped",
+			data: {"cmpId":$localStorage.cmpid, "userid":$localStorage.userid},
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(datascreenids, status, headers, config){
+
+			//*******options for client Names*********
+
+			if(datascreenids!="")
+			{
+				var screenidsmapped = datascreenids.screenId.split(',');
+			}
+			else
+			{
+				$location.path("/home");
+			}
+
+			//get all the screens list and ids
+
+			$http({
+				method : "GET",
+				url : "usermapping/getscreens",
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(datascreens, status, headers, config){
+
+				var reportscreen=$filter('filter')(datascreens, {screenName: "Reports"}, true)[0];
+
+
+				if(screenidsmapped.indexOf(reportscreen.sid.toString()) === -1)
+				{
+					$location.path("/home");
+				}
+
+			}).error(function(data, status, headers, config){
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});	
+	}
 
 	// **********switch flag for success message**********
 	$scope.switchBool = function (value) {
@@ -101,6 +152,7 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			"vchId"			: "",
 			"vchDate"		: "",
 			"vchTypeId"		: 0,
+			"vchName"		:"",
 			"vchNumber"		: "",
 			"partyLedger"	: "",
 			"isOptional"	: 0,
@@ -117,6 +169,7 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			"cmpId"	: $localStorage.cmpid,
 			"vchId"	: "",
 			"vchType":"",
+			"vchName":"",
 			"vchNumber":"",
 			"vchDate":"",
 			"ledgerName":"",
@@ -124,11 +177,11 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			"expanded"	: ""
 	}
 	$scope.DaybookLedgersDTO={
-			"vchId"	: "",
+			"vchId"		: "",
 			"ledgerName":"",
 			"vchAmount"	: 0.00,
-			"vchAmountType"	: "",
-			"expanded"	: ""
+			"vchAmountType"	: ""
+
 	}
 
 	$scope.VouchersDTO= {
@@ -136,6 +189,7 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			"vchId"			: "",
 			"vchDate"		: "",
 			"vchTypeId"		: 0,
+			"vchName"		:"",
 			"vchNumber"		: "",
 			"partyLedger"	: "",
 			"isOptional"	: 0,
@@ -144,7 +198,8 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			"authBy"		: "",
 			"vchAmt"		: 0.00,
 			"vchNarration"	: "",
-			"syncStatus"	: 0
+			"syncStatus"	: 0,
+			"vchtotal"		: 0
 
 
 	}
@@ -154,7 +209,7 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 	$scope.reportDTO.fromDate = new Date();
 	$scope.reportDTO.toDate = new Date();
 	$scope.currentPage=1;
-	$scope.itemsPerPage=15;
+	$scope.itemsPerPage=30;
 //	based on report name on change selection  
 	$scope.selectReport=function(){
 
@@ -170,6 +225,42 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
 		};
 
+		$scope.vchtotal = 0;
+		$scope.setTotals = function(db){
+			if (db){
+
+				$scope.vchtotal += db.vchAmount;
+
+			}
+		}
+
+		$scope.opDrAmtTotal=0;
+		$scope.opCrAmtTotal=0;
+		$scope.vchDrAmtTotal=0;
+		$scope.vchCrAmtTotal=0;
+
+		$scope.setTBTotals = function(comp){
+
+			if (comp){
+
+				$scope.opDrAmtTotal += comp.opDrAmt;
+				$scope.opCrAmtTotal += comp.opCrAmt;
+				$scope.vchDrAmtTotal += comp.vchDrAmt;
+				$scope.vchCrAmtTotal += comp.vchCrAmt;
+
+
+			}
+
+		}
+
+		$scope.getTotal = function(){
+			var total = 0;
+			for(var i = 0; i < $scope.data.length; i++){
+				var item = $scope.data[i];
+				total += item.vchAmount;
+			}
+			return total;
+		}
 
 		$scope.isLoadingreports=true;
 
@@ -181,19 +272,16 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 				'Content-Type': 'application/json'
 			}
 		}).success(function(tbdata, status, headers, config){
-			
+
 			if(tbdata.length>0)
 			{
 				$scope.data=tbdata;
+
 			}
 			else
 			{
-				$mdDialog.show(
-						$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.textContent('Please Select a Date Range!')
-						.ok('Ok!'));
+				$scope.alerts = { type: 'danger' ,msg: 'Please Select a Date Range!'};
+				$scope.showSuccessAlert = true;
 			}
 
 			$scope.isLoadingreports=false;			
@@ -249,7 +337,7 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 				targetEvent: $event,
 				templateUrl : "html/reports/VoucherLedgers.html",
 				locals: {
-					items: $scope.vchleddata
+					items: $scope.vchleddata,
 				},
 
 				controller: DialogController
@@ -270,12 +358,9 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			// called asynchronously if an error occurs
 			// or server returns response with an error status.
 		});
-
-
-
 	};
 
-	$scope.reports = ["Trial Balance","Daybook","Payment Register","Sales Register","Journal Register","Purchase Register"];
+	$scope.reports = ["Trial Balance","Trial Balance-Ledger","Daybook","Daybook-Ledgers","Payment Register","Sales Register","Journal Register","Purchase Register"];
 
 	$scope.exportData = function () {
 		var repName	= $scope.reportDTO.reportName;

@@ -2,7 +2,11 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 	$scope.cmpname=$localStorage.cmpname;
 	
-	if($localStorage.usertype!="PPsuperadmin" && $localStorage.cmpid===undefined)
+	if($localStorage.usertype!="PPsuperadmin" && ($localStorage.cmpid===undefined))
+	{
+		$location.path("/home");
+	}
+	else if($localStorage.usertype==="PPsuperadmin" && ($localStorage.cmpid===undefined || $localStorage.cmpid!=0))
 	{
 		$location.path("/home");
 	}
@@ -10,6 +14,59 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 	if($localStorage.userid===undefined)
 	{
 		$location.path("/");
+	}
+	
+	
+	//get the screens mapped for the userid and cmpid
+
+	if($localStorage.usertype!="PPsuperadmin")
+	{
+		$http({
+			method : "POST",
+			url : "usermapping/getScreensMapped",
+			data: {"cmpId":$localStorage.cmpid, "userid":$localStorage.userid},
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(datascreenids, status, headers, config){
+
+			//*******options for client Names*********
+
+			if(datascreenids!="")
+			{
+				var screenidsmapped = datascreenids.screenId.split(',');
+			}
+			else
+			{
+				$location.path("/home");
+			}
+
+			//get all the screens list and ids
+
+			$http({
+				method : "GET",
+				url : "usermapping/getscreens",
+				headers : {
+					'Content-Type' : 'application/json'
+				}
+			}).success(function(datascreens, status, headers, config){
+
+				var clientscreen=$filter('filter')(datascreens, {screenName: "Client Master"}, true)[0];
+
+
+				if(screenidsmapped.indexOf(clientscreen.sid.toString()) === -1)
+				{
+					$location.path("/home");
+				}
+
+			}).error(function(data, status, headers, config){
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}).error(function(data, status, headers, config){
+			// called asynchronously if an error occurs
+			// or server returns response with an error status.
+		});	
 	}
 
 
@@ -34,6 +91,9 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 			"contactTelPhone": "",
 			"status": ""
 	};	
+	
+	$scope.emailFormat = /^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+
 
 	// **********************When Create tab is clicked*****************************************************************
 
@@ -55,6 +115,15 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 			$scope.clientDTO.contactTelPhone = '';
 			//$scope.clientDTO.status = $scope.clientstatus[0];
 		}
+		
+		$scope.clear=function(){
+
+			$scope.eclientDTO.clientName='';
+			$scope.eclientDTO.contactPerson='';
+			$scope.eclientDTO.contactEmail='';
+			$scope.eclientDTO.contactTelPhone = '';
+			$scope.eclientDTO.status = '';
+		}
 
 		//************when submit button is pressed validate and post to the service************
 
@@ -62,7 +131,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 		$scope.createclient=function(clientDTO){
 
 			//call user add service
-			if($scope.clientDTO.contactEmail===undefined)
+			if($scope.clientadd.emailid.$error.pattern || $scope.clientDTO.contactEmail===undefined)
 			{
 				$scope.alerts = { type: 'danger', msg: 'E-Mail Address is not Valid!'};
 				$scope.showSuccessAlert = true;
@@ -79,8 +148,15 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 					$scope.alerts = { type: 'danger', msg: 'Email cannot be Empty!'};
 					$scope.showSuccessAlert = true;
 				}
+				else if($scope.clientDTO.contactTelPhone!="" && $scope.clientadd.mobile.$error.pattern)
+				{
+					$scope.alerts = { type: 'danger', msg: 'Mobile Number should be Min 10 Char!'};
+					$scope.showSuccessAlert = true;
+				}
 				else
 				{
+					$scope.isLoadingresponse=true;
+					
 					$http({
 						method : "POST",
 						url : "client/add",
@@ -100,28 +176,35 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 							$scope.clientDTO.contactPerson='';
 							$scope.clientDTO.contactEmail='';
 							$scope.clientDTO.contactTelPhone = '';
-							//$scope.clientDTO.status = $scope.clientstatus[0];
+							
+							$scope.isLoadingresponse=false;
 						}
 						else if(data[0]==="failure")
 						{
 							$scope.alerts = { type: 'danger', msg: 'Client not Created'};
 							$scope.showSuccessAlert = true;
 							$scope.showerror=false;
+							
+							$scope.isLoadingresponse=false;
 						}
 						else
 						{
 							if(data.length>0)
 							{
 								$scope.alerts = { type: 'danger'};
-								$scope.errdata=data;
+								$scope.errdata=data[0];
 								$scope.showerror=true;
 								$scope.showSuccessAlert = false;
+								
+								$scope.isLoadingresponse=false;
 							}
 							else
 							{
 								$scope.alerts = { type: 'danger', msg: 'Client not Created'};
 								$scope.showSuccessAlert = true;
 								$scope.showerror=false;
+								
+								$scope.isLoadingresponse=false;
 							}
 							
 						}
@@ -129,7 +212,8 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 						$scope.alerts = { type: 'danger', msg: 'Client not Created'};
 						$scope.showSuccessAlert = true;
-
+						
+						$scope.isLoadingresponse=false;
 					});	
 				}	
 			}	 	
@@ -192,7 +276,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 		$scope.editclient=function(eclientDTO){
 			
-			if($scope.eclientDTO.clientId==="" && $scope.eclientDTO.clientName==="" && $scope.eclientDTO.contactEmail==="" && $scope.eclientDTO.status==="")
+			if($scope.eclientDTO.clientId==="" || $scope.eclientDTO.clientName==="" || ($scope.eclientDTO.contactEmail==="" || $scope.eclientDTO.contactEmail===undefined)  && $scope.eclientDTO.status==="")
 			{
 				$scope.alerts = { type: 'danger', msg: 'All Mandatory Fields should be Filled up.'};
 				$scope.showSuccessAlert = true;
@@ -256,6 +340,16 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 						$scope.alerts = { type: 'danger', msg: 'Email cannot be Empty!'};
 						$scope.showSuccessAlert = true;
 					}
+					else if($scope.clientedit.emailid.$error.pattern)
+					{
+						$scope.alerts = { type: 'danger' ,msg: 'Email ID is not Valid!'};
+						$scope.showSuccessAlert = true;
+					}
+					else if($scope.clientedit.mobile.$error.pattern)
+					{
+						$scope.alerts = { type: 'danger' ,msg: 'Mobile Number should be Min 10 char!'};
+						$scope.showSuccessAlert = true;
+					}
 					else if($scope.eclientDTO.status.length===0)
 					{
 						$scope.alerts = { type: 'danger', msg: 'Client Status cannot be Empty!'};
@@ -263,6 +357,7 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 					}
 					else
 					{
+						
 						if($scope.eclientDTO.status==="Inactive")
 						{
 							var confirm = $mdDialog.confirm()
@@ -272,6 +367,9 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 							.cancel('Cancel');
 							
 							$mdDialog.show(confirm).then(function() {
+								
+								$scope.isLoadingresponse=true;
+								
 								$http({
 									method : "POST",
 									url : "client/edit",
@@ -311,6 +409,8 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 											$scope.eclientDTO.contactTelPhone = '';
 											$scope.eclientDTO.status = '';
 											
+											$scope.isLoadingresponse=false;
+											
 											$scope.oneditclick();
 										}
 										else if(data[0]==="failure")
@@ -318,21 +418,27 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 											$scope.showSuccessAlert = true;
 											$scope.showerror=false;
+											
+											$scope.isLoadingresponse=false;
 										}
 										else
 										{											
 											if(data.length>0)
 											{
 												$scope.alerts = { type: 'danger'};
-												$scope.errdata=data;
+												$scope.errdata=data[0];
 												$scope.showerror=true;
 												$scope.showSuccessAlert = false;
+												
+												$scope.isLoadingresponse=false;
 											}
 											else
 											{
 												$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 												$scope.showSuccessAlert = true;
 												$scope.showerror=false;
+												
+												$scope.isLoadingresponse=false;
 											}
 										}
 									}
@@ -341,21 +447,27 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 										$scope.showSuccessAlert = true;
 										$scope.showerror=false;
+										
+										$scope.isLoadingresponse=false;
 									}
 									else
 									{
 										if(data.length>0)
 										{
 											$scope.alerts = { type: 'danger'};
-											$scope.errdata=data;
+											$scope.errdata=data[0];
 											$scope.showerror=true;
 											$scope.showSuccessAlert = false;
+											
+											$scope.isLoadingresponse=false;
 										}
 										else
 										{
 											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 											$scope.showSuccessAlert = true;
 											$scope.showerror=false;
+											
+											$scope.isLoadingresponse=false;
 										}
 									
 									}
@@ -366,11 +478,15 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 									$scope.alerts = { type: 'danger',msg: 'Client not Updated!'};
 									$scope.showSuccessAlert = true;
+									
+									$scope.isLoadingresponse=false;
 								});
 							});
 						}
 						else
 						{
+							$scope.isLoadingresponse=true;
+							
 							$http({
 								method : "POST",
 								url : "client/edit",
@@ -409,6 +525,8 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 										$scope.eclientDTO.contactTelPhone = '';
 										$scope.eclientDTO.status = '';
 										
+										$scope.isLoadingresponse=false;
+										
 										$scope.oneditclick();
 									}
 									else if(data[0]==="failure")
@@ -416,21 +534,27 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 										$scope.showSuccessAlert = true;
 										$scope.showerror=false;
+										
+										$scope.isLoadingresponse=false;
 									}
 									else
 									{
 										if(data.length>0)
 										{
 											$scope.alerts = { type: 'danger'};
-											$scope.errdata=data;
+											$scope.errdata=data[0];
 											$scope.showerror=true;
 											$scope.showSuccessAlert = false;
+											
+											$scope.isLoadingresponse=false;
 										}
 										else
 										{
 											$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 											$scope.showSuccessAlert = true;
 											$scope.showerror=false;
+											
+											$scope.isLoadingresponse=false;
 										}
 									}
 								}
@@ -439,21 +563,27 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 									$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 									$scope.showSuccessAlert = true;
 									$scope.showerror=false;
+									
+									$scope.isLoadingresponse=false;
 								}
 								else
 								{									
 									if(data.length>0)
 									{
 										$scope.alerts = { type: 'danger'};
-										$scope.errdata=data;
+										$scope.errdata=data[0];
 										$scope.showerror=true;
 										$scope.showSuccessAlert = false;
+										
+										$scope.isLoadingresponse=false;
 									}
 									else
 									{
 										$scope.alerts = { type: 'danger', msg: 'Client not Updated!'};
 										$scope.showSuccessAlert = true;
 										$scope.showerror=false;
+										
+										$scope.isLoadingresponse=false;
 									}
 								}
 
@@ -463,6 +593,8 @@ baseApp.controller("ClientController", function($scope, $location, $http, $timeo
 
 								$scope.alerts = { type: 'danger',msg: 'Client not Updated!'};
 								$scope.showSuccessAlert = true;
+								
+								$scope.isLoadingresponse=false;
 							});
 						}
 					}

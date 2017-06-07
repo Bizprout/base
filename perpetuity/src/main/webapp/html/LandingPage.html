@@ -8,7 +8,7 @@
 					<div class="col-xs-7" style="float: right; margin-right: -118px;">
 						<span>Select Company:</span>
 						<div
-							custom-select="comp.cmpId as comp.tallyCmpName for comp in companies| orderBy: 'tallyCmpName' | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
+							custom-select="comp.cmpId as comp.tallyCmpName for comp in companies | filter: {tallyCmpName: $searchTerm} track by comp.cmpId"
 							custom-select-options="companyselectOptions"
 							ng-change="landingcompanychange()" ng-model="landingcmpId"
 							autofocus></div>
@@ -19,42 +19,49 @@
 					</div>
 				</div>
 			</div>
-			<div ng-if="lastlogin" class="path">Your Last Login was on {{lastlogin | date:
-				"EEEE, MMMM d, y 'at' h:mm a"}}</div>
-			<div ng-if="!lastlogin" class="path">You Have Logged in for the First Time!</div>
+			<div ng-if="lastlogin" class="path">Your Last Login was on
+				{{lastlogin | date: "EEEE, MMMM d, y 'at' h:mm a"}}</div>
+			<div ng-if="!lastlogin" class="path">You Have Logged in for the
+				First Time!</div>
 			<div class="text">Choose Your Option</div>
 		</div>
-		<div class="app-section">
-			<div class="app-section-container path" id="left" role="button"
-				data-toggle="modal" data-target="#last-step-modal"
-				style="width: calc(( 100% - 90px - 28px)/3);">
+		<div class="app-section" style="text-align: center;">
+			<md-progress-circular md-mode="indeterminate" md-diameter="50px"
+				ng-show="isLoadinglandingscreens"></md-progress-circular>
+			<div class="app-section-container path"
+				style="width: calc(( 100% - 90px - 28px)/3); border: 1px solid #000; display: inline-block;"
+				ng-hide="mastershide" id="left" role="button" data-toggle="modal"
+				data-target="#last-step-modal">
 				<div class="app-type">
 					<div class="title">Masters</div>
 				</div>
-				<div class="content">Manage Users, Clients, Company and PP standards.</div>
+				<div class="content">Manage Users, Clients, Company and PP
+					standards.</div>
 				<a href="#masters" my-link="masterslinkenabled"
 					data-ng-class="{'disabled': !masterslinkenabled}"
 					class="btn btn-success" style="text-decoration: none;">Continue</a>
 			</div>
-			<div class="app-section-container path" role="button"
-				data-toggle="modal" data-target="#last-step-modal"
-				style="width: calc(( 100% - 90px - 28px)/3);">
+			<div class="app-section-container path"
+				style="width: calc(( 100% - 90px - 28px)/3); border: 1px solid #000; display: inline-block;"
+				ng-hide="mappinghide" role="button" data-toggle="modal"
+				data-target="#last-step-modal">
 				<div class="app-type">
 					<div class="title">Mapping</div>
 				</div>
-				<div class="content">Manage User Mapping to Clients and PP Mapping to Tally.</div>
+				<div class="content">Manage User Mapping to Clients and PP
+					Mapping to Tally.</div>
 				<a href="#mapping" my-link="mappinglinkenabled"
 					data-ng-class="{'disabled': !mappinglinkenabled}"
 					class="btn btn-success" style="text-decoration: none;">Continue</a>
 			</div>
-			<div class="app-section-container path" id="right" role="button"
-				data-toggle="modal" data-target="#last-step-modal"
-				style="width: calc(( 100% - 90px - 28px)/3);">
+			<div class="app-section-container path"
+				style="width: calc(( 100% - 90px - 28px)/3); border: 1px solid #000; display: inline-block;"
+				ng-hide="reportshide" id="right" role="button" data-toggle="modal"
+				data-target="#last-step-modal">
 				<div class="app-type">
 					<div class="title">Reports</div>
 				</div>
-				<div class="content">Export
-					Reports.</div>
+				<div class="content">Export Reports.</div>
 				<a href="#reports" my-link="reportslinkenabled"
 					data-ng-class="{'disabled': !reportslinkenabled}"
 					class="btn btn-success" style="text-decoration: none;">Continue</a>

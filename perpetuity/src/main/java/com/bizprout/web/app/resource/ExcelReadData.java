@@ -1,7 +1,6 @@
 package com.bizprout.web.app.resource;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -28,23 +28,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("deprecation")
 public class ExcelReadData {
-	
-	
+
+
 	public boolean checkExcelFormatPpMasters(MultipartFile filename)
 	{
 		Logger logger=LoggerFactory.getLogger(this.getClass());
 
 		Workbook workbook = null;
-		
+
 		boolean res = false;
-		
+
 		try {
 
 			InputStream excelfile= filename.getInputStream();
 			workbook=new XSSFWorkbook(excelfile);
 			Sheet datatypesheet= workbook.getSheetAt(0);
-			
-			
+
+
 			if(datatypesheet.getRow(0).getCell(0).getStringCellValue().equals("Upload Format for Creating PP Masters") &&
 					datatypesheet.getRow(3).getCell(0).getStringCellValue().equals("Master Type") && 
 					datatypesheet.getRow(3).getCell(1).getStringCellValue().equals("PP Master Name") &&
@@ -58,7 +58,7 @@ public class ExcelReadData {
 			{
 				res=false;
 			}
-			
+
 		}
 		catch (IOException e) {
 			logger.error(e.getMessage()+"...."+this.getClass());
@@ -74,22 +74,22 @@ public class ExcelReadData {
 		return res;
 
 	}
-	
+
 	public boolean checkExcelFormatPpMastersMapping(MultipartFile filename)
 	{
 		Logger logger=LoggerFactory.getLogger(this.getClass());
 
 		Workbook workbook = null;
-		
+
 		boolean res = false;
-		
+
 		try {
 
 			InputStream excelfile= filename.getInputStream();
 			workbook=new XSSFWorkbook(excelfile);
 			Sheet datatypesheet= workbook.getSheetAt(0);
-			
-			
+
+
 			if(datatypesheet.getRow(0).getCell(0).getStringCellValue().equals("Upload Format for Mapping PP Masters") &&
 					datatypesheet.getRow(1).getCell(0).getStringCellValue().contains("Client Name:") &&
 					datatypesheet.getRow(2).getCell(0).getStringCellValue().contains("Company Name:") &&
@@ -103,7 +103,7 @@ public class ExcelReadData {
 			{
 				res=false;
 			}
-			
+
 		}
 		catch (IOException e) {
 			logger.error(e.getMessage()+"...."+this.getClass());
@@ -137,6 +137,17 @@ public class ExcelReadData {
 		boolean res = false;
 
 		try {
+			
+			Properties prop = new Properties();
+			InputStream inprop = null;
+			
+			inprop = new FileInputStream("Postgeturls.properties");
+
+			// load a properties file
+			prop.load(inprop);
+			
+			String baseserveraddress=prop.getProperty("baseserveraddress");
+			String getcompanyidbyname=prop.getProperty("getcompanyidbyname");
 
 			InputStream excelfile= filename.getInputStream();
 			workbook=new XSSFWorkbook(excelfile);
@@ -153,7 +164,7 @@ public class ExcelReadData {
 
 			//request to post cmpname and get cmp_id
 			DefaultHttpClient httpclientcmp= new DefaultHttpClient();
-			HttpPost postcmp= new HttpPost("http://localhost:9090/perpetuity/company/getcompanyidbyname");
+			HttpPost postcmp= new HttpPost(baseserveraddress+getcompanyidbyname);
 			StringEntity inputcmp= new StringEntity("{\"tallyCmpName\":\"" + compname[1] + "\"}");					
 			inputcmp.setContentType("application/json");
 			postcmp.setEntity(inputcmp);
@@ -207,11 +218,9 @@ public class ExcelReadData {
 
 
 	@SuppressWarnings("resource")
-	public List<Object> excelReadData(String filename){
+	public List<Object> excelReadData(MultipartFile file){
 
 		Logger logger=LoggerFactory.getLogger(this.getClass());
-
-		final String FILE_NAME="C:/Apache Software Foundation/Tomcat 8.0/tmpFiles/"+filename;
 
 		Workbook workbook;
 
@@ -224,17 +233,27 @@ public class ExcelReadData {
 		String[] compname = null;
 		String[] categories={"Assets","Liabilities","Expenses","Income"};
 		String compdata=null;
-		//ArrayList<String> cstcat=new ArrayList<String>();
-		//ArrayList<String> groups=new ArrayList<String>();
-		//ArrayList<String> cstcent=new ArrayList<String>();
-		//ArrayList<String> catspecppmasters=new ArrayList<String>();
 		int cmpId=0;
 		List<Object> result=new ArrayList<Object>();
 
 		logger.debug("inside Excel read data class..."+this.getClass());
 		try {
+			
+			Properties prop = new Properties();
+			InputStream inprop = null;
+			
+			inprop = new FileInputStream("Postgeturls.properties");
 
-			FileInputStream excelfile= new FileInputStream(new File(FILE_NAME));
+			// load a properties file
+			prop.load(inprop);
+			
+			String baseserveraddress=prop.getProperty("baseserveraddress");
+			String getcompanyidbyname=prop.getProperty("getcompanyidbyname");
+			String getppmastersnameall=prop.getProperty("getppmastersnameall");
+			String getppmastersnamebycompany=prop.getProperty("getppmastersnamebycompany");
+			String ppmasteradd=prop.getProperty("ppmasteradd");
+
+			InputStream excelfile= file.getInputStream();
 			workbook=new XSSFWorkbook(excelfile);
 			Sheet datatypesheet= workbook.getSheetAt(0);
 			Iterator<Row> iterator=datatypesheet.iterator();
@@ -245,7 +264,7 @@ public class ExcelReadData {
 
 			//request to post cmpname and get cmp_id
 			DefaultHttpClient httpclientcmp= new DefaultHttpClient();
-			HttpPost postcmp= new HttpPost("http://localhost:9090/perpetuity/company/getcompanyidbyname");
+			HttpPost postcmp= new HttpPost(baseserveraddress+getcompanyidbyname);
 			StringEntity inputcmp= new StringEntity("{\"tallyCmpName\":\"" + compname[1] + "\"}");					
 			inputcmp.setContentType("application/json");
 			postcmp.setEntity(inputcmp);
@@ -271,7 +290,7 @@ public class ExcelReadData {
 
 			//request to post mastertype, category and cmpid and get all cost categories
 			DefaultHttpClient httpclientcstcat= new DefaultHttpClient();
-			HttpPost postcstcat= new HttpPost("http://localhost:9090/perpetuity/ppmaster/getppmastersnameall");
+			HttpPost postcstcat= new HttpPost(baseserveraddress+getppmastersnameall);
 			StringEntity inputcstcat= new StringEntity("{\"mastertype\":\"Cost Category\",\"category\":\"Cost Category\",\"cmpid\":\""+cmpId+"\"}");					
 			inputcstcat.setContentType("application/json");
 			postcstcat.setEntity(inputcstcat);
@@ -288,7 +307,7 @@ public class ExcelReadData {
 
 			//request to post mastertype and cmpid and get all cost centres
 			DefaultHttpClient httpclientcstcent= new DefaultHttpClient();
-			HttpPost postcstcent= new HttpPost("http://localhost:9090/perpetuity/ppmaster/getppmastersnamebycompany");
+			HttpPost postcstcent= new HttpPost(baseserveraddress+getppmastersnamebycompany);
 			StringEntity inputcstcent= new StringEntity("{\"mastertype\":\"Cost Centre\",\"cmpid\":\""+cmpId+"\"}");					
 			inputcstcent.setContentType("application/json");
 			postcstcent.setEntity(inputcstcent);
@@ -343,7 +362,7 @@ public class ExcelReadData {
 								{
 									//request to post mastertype, category and cmpid and get ppmaster names category specific
 									DefaultHttpClient httpclientgrps1= new DefaultHttpClient();
-									HttpPost postgrps1= new HttpPost("http://localhost:9090/perpetuity/ppmaster/getppmastersnameall");
+									HttpPost postgrps1= new HttpPost(baseserveraddress+getppmastersnameall);
 									StringEntity inputgrps1= new StringEntity("{\"mastertype\":\"Group\",\"category\":\""+currentrow.getCell(2).getStringCellValue()+"\",\"cmpid\":\""+cmpId+"\"}");					
 									inputgrps1.setContentType("application/json");
 									postgrps1.setEntity(inputgrps1);
@@ -371,7 +390,7 @@ public class ExcelReadData {
 								{
 									//request to post mastertype, category and cmpid and get ppmaster names category specific
 									DefaultHttpClient httpclientgrps1= new DefaultHttpClient();
-									HttpPost postgrps1= new HttpPost("http://localhost:9090/perpetuity/ppmaster/getppmastersnameall");
+									HttpPost postgrps1= new HttpPost(baseserveraddress+getppmastersnameall);
 									StringEntity inputgrps1= new StringEntity("{\"mastertype\":\"Group\",\"category\":\""+currentrow.getCell(2).getStringCellValue()+"\",\"cmpid\":\""+cmpId+"\"}");					
 									inputgrps1.setContentType("application/json");
 									postgrps1.setEntity(inputgrps1);
@@ -399,7 +418,7 @@ public class ExcelReadData {
 								{
 									//request to post mastertype, category and cmpid and get ppmaster names category specific
 									DefaultHttpClient httpclientgrps1= new DefaultHttpClient();
-									HttpPost postgrps1= new HttpPost("http://localhost:9090/perpetuity/ppmaster/getppmastersnameall");
+									HttpPost postgrps1= new HttpPost(baseserveraddress+getppmastersnameall);
 									StringEntity inputgrps1= new StringEntity("{\"mastertype\":\"Group\",\"category\":\""+currentrow.getCell(2).getStringCellValue()+"\",\"cmpid\":\""+cmpId+"\"}");					
 									inputgrps1.setContentType("application/json");
 									postgrps1.setEntity(inputgrps1);
@@ -428,7 +447,7 @@ public class ExcelReadData {
 								{
 									//request to post mastertype, category and cmpid and get ppmaster names category specific
 									DefaultHttpClient httpclientgrps1= new DefaultHttpClient();
-									HttpPost postgrps1= new HttpPost("http://localhost:9090/perpetuity/ppmaster/getppmastersnameall");
+									HttpPost postgrps1= new HttpPost(baseserveraddress+getppmastersnameall);
 									StringEntity inputgrps1= new StringEntity("{\"mastertype\":\"Group\",\"category\":\""+currentrow.getCell(2).getStringCellValue()+"\",\"cmpid\":\""+cmpId+"\"}");					
 									inputgrps1.setContentType("application/json");
 									postgrps1.setEntity(inputgrps1);
@@ -502,8 +521,10 @@ public class ExcelReadData {
 						}
 						else if(currentrow.getCell(0).getStringCellValue().equals("Voucher Type"))
 						{
-							if(currentrow.getCell(2).getStringCellValue().equals(""))
+							if(currentrow.getCell(2).getStringCellValue().equals("Voucher Type"))
 							{
+								jsonobj.put("category", currentrow.getCell(2).getStringCellValue());
+								
 								if(currentrow.getCell(3).getStringCellValue().equals("Contra") || 
 										currentrow.getCell(3).getStringCellValue().equals("Credit Note") || 
 										currentrow.getCell(3).getStringCellValue().equals("Debit Note") || 
@@ -535,18 +556,14 @@ public class ExcelReadData {
 							}
 							else
 							{
-								result.add("Category is not Applicable for Voucher Types at row "+(currentrow.getRowNum()+1));
+								result.add("Category does not Match at row "+(currentrow.getRowNum()+1));
 							}
 						}
 
 						jsonarr.put(jsonobj);		
-					}				
+					}
 				}
-			}
-			else
-			{
-				result.add("No Data Filled");
-			}			
+			}	
 
 			// Create the JSON.
 
@@ -555,36 +572,42 @@ public class ExcelReadData {
 			workbook.close();
 
 			//Call the service and import the data
+			
+			if(jsonarr.length()>0)
+			{
+				for (int i = 0; i < jsonarr.length(); i++) {
 
+					DefaultHttpClient httpclient= new DefaultHttpClient();
+					HttpPost post= new HttpPost(baseserveraddress+ppmasteradd);
+					StringEntity input= new StringEntity(jsonarr.getString(i));
+					input.setContentType("application/json");
+					post.setEntity(input);
+					logger.debug("Posting excel data to ppmaster add service....."+this.getClass());
+					HttpResponse response=httpclient.execute(post);
 
-			for (int i = 0; i < jsonarr.length(); i++) {
-
-				DefaultHttpClient httpclient= new DefaultHttpClient();
-				HttpPost post= new HttpPost("http://localhost:9090/perpetuity/ppmaster/add");
-				StringEntity input= new StringEntity(jsonarr.getString(i));
-				input.setContentType("application/json");
-				post.setEntity(input);
-				logger.debug("Posting excel data to ppmaster add service....."+this.getClass());
-				HttpResponse response=httpclient.execute(post);
-
-				BufferedReader rd= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-				while((line=rd.readLine())!=null)
+					BufferedReader rd= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+					while((line=rd.readLine())!=null)
+					{
+						logger.debug("post data response..."+line+"....class name..."+this.getClass());
+						line1=line;
+					}
+				}
+				
+				if(result.isEmpty())
 				{
-					logger.debug("post data response..."+line+"....class name..."+this.getClass());
-					line1=line;
+					if(line1.contains("success"))
+					{
+						result.add("success");
+					}			
+					else
+					{
+						result.add("failure");
+					}
 				}
 			}
-
-			if(result.isEmpty())
+			else
 			{
-				if(line1.contains("success"))
-				{
-					result.add("success");
-				}			
-				else
-				{
-					result.add("failure");
-				}
+				result.add("No Data Filled.");
 			}
 
 		} catch (IOException | JSONException e) {
@@ -595,11 +618,9 @@ public class ExcelReadData {
 	}
 
 	@SuppressWarnings("resource")
-	public List<Object> excelReadDatamapping(String filename){
+	public List<Object> excelReadDatamapping(MultipartFile file){
 
 		Logger logger=LoggerFactory.getLogger(this.getClass());
-
-		final String FILE_NAME="C:/Apache Software Foundation/Tomcat 8.0/tmpFiles/"+filename;
 
 		Workbook workbook;
 
@@ -616,13 +637,30 @@ public class ExcelReadData {
 		JSONArray ppid = null;
 		JSONArray masterid = null;
 		int ppmasterid=0;
+		String cate=null;
 		int tallymasterid=0;
 		List<Object> result=new ArrayList<Object>();
 
 		logger.debug("inside Excel ReadDatamapping class..."+this.getClass());
 		try {
+			
+			Properties prop = new Properties();
+			InputStream inprop = null;
+			
+			inprop = new FileInputStream("Postgeturls.properties");
 
-			FileInputStream excelfile= new FileInputStream(new File(FILE_NAME));
+			// load a properties file
+			prop.load(inprop);
+			
+			String baseserveraddress=prop.getProperty("baseserveraddress");
+			String getcompanyidbyname=prop.getProperty("getcompanyidbyname");
+			String getppmasternames=prop.getProperty("getppmasternames");
+			String getppmasteridnames=prop.getProperty("getppmasteridnames");
+			String gettallymasternames=prop.getProperty("gettallymasternames");
+			String gettallymasteridnames=prop.getProperty("gettallymasteridnames");
+			String saveppmapping=prop.getProperty("saveppmapping");
+
+			InputStream excelfile= file.getInputStream();
 			workbook=new XSSFWorkbook(excelfile);
 			Sheet datatypesheet= workbook.getSheetAt(0);
 			Iterator<Row> iterator=datatypesheet.iterator();
@@ -633,7 +671,7 @@ public class ExcelReadData {
 
 			//request to post cmpname and get cmp_id
 			DefaultHttpClient httpclientcmp= new DefaultHttpClient();
-			HttpPost postcmp= new HttpPost("http://localhost:9090/perpetuity/company/getcompanyidbyname");
+			HttpPost postcmp= new HttpPost(baseserveraddress+getcompanyidbyname);
 			StringEntity inputcmp= new StringEntity("{\"tallyCmpName\":\"" + compname[1] + "\"}");					
 			inputcmp.setContentType("application/json");
 			postcmp.setEntity(inputcmp);
@@ -685,7 +723,7 @@ public class ExcelReadData {
 
 						//request to post mastertype and cmpid and get ppmaster names
 						DefaultHttpClient httpclientgrps1= new DefaultHttpClient();
-						HttpPost postgrps1= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/getppmasternames");
+						HttpPost postgrps1= new HttpPost(baseserveraddress+getppmasternames);
 						StringEntity inputgrps1= new StringEntity("{\"mastertype\":\""+currentrow.getCell(0).getStringCellValue()+"\",\"cmpid\":\""+cmpId+"\"}");					
 						inputgrps1.setContentType("application/json");
 						postgrps1.setEntity(inputgrps1);
@@ -704,7 +742,7 @@ public class ExcelReadData {
 						{
 							//request to get pp_id
 							DefaultHttpClient httpclient1= new DefaultHttpClient();
-							HttpPost post1= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/getppmasteridnames");
+							HttpPost post1= new HttpPost(baseserveraddress+getppmasteridnames);
 							StringEntity input1= new StringEntity("{\"cmpid\":\"" + cmpId + "\",\"mastertype\":\"" + currentrow.getCell(0).getStringCellValue() + "\",\"ppmastername\":\"" + currentrow.getCell(1).getStringCellValue() + "\"}");					
 							input1.setContentType("application/json");
 							post1.setEntity(input1);
@@ -720,21 +758,21 @@ public class ExcelReadData {
 								for (int i = 0; i < ppid.length(); ++i) {
 									JSONObject rec = ppid.getJSONObject(i);
 									ppmasterid = rec.getInt("masteridindex");
+									cate = rec.getString("category");
 								}
 							}
-
-							jsonobj.put("ppId", ppmasterid);
+							
+							jsonobj.put("ppid", ppmasterid);
 						}
 						else
 						{
 							result.add("PP Masters Name Does not match at row "+(currentrow.getRowNum()+1));
 						}
-
-
+						
 						//request to get all the tally master names for the master type
 						DefaultHttpClient httpclienttallymaster= new DefaultHttpClient();
-						HttpPost posttallymaster= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/gettallymasternames");
-						StringEntity inputtallymaster= new StringEntity("{\"masterType\":\""+currentrow.getCell(0).getStringCellValue()+"\",\"cmpId\":\""+cmpId+"\"}");					
+						HttpPost posttallymaster= new HttpPost(baseserveraddress+gettallymasternames);
+						StringEntity inputtallymaster= new StringEntity("{\"masterType\":\""+currentrow.getCell(0).getStringCellValue()+"\",\"cmpId\":\""+cmpId+"\", \"category\":\""+cate+"\"}");					
 						inputtallymaster.setContentType("application/json");
 						posttallymaster.setEntity(inputtallymaster);
 						logger.debug("Posting excel data to get all cost centres....."+this.getClass());
@@ -752,7 +790,7 @@ public class ExcelReadData {
 						{
 							//request to get tally masters id
 							DefaultHttpClient httpclient2= new DefaultHttpClient();
-							HttpPost post2= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/gettallymasteridnames");
+							HttpPost post2= new HttpPost(baseserveraddress+gettallymasteridnames);
 							StringEntity input2= new StringEntity("{\"cmpId\":\"" + cmpId + "\",\"masterType\":\"" + currentrow.getCell(0).getStringCellValue() + "\",\"tallyMasterName\":\"" + currentrow.getCell(2).getStringCellValue() + "\"}");					
 							input2.setContentType("application/json");
 							post2.setEntity(input2);
@@ -770,15 +808,15 @@ public class ExcelReadData {
 									tallymasterid = rec1.getInt("masterId");
 								}
 							}
-							jsonobj.put("tallyMasterId", tallymasterid);	
+							jsonobj.put("masterId", tallymasterid);	
+						}
+						else
+						{
+							result.add("Tally Masters Name Does not match at row "+(currentrow.getRowNum()+1));
 						}
 						jsonarr.put(jsonobj);		
-					}				
+					}
 				}
-			}
-			else
-			{
-				result.add("No Data Filled");
 			}
 
 			// Create the JSON.
@@ -789,11 +827,11 @@ public class ExcelReadData {
 
 			//Call the service and import the data
 
-			for (int i = 0; i < jsonarr.length(); i++) {
-
+			if(jsonarr.length()>0)
+			{
 				DefaultHttpClient httpclient3= new DefaultHttpClient();
-				HttpPost post3= new HttpPost("http://localhost:9090/perpetuity/pptallymapping/insert");
-				StringEntity input3= new StringEntity(jsonarr.getString(i));
+				HttpPost post3= new HttpPost(baseserveraddress+saveppmapping);
+				StringEntity input3= new StringEntity(jsonarr.toString());
 				input3.setContentType("application/json");
 				post3.setEntity(input3);
 				logger.debug("Posting excel data to ppmaster add service....."+this.getClass());
@@ -805,18 +843,22 @@ public class ExcelReadData {
 					logger.debug("post data response..."+line5+"....class name..."+this.getClass());
 					line6=line5;
 				}
-			}
 
-			if(result.isEmpty())
-			{
-				if(line6.contains("success"))
+				if(result.isEmpty())
 				{
-					result.add("success");
-				}			
-				else
-				{
-					result.add("failure");
+					if(line6.contains("success"))
+					{
+						result.add("success");
+					}			
+					else
+					{
+						result.add("failure");
+					}
 				}
+			}
+			else
+			{
+				result.add("No Data Filled.");
 			}
 
 

@@ -20,4 +20,8 @@ public interface UserMappingService<T> {
 	public List<UserMappingDTO> getCmpByuserid(int userid);
 	
 	public int deleteScreensByCmpidUserid(int cmpid, int userid);
+
+	public List<UserMappingDTO> getScreensMappedByCmpid(int cmpid);
+
+	public List<UserMappingDTO> getUserMapByCmpUserList(int cmpId, int userid);
 }

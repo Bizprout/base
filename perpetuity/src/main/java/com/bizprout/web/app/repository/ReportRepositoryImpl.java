@@ -69,6 +69,8 @@ public class ReportRepositoryImpl extends AbstractBaseRepository<ReportsDTO>
 		
 		if (repName.equalsIgnoreCase("Daybook")) 
 			vchType = "All";
+		else if (repName.equalsIgnoreCase("Daybook-Ledgers"))
+			vchType = "VchLedgers";
 		else if (repName.equalsIgnoreCase("Payment Register")) 
 			vchType = "Payment";
 		else if (repName.equalsIgnoreCase("Sales Register"))
@@ -81,23 +83,31 @@ public class ReportRepositoryImpl extends AbstractBaseRepository<ReportsDTO>
 			vchType = "Journal";
 		else
 			vchType = "Payment";
-
+		
 		try {
 			logger.info("Inside Report RepositoryImpl......Get Vouchers Data getCmpVchData method.......");
 			session = getSession();
 			if (vchType.equalsIgnoreCase("All")){
 				vchData= session.createQuery(" from DaybookDTO where cmpId = ? and vchDate >= ?  and vchDate <= ? Order By vchDate DESC")
 						.setParameter(0, repdto.getCmpId())
-						.setParameter(1,sqlvchFromDate)
-						.setParameter(2,sqlvchToDate)
+						.setDate(1,sqlvchFromDate)
+						.setDate(2,sqlvchToDate)
 						.list();
+			}
+			else if (vchType.equalsIgnoreCase("VchLedgers")){
+				vchData= session.createQuery(" from DaybookLedgersDTO where cmpId = ? and vchDate>=? and vchDate<=? Order By vchDate DESC")
+						.setParameter(0, repdto.getCmpId())
+						.setDate(1,sqlvchFromDate)
+						.setDate(2,sqlvchToDate)
+						.list();
+				
 			}
 			else {
 				vchData= session.createQuery(" from DaybookDTO where cmpId = ? and vchType=? and vchDate>=? and vchDate<=? Order By vchDate DESC")
 						.setParameter(0, repdto.getCmpId())
 						.setParameter(1, vchType)
-						.setParameter(2,sqlvchFromDate)
-						.setParameter(3,sqlvchToDate)
+						.setDate(2,sqlvchFromDate)
+						.setDate(3,sqlvchToDate)
 						.list();
 			}
 		}
@@ -116,9 +126,9 @@ public class ReportRepositoryImpl extends AbstractBaseRepository<ReportsDTO>
 		List<Object> vchLedgers= null;
 
 		try {
-			logger.info("Inside Report RepositoryImpl......Get Vouchers Data getVchLedgers method.......");
+			logger.info("Inside Report RepositoryImpl...... getVchLedgers method.......");
 			session = factory.getCurrentSession();
-
+			
 			vchLedgers = session.createQuery(" from DaybookLedgersDTO where vchId = ?")
 					.setParameter(0, voucherId)
 					.list();
@@ -136,17 +146,20 @@ public class ReportRepositoryImpl extends AbstractBaseRepository<ReportsDTO>
 		{
 			Session session = null;
 			List<Object> compTB = null;
+			String hql;
 			try {
 				logger.info("Inside......getCompanyTB method.......");
-
 				session = getSession();
 
-				String hql = "Select new  com.bizprout.web.app.dto.TrialBalanceDTO(baseGrp, SUM(opDrAmt), SUM(opCrAmt), SUM(vchDrAmt), SUM(vchCrAmt)) "
+				if (repdto.getReportName().equalsIgnoreCase("Trial Balance"))
+					hql = "Select new  com.bizprout.web.app.dto.TrialBalanceDTO(baseGrp, SUM(opDrAmt), SUM(opCrAmt), SUM(vchDrAmt), SUM(vchCrAmt)) "
 						+ "		from TrialBalanceDTO where cmpId = ? Group by cmpId,baseGrp";
-
-				Query query = session.createQuery(hql);
-				query.setParameter(0, repdto.getCmpId());           
-				compTB = query.list();
+				else
+					hql = "from TrialBalanceDTO where cmpId=? and (opDrAmt!=0 or opCrAmt!=0 or vchDrAmt!=0 or vchCrAmt!=0)"; /*"Select new  com.bizprout.web.app.dto.TrialBalanceDTO(name, SUM(opDrAmt), SUM(opCrAmt), SUM(vchDrAmt), SUM(vchCrAmt),"
+							+ "SUM(opDrAmt-opCrAmt+vchDrAmt-vchCrAmt) as total from TrialBalanceDTO where cmpId = ? and total!=0 Group by cmpId,name )";*/
+					compTB = session.createQuery(hql)
+							.setParameter(0,repdto.getCmpId())
+							.list();
 			}
 			catch (HibernateException e)    {
 				logger.error(e.getMessage()+"..."+this.getClass());

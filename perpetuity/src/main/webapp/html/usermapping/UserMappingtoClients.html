@@ -13,6 +13,8 @@
 		</div>
 		<div class="cu-section">
 			<div class="container-fluid">
+				<md-progress-linear md-mode="indeterminate"
+					ng-show="isLoadingresponse"></md-progress-linear>
 				<div ng-class="'alert alert-' + (alerts.type || 'warning')"
 					ng-show="showSuccessAlert">
 					<button type="button" class="close"
@@ -129,11 +131,33 @@
 					class="md-padding">
 				<div class="col-lg-12">
 					<div class="bs-component">
-						<!-- 					<div class="alert alert-info">
-						<p>Sort key: {{sortKey}}</p>
-						<p>Reverse: {{reverse}}</p>
-						<p>Search String : {{search}}</p>
-					</div> -->
+						<div class="row">
+							<div class="col-xs-3" style="padding-left: 15px;">
+								<span>Select User:</span><br>
+								<div
+									custom-select="usr.userid as usr.username for usr in usernames | filter: $searchTerm track by $index"
+									custom-select-options="usernameselectOptions" ng-value="usr" ng-change="repouserchange()"
+									ng-model="repoDTO.userid" autofocus></div>
+								<br> <br>
+							</div>
+							<div class="col-xs-1">
+								<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+									ng-show="isLoadingrepouser"></md-progress-circular>
+							</div>
+							<div class="col-xs-3">
+								<span>Select Company :</span><br>
+								<div
+									custom-select="complst.cmpId as complst.tallyCmpName for complst in companylist | filter: $searchTerm track by $index"
+									custom-select-options="cmpNameselectOptions" ng-value="complst"
+									ng-change="repocompanychange(repoDTO)" ng-model="repoDTO.cmpId"
+									autofocus></div>
+								<br> <br>
+							</div>
+							<div class="col-xs-1">
+								<md-progress-circular md-mode="indeterminate" md-diameter="20px"
+									ng-show="isLoadingrepocompany"></md-progress-circular>
+							</div>
+						</div>
 						<form class="form-inline">
 							<div class="form-group">
 								<input type="text" ng-model="search" class="form-control"
@@ -202,16 +226,16 @@
 										current-page="currentPage">
 										<td style="text-align: left;">{{itemsPerPage *
 											(currentPage-1)+$index+1}}</td>
-										<td style="text-align: left;">{{user.userdto.username}}</td>
-										<td style="text-align: left;">{{user.compdto.tallyCmpName}}</td>
-										<td style="text-align: left;">{{user.screenId}}</td>
+										<td style="text-align: left;">{{user.username}}</td>
+										<td style="text-align: left;">{{user.companyname}}</td>
+										<td style="text-align: left;">{{user.screens}}</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 						<dir-pagination-controls max-size="5" direction-links="true"
 							boundary-links="true"> </dir-pagination-controls>
-						<a style="margin-bottom: 65px;" href="#masters"
+						<a style="margin-bottom: 65px;" href="#mapping"
 							class="btn btn-success">Back</a>
 					</div>
 				</div>

@@ -54,7 +54,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TallyMastersDTO> getTallyMasterNames(String mastertype, int cmpid)
+	public List<TallyMastersDTO> getTallyMasterNames(String mastertype, int cmpid, String category)
 	{
 	logger.info("Inside getTallyMasterNames method......."+this.getClass());
 		
@@ -65,6 +65,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 			Criteria cr = session.createCriteria(TallyMastersDTO.class)
 					.add(Restrictions.eq("masterType", mastertype))
 					.add(Restrictions.eq("cmpId", cmpid))
+					.add(Restrictions.eq("category", category))
 					.setProjection(Projections.projectionList()
 							.add(Projections.property("cmpId"), "cmpId")
 							.add(Projections.property("masterId"), "masterId")
@@ -93,7 +94,8 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 					.add(Restrictions.eq("cmpid", cmpid))
 					.setProjection(Projections.projectionList()
 							.add(Projections.property("masteridindex"), "masteridindex")
-							.add(Projections.property("ppmastername"), "ppmastername"))
+							.add(Projections.property("ppmastername"), "ppmastername")
+							.add(Projections.property("category"), "category"))
 							.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
 
 			ppmasternames = cr.list();
@@ -104,6 +106,31 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 		return ppmasternames;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<PpMasterDTO> getPpMasterNamesByCategory(String mastertype, int cmpid, String category)
+	{
+	logger.info("Inside getPpMasterNames method......."+this.getClass());
+		
+		List<PpMasterDTO> ppmasternames = null;
+		try {
+			Session session = getSession();
+
+			Criteria cr = session.createCriteria(PpMasterDTO.class)
+					.add(Restrictions.eq("mastertype", mastertype))
+					.add(Restrictions.eq("cmpid", cmpid))
+					.add(Restrictions.eq("category", category))
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("masteridindex"), "masteridindex")
+							.add(Projections.property("ppmastername"), "ppmastername"))
+							.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
+
+			ppmasternames = cr.list();
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+
+		return ppmasternames;
+	}
 	
 	public int updateTallyMapping(TallyMappingDTO tallymappingdto) {
 		
@@ -127,7 +154,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Integer> getPpMastersMapping(int cmpid, int ppid)
+	public List<Integer> getPpMastersMapping(int cmpid, int ppid, String category)
 	{
 		Session session;
 		Query qry=null;
@@ -137,9 +164,10 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 
 			session = getSession();
 
-			qry=session.createQuery("select tallyMasterId from TallyMappingDTO where cmpId=:cmpid and ppId=:ppid");
+			qry=session.createQuery("select masterId from TallyMastersDTO where cmpId=:cmpid and ppid=:ppid and category=:cate");
 			qry.setParameter("cmpid",cmpid);
 			qry.setParameter("ppid",ppid);
+			qry.setParameter("cate",category);
 			ppmapping=qry.list();
 
 		} catch (HibernateException e) {
@@ -172,7 +200,7 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype)
+	public List<TallyMastersDTO> getTallyPpMappingData(int cmpid, String mastertype, String category)
 	{
 		List<TallyMastersDTO> tallyppmappingdata = null;
 		Query qry=null;
@@ -180,7 +208,52 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 			logger.info("Inside getTallyPpMappingData method......."+this.getClass());
 
 			Session session = getSession();
+			
+			qry= session.createQuery("from TallyMastersDTO where cmpId=:companyid and masterType=:mastertyp and category=:cate");
+			qry.setParameter("companyid", cmpid);
+			qry.setParameter("mastertyp", mastertype);
+			qry.setParameter("cate", category);
+			
+			tallyppmappingdata=qry.list();
 
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return tallyppmappingdata;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<TallyMastersDTO> getTallyPpMappingDataMastertype(int cmpid, String mastertype)
+	{
+		List<TallyMastersDTO> tallyppmappingdata = null;
+		Query qry=null;
+		try {
+			logger.info("Inside getTallyPpMappingData method......."+this.getClass());
+
+			Session session = getSession();
+			
+			qry= session.createQuery("from TallyMastersDTO where cmpId=:companyid and masterType=:mastertyp");
+			qry.setParameter("companyid", cmpid);
+			qry.setParameter("mastertyp", mastertype);
+			
+			tallyppmappingdata=qry.list();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return tallyppmappingdata;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<TallyMastersDTO> getTallyPpMappingDataWithoutCategory(int cmpid, String mastertype)
+	{
+		List<TallyMastersDTO> tallyppmappingdata = null;
+		Query qry=null;
+		try {
+			logger.info("Inside getTallyPpMappingData method......."+this.getClass());
+
+			Session session = getSession();
+			
 			qry= session.createQuery("from TallyMastersDTO where cmpId=:companyid and masterType=:mastertyp");
 			qry.setParameter("companyid", cmpid);
 			qry.setParameter("mastertyp", mastertype);
@@ -231,7 +304,8 @@ public class TallyMappingRepositoryImpl extends AbstractBaseRepository<TallyMapp
 					.add(Restrictions.eq("cmpid", cmpid))
 					.add(Restrictions.eq("ppmastername", ppmastername))
 					.setProjection(Projections.projectionList()
-							.add(Projections.property("masteridindex"), "masteridindex"))
+							.add(Projections.property("masteridindex"), "masteridindex")
+							.add(Projections.property("category"), "category"))
 							.setResultTransformer(Transformers.aliasToBean(PpMasterDTO.class));
 
 			ppmasternames = cr.list();
