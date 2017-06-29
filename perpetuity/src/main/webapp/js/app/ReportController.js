@@ -132,6 +132,7 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			"fromDate"	: "",
 			"toDate"	: "",
 			"baseGrp"	: "",
+			"vchNarration"	: "",
 			"expanded"	: ""
 
 	};	
@@ -173,15 +174,16 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 			"vchNumber":"",
 			"vchDate":"",
 			"ledgerName":"",
-			"vchAmount"	: 0.00,	
+			"vchAmount"	: 0.00,
+			"vchNarration"	: "",
 			"expanded"	: ""
 	}
 	$scope.DaybookLedgersDTO={
 			"vchId"		: "",
 			"ledgerName":"",
 			"vchAmount"	: 0.00,
+			"vchNarration"	: "",
 			"vchAmountType"	: ""
-
 	}
 
 	$scope.VouchersDTO= {
@@ -272,11 +274,11 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 				'Content-Type': 'application/json'
 			}
 		}).success(function(tbdata, status, headers, config){
-
+			
 			if(tbdata.length>0)
 			{
 				$scope.data=tbdata;
-
+				
 			}
 			else
 			{
@@ -343,15 +345,17 @@ baseApp.controller("ReportController", function($scope, $location, $http, $timeo
 				controller: DialogController
 			});
 			function DialogController($scope, $mdDialog, items) {
-				$scope.items = items;
-
-				$scope.closeDialog = function() {
-					$mdDialog.hide();
-				}
-				$scope.cancel = function() {
-					$mdDialog.cancel();
-				};
-			}
+		        $scope.items = items;
+		        
+		        $scope.vchNarration=vchdata.vchNarration;
+		        
+		        $scope.closeDialog = function() {
+		          $mdDialog.hide();
+		        }
+		        $scope.cancel = function() {
+		          $mdDialog.cancel();
+		        };
+		      }
 
 
 		}).error(function(data, status, headers, config){

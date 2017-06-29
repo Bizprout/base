@@ -8,59 +8,65 @@
     </md-toolbar>
 
     <md-dialog-content>
-	<div class="md-dialog-content">
-		<div id="exportable">
-			<table class="table table-striped table-hover" border="1">
-				<tr>
-					<td>
-						<table class="table table-striped table-hover" border="0">
-							<thead>
-							<tr>
-								<th style="text-align: center; background-color: #999999;" colspan="2"> DEBIT</th>
-							</tr>
-							<tr>
+  <div class="md-dialog-content">
+    <div id="exportable">
+      <table class="table table-striped table-hover" border="1">
+        <tr>
+          <td>
+            <table class="table table-striped table-hover" border="0">
+              <thead>
+              <tr>
+                <th style="text-align: center; background-color: #999999;" colspan="2"> DEBIT</th>
+              </tr>
+              <tr>
 
-								<th>Ledger Name</th>
-								<th style="text-align: right;">Amount</th>
-								
-							</tr>
-							</thead>
-							<tbody>
-							<tr ng-repeat="item in items">
-								
-								<td ng-if="item.vchAmountType==1">{{item.ledgerName}}</td>
-			        			<td ng-if="item.vchAmountType==1"style="text-align: right;">{{item.vchAmount | number:2}}</td>
-			        		</tr>
-			    			</tbody>
-			    		</table>
-					</td>
-					<td>
-					<table class="table table-striped table-hover" border="0">
-							<thead>
-							<tr>
-								<th style="text-align: center; background-color:#999999;" colspan="2"> CREDIT</th>
-							</tr>
-							<tr>
-								
-								<th>Ledger Name</th>
-								<th style="text-align: right;">Amount</th>
-								
-							</tr>
-							</thead>
-							<tbody>
-							<tr ng-repeat="item in items">
-								
-								<td ng-if="item.vchAmountType==0">{{item.ledgerName}}</td>
-			        			<td ng-if="item.vchAmountType==0"style="text-align: right;">{{item.vchAmount | number:2}}</td>
-			        		</tr>
-			    			</tbody>
-			    		</table>
-					</td>
-					
-				</tr>
-				
-		</table>
-	</div>
+                <th>Ledger Name</th>
+                <th style="text-align: right;">Amount</th>
+                
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="item in items">
+                
+                <td ng-if="item.vchAmountType==1">{{item.ledgerName}}</td>
+                    <td ng-if="item.vchAmountType==1"style="text-align: right;">{{item.vchAmount | number:2}}</td>
+                  </tr>
+                </tbody>
+              </table>
+          </td>
+          <td>
+          <table class="table table-striped table-hover" border="0">
+              <thead>
+              <tr>
+                <th style="text-align: center; background-color:#999999;" colspan="2"> CREDIT</th>
+              </tr>
+              <tr>
+                
+                <th>Ledger Name</th>
+                <th style="text-align: right;">Amount</th>
+                
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="item in items">
+                
+                <td ng-if="item.vchAmountType==0">{{item.ledgerName}}</td>
+                    <td ng-if="item.vchAmountType==0"style="text-align: right;">{{item.vchAmount | number:2}}</td>
+                  </tr>
+                </tbody>
+              </table>
+          </td>
+          
+        </tr>
+      </table>
+      <table class="table table-striped table-hover" border="1">
+      <tr>
+          <td> Narration  </td>
+          <td>  {{vchNarration}} </td>
+        </tr>
+      </table>
+    
+  </div>
     
       </div>
     </md-dialog-content>
