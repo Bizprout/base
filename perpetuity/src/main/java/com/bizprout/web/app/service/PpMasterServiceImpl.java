@@ -37,16 +37,28 @@ public class PpMasterServiceImpl implements PpMasterService<PpMasterDTO> {
 		}
 	}
 
-	public List<String> getPpMastersName(String mastertype, String category, int cmpid, String ppmastername) {
+	public List<String> getPpMastersName(String mastertype, String category, int cmpid, String ppmastername, List<String> child) {
 
 		List<String> ppmasterlist = null;
 		try {
 			logger.info("inside getPpMastersName service method "+this.getClass());
-			ppmasterlist = PpRepository.getPpMasterList(mastertype, category, cmpid, ppmastername);
+			ppmasterlist = PpRepository.getPpMasterList(mastertype, category, cmpid, ppmastername, child);
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}
 		return ppmasterlist;
+	}
+	
+	public List<String> getPpMastersChild(String mastertype, int cmpid, String ppmastername) {
+
+		List<String> ppmasterchildlist = null;
+		try {
+			logger.info("inside getPpMastersChild service method "+this.getClass());
+			ppmasterchildlist = PpRepository.getPpMasterChildList(mastertype, cmpid, ppmastername);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return ppmasterchildlist;
 	}
 
 	public List<String> getPpMastersNameall(String mastertype, String category, int cmpid) {

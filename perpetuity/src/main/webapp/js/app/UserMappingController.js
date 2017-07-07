@@ -225,6 +225,12 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 				// or server returns response with an error status.
 			});
 		};
+		
+		$scope.onuserchanged=function(){
+			
+			$scope.UserMappingDTO.cmpId=0;
+			$scope.UserMappingDTO.screenId='';
+		};
 
 		$scope.updateUserMapping=function(userMappingDTO){			
 			
@@ -349,6 +355,9 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 				"userid":0,
 				"cmpId":0
 		};
+		
+		var usersdata=[];
+		$scope.usersdata = []; //declare an empty array
 
 		$scope.currentPage=1;
 		$scope.itemsPerPage=5;
@@ -383,9 +392,6 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 			$scope.isLoading=true;
 			
 			$scope.repoDTO.cmpId='';
-
-			var usersdata=[];
-			$scope.usersdata = []; //declare an empty array
 
 			if($scope.repoDTO.userid!=0)
 			{

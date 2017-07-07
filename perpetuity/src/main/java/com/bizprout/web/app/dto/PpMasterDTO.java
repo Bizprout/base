@@ -1,7 +1,10 @@
 package com.bizprout.web.app.dto;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -41,6 +44,9 @@ public class PpMasterDTO {
 	
 	@Column(name="category")
 	private String category;
+	
+	@ElementCollection(targetClass=String.class)
+	private List<String> child;
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="cmp_id", nullable=false, insertable=false, updatable=false)
@@ -88,6 +94,11 @@ public class PpMasterDTO {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-
+	public List<String> getChild() {
+		return child;
+	}
+	public void setChild(List<String> child) {
+		this.child = child;
+	}
 	
 }

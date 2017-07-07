@@ -95,8 +95,21 @@ public class PpMasterResource {
 
 		List<String> ppmaster = null;
 		try {
-			ppmaster=ppmasterservice.getPpMastersName(ppmasterDTO.getMastertype(), ppmasterDTO.getCategory(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername());
+			ppmaster=ppmasterservice.getPpMastersName(ppmasterDTO.getMastertype(), ppmasterDTO.getCategory(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername(), ppmasterDTO.getChild());
 			logger.debug("Request......getPpMastername List......"+this.getClass());
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return ppmaster;
+	}
+	
+	@PostMapping(value="/getppmasterschild")
+	public List<String> getPpMastersChlid(@RequestBody PpMasterDTO ppmasterDTO){
+
+		List<String> ppmaster = null;
+		try {
+			ppmaster=ppmasterservice.getPpMastersChild(ppmasterDTO.getMastertype(), ppmasterDTO.getCmpid(), ppmasterDTO.getPpmastername());
+			logger.debug("Request......getPpMastersChlid List......"+this.getClass());
 		} catch (Exception e) {
 			logger.error(e.getMessage()+"..."+this.getClass());
 		}

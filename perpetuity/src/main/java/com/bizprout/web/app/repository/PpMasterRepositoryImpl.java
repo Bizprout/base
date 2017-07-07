@@ -28,7 +28,7 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@SuppressWarnings("unchecked")
-	public List<String> getPpMasterList(String mastertype, String category, int cmpid, String ppmastername) {
+	public List<String> getPpMasterList(String mastertype, String category, int cmpid, String ppmastername, List<String> child) {
 		Session session;
 		Query qry=null;
 		List<String> ppmasterlist = null;
@@ -36,12 +36,43 @@ public class PpMasterRepositoryImpl extends AbstractBaseRepository<PpMasterDTO>{
 			logger.info("Inside PpMasterRepositoryImpl......getPpMasterList method......."+this.getClass());
 
 			session = getSession();
-
-			qry=session.createQuery("select ppmastername from PpMasterDTO where mastertype=:mastertyp and category=:cate and cmpid=:cmp and ppmastername<>:ppmasname");
-			qry.setParameter("mastertyp",mastertype);
-			qry.setParameter("cate",category);
+			
+			qry=session.createQuery("select ppmastername from PpMasterDTO where mastertype=:mastyp and category=:cate and cmpid=:cmp and ppmastername<>:ppmasname and ppparentname not in (:chld)");
+			qry.setParameter("mastyp", mastertype);
+			qry.setParameter("cate", category);
 			qry.setParameter("cmp",cmpid);
 			qry.setParameter("ppmasname", ppmastername);
+			qry.setParameterList("chld", child);
+			ppmasterlist=qry.list();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return ppmasterlist;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getPpMasterChildList(String mastertype, int cmpid, String ppmastername) {
+		Session session;
+		Query qry=null;
+		List<String> ppmasterlist = null;
+		try {
+			logger.info("Inside PpMasterRepositoryImpl......getPpMasterChildList method......."+this.getClass());
+
+			session = getSession();
+
+			qry=session.createSQLQuery("WITH tblChild AS "
+					+ "(SELECT pp_masters.name"
+					+ " FROM pp_masters "
+					+ "WHERE pp_masters.name = :ppmasname and pp_masters.master_type=:mastertyp and pp_masters.cmp_id=:cmp"
+					+ " UNION ALL"
+					+ " SELECT pp_masters.name FROM pp_masters  JOIN tblChild  ON pp_masters.group_name = tblChild.name"
+					+ ")"
+					+ "SELECT * FROM tblChild OPTION(MAXRECURSION 32767)");
+			
+			qry.setParameter("ppmasname", ppmastername);
+			qry.setParameter("mastertyp",mastertype);
+			qry.setParameter("cmp",cmpid);
 			ppmasterlist=qry.list();
 
 		} catch (HibernateException e) {

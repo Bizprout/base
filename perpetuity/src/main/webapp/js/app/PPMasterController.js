@@ -445,6 +445,8 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 	//***********when Edit tab is clicked**********************************
 	$scope.oneditclick=function(){
 		//to get pp masters list based on master type selection
+		
+		var childdata=[];
 
 		$scope.editppmasterDTO.mastertype='';
 		$scope.editppmasterDTO.ppmastername='';
@@ -497,6 +499,7 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 
 			$scope.isLoadingselecteditcategory=true;
 			$scope.isLoadingeditppparentname=true;
+			
 
 			$http({
 				method : "POST",
@@ -557,111 +560,129 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 				{
 					$scope.editppmasterDTO.category=datapop[0].category;
 				}
+				
+				
+				//get child names for pp master name
+				$http({
+					method : "POST",
+					url : "ppmaster/getppmasterschild",
+					data : {"mastertype":$scope.editppmasterDTO.mastertype, "ppmastername":$scope.editppmasterDTO.ppmastername, "cmpid":$localStorage.cmpid},
+					headers : {
+						'Content-Type' : 'application/json'
+					}
+				}).success(function(datachld, status, headers, config){
+					
+					childdata=datachld;
+					
+					if($scope.editppmasterDTO.mastertype==="Ledger")
+					{
+						$http({
+							method : "POST",
+							url : "ppmaster/getppmastersname",
+							data : {"mastertype":"Group", "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername, "child":childdata},
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(data, status, headers, config){
+
+							$scope.ppparentnames.push($scope.editppmasterDTO.category);
+
+							for(var key in data){
+								$scope.ppparentnames.push(data[key]);
+							}	
+
+							$scope.isLoadingselecteditcategory=false;
+							$scope.isLoadingeditppparentname=false;
 
 
-				if($scope.editppmasterDTO.mastertype==="Ledger")
-				{
-					$http({
-						method : "POST",
-						url : "ppmaster/getppmastersname",
-						data : {"mastertype":"Group", "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername},
-						headers : {
-							'Content-Type' : 'application/json'
-						}
-					}).success(function(data, status, headers, config){
+						}).error(function(data, status, headers, config){
+							// called asynchronously if an error occurs
+							// or server returns response with an error status.
+						});
+					}
+					else if($scope.editppmasterDTO.mastertype==="Group")
+					{						
+						$http({
+							method : "POST",
+							url : "ppmaster/getppmastersname",
+							data : {"mastertype":"Group", "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername, "child":childdata},
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(data, status, headers, config){
+							
+							$scope.ppparentnames.push($scope.editppmasterDTO.category);
 
-						$scope.ppparentnames.push($scope.editppmasterDTO.category);
+							for(var key in data){
+								$scope.ppparentnames.push(data[key]);
+							}	
 
-						for(var key in data){
-							$scope.ppparentnames.push(data[key]);
-						}	
-
-						$scope.isLoadingselecteditcategory=false;
-						$scope.isLoadingeditppparentname=false;
-
-
-					}).error(function(data, status, headers, config){
-						// called asynchronously if an error occurs
-						// or server returns response with an error status.
-					});
-				}
-				else if($scope.editppmasterDTO.mastertype==="Group")
-				{
-					$http({
-						method : "POST",
-						url : "ppmaster/getppmastersname",
-						data : {"mastertype":"Group", "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername},
-						headers : {
-							'Content-Type' : 'application/json'
-						}
-					}).success(function(data, status, headers, config){
-
-						$scope.ppparentnames.push($scope.editppmasterDTO.category);
-
-						for(var key in data){
-							$scope.ppparentnames.push(data[key]);
-						}	
-
-						$scope.isLoadingselecteditcategory=false;
-						$scope.isLoadingeditppparentname=false;
+							$scope.isLoadingselecteditcategory=false;
+							$scope.isLoadingeditppparentname=false;
 
 
-					}).error(function(data, status, headers, config){
-						// called asynchronously if an error occurs
-						// or server returns response with an error status.
-					});
-				}
-				else if($scope.editppmasterDTO.mastertype==="Cost Centre")
-				{
-					$scope.ppparentnames.push("Primary");				
+						}).error(function(data, status, headers, config){
+							// called asynchronously if an error occurs
+							// or server returns response with an error status.
+						});
+					}
+					else if($scope.editppmasterDTO.mastertype==="Cost Centre")
+					{
+						$scope.ppparentnames.push("Primary");				
 
-					$http({
-						method : "POST",
-						url : "ppmaster/getppmastersnamebycostcategory",
-						data : {"mastertype":"Cost Centre", "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername},
-						headers : {
-							'Content-Type' : 'application/json'
-						}
-					}).success(function(dataccat, status, headers, config){
+						$http({
+							method : "POST",
+							url : "ppmaster/getppmastersnamebycostcategory",
+							data : {"mastertype":"Cost Centre", "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername, "child":childdata},
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(dataccat, status, headers, config){
 
-						for(var key1 in dataccat){
-							$scope.ppparentnames.push(dataccat[key1]);
-						}
+							for(var key1 in dataccat){
+								$scope.ppparentnames.push(dataccat[key1]);
+							}
 
-						$scope.isLoadingselecteditcategory=false;
-						$scope.isLoadingeditppparentname=false;
+							$scope.isLoadingselecteditcategory=false;
+							$scope.isLoadingeditppparentname=false;
 
-					}).error(function(data, status, headers, config){
-						// called asynchronously if an error occurs
-						// or server returns response with an error status.
-					});
-				}
-				else
-				{
-					$http({
-						method : "POST",
-						url : "ppmaster/getppmastersname",
-						data : {"mastertype":$scope.editppmasterDTO.mastertype, "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername},
-						headers : {
-							'Content-Type' : 'application/json'
-						}
-					}).success(function(data, status, headers, config){
+						}).error(function(data, status, headers, config){
+							// called asynchronously if an error occurs
+							// or server returns response with an error status.
+						});
+					}
+					else
+					{
+						$http({
+							method : "POST",
+							url : "ppmaster/getppmastersname",
+							data : {"mastertype":$scope.editppmasterDTO.mastertype, "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername, "child":childdata},
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(data, status, headers, config){
 
-						//$scope.ppparentnames.push($scope.editppmasterDTO.category);
+							//$scope.ppparentnames.push($scope.editppmasterDTO.category);
 
-						for(var key in data){
-							$scope.ppparentnames.push(data[key]);
-						}
-						$scope.isLoadingselecteditcategory=false;
-						$scope.isLoadingeditppparentname=false;
+							for(var key in data){
+								$scope.ppparentnames.push(data[key]);
+							}
+							$scope.isLoadingselecteditcategory=false;
+							$scope.isLoadingeditppparentname=false;
 
-					}).error(function(data, status, headers, config){
-						// called asynchronously if an error occurs
-						// or server returns response with an error status.
-					});
-				}
+						}).error(function(data, status, headers, config){
+							// called asynchronously if an error occurs
+							// or server returns response with an error status.
+						});
+					}
 
-				$scope.editppmasterDTO.ppparentname=datapop[0].ppparentname;
+					$scope.editppmasterDTO.ppparentname=datapop[0].ppparentname;
+					
+					
+				}).error(function(data, status, headers, config){
+					// called asynchronously if an error occurs
+					// or server returns response with an error status.
+				});
 
 			}).error(function(data, status, headers, config){
 				// called asynchronously if an error occurs
@@ -671,6 +692,8 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 
 
 		$scope.oneditcategorychange=function(){
+			
+			$scope.isLoadingeditppparentname=true;
 
 			$scope.ppparentnames=[];
 
@@ -689,16 +712,18 @@ baseApp.controller("PPMasterController", function($scope, $location, $http, $tim
 			else if($scope.editppmasterDTO.mastertype==="Cost Centre")
 			{
 				$scope.tempmastertype="Cost Centre";
+				
+				$scope.ppparentnames.push("Primary");
 			}
 			else if($scope.editppmasterDTO.mastertype==="Voucher Types")
 			{
 				$scope.tempmastertype="Voucher Types";
 			}
-
+			
 			$http({
 				method : "POST",
 				url : "ppmaster/getppmastersname",
-				data : {"mastertype":$scope.tempmastertype, "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername},
+				data : {"mastertype":$scope.tempmastertype, "category":$scope.editppmasterDTO.category, "cmpid":$localStorage.cmpid, "ppmastername":$scope.editppmasterDTO.ppmastername, "child":childdata},
 				headers : {
 					'Content-Type' : 'application/json'
 				}

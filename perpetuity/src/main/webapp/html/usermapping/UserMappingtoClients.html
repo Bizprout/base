@@ -40,7 +40,7 @@
 						<span>Select User:</span><br>
 						<div
 							custom-select="usr.userid as usr.username for usr in usernames | filter: $searchTerm track by $index"
-							custom-select-options="usernameselectOptions" ng-value="usr"
+							custom-select-options="usernameselectOptions" ng-value="usr" ng-change="onuserchanged()"
 							ng-model="UserMappingDTO.userid" autofocus></div>
 						<br> <br>
 					</div>

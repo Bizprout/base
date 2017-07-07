@@ -9,7 +9,9 @@ public interface PpMasterService<T> {
 
 	public void CreatePpMaster(PpMasterDTO t);
 	
-	public List<String> getPpMastersName(String ppmasterlist, String category, int cmpid, String ppmastername);
+	public List<String> getPpMastersName(String ppmasterlist, String category, int cmpid, String ppmastername, List<String> child);
+	
+	public List<String> getPpMastersChild(String ppmasterlist, int cmpid, String ppmastername);
 
 	public List<String> getPpMastersNameall(String ppmasterlist, String category, int cmpid);
 	
