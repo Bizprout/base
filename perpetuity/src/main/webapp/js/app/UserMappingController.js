@@ -441,7 +441,7 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 
 			var usersdata=[];
 			$scope.usersdata = []; //declare an empty array			
-			
+						
 			if($scope.repoDTO.cmpId!=0 && $scope.repoDTO.userid!=0)
 			{
 				$scope.isLoading=true;
@@ -486,10 +486,10 @@ baseApp.controller("UserMappingController", function($scope, $location, $http, $
 					// or server returns response with an error status.
 				});
 			}
-			else if($scope.repoDTO.cmpId!=0 && $scope.repoDTO.userid===0 )
+			else if($scope.repoDTO.cmpId!=0 && $scope.repoDTO.userid==="")
 			{
 				$scope.isLoading=true;
-
+				
 				$http({
 					method : "POST",
 					url : "usermapping/getScreensMappedByCmpid",
