@@ -41,11 +41,11 @@ public class QuartzScheduler implements ServletContextListener {
 		JobDetail job = newJob(CronEmailJob.class).withIdentity(
 				"CronQuartzJob", "Group").build();
 
-		// Create a Trigger that fires every 5 minutes.
+		// Create a Trigger
 		Trigger trigger = newTrigger()
 				.withIdentity("TriggerName", "Group")
 				.withSchedule(
-						CronScheduleBuilder.cronSchedule("0 0 18 * * ?"))
+						CronScheduleBuilder.cronSchedule("0 * * ? * *"))
 				.build();
 
 		// Setup the Job and Trigger with Scheduler & schedule jobs

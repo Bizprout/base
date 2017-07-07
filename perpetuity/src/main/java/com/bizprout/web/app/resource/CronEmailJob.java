@@ -1,7 +1,6 @@
 package com.bizprout.web.app.resource;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
@@ -29,14 +28,16 @@ public class CronEmailJob implements Job {
 	@Override
 	public void execute(JobExecutionContext jobContext) throws JobExecutionException {
 		
+		String resourceName = "Postgeturls.properties"; 
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		
 		try {
 		Properties prop = new Properties();
-		InputStream inprop = null;
 		
-		inprop = new FileInputStream("Postgeturls.properties");
+		InputStream resourceStream = loader.getResourceAsStream(resourceName);
 
 		// load a properties file
-		prop.load(inprop);
+		prop.load(resourceStream);
 		
 		String baseserveraddress=prop.getProperty("baseserveraddress");
 		String compurl=prop.getProperty("Cronemailjobgetallactivecompanies");

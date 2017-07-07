@@ -1,6 +1,5 @@
 package com.bizprout.web.app.resource;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -20,18 +19,20 @@ import org.slf4j.LoggerFactory;
 public class Email {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	String resourceName = "Emailconfig.properties"; 
+	ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
 	public void sendEmail(String toaddress, String user, String password){
 
 		try {
 
 			Properties prop = new Properties();
-			InputStream inprop = null;
 
-			inprop = new FileInputStream("Emailconfig.properties");
+			InputStream resourceStream = loader.getResourceAsStream(resourceName);
 
 			// load a properties file
-			prop.load(inprop);
+			prop.load(resourceStream);
 
 			// Sender's email ID needs to be mentioned	
 			String from =prop.getProperty("fromemailid");
@@ -103,12 +104,11 @@ public class Email {
 
 		try {	
 			Properties prop = new Properties();
-			InputStream inprop = null;
-
-			inprop = new FileInputStream("Emailconfig.properties");
+			
+			InputStream resourceStream = loader.getResourceAsStream(resourceName);
 
 			// load a properties file
-			prop.load(inprop);
+			prop.load(resourceStream);
 
 			// Sender's email ID needs to be mentioned	
 			String from =prop.getProperty("fromemailid");
@@ -180,12 +180,11 @@ public class Email {
 
 		try {	
 			Properties prop = new Properties();
-			InputStream inprop = null;
-
-			inprop = new FileInputStream("Emailconfig.properties");
+			
+			InputStream resourceStream = loader.getResourceAsStream(resourceName);
 
 			// load a properties file
-			prop.load(inprop);
+			prop.load(resourceStream);
 
 			// Sender's email ID needs to be mentioned	
 			String from =prop.getProperty("fromemailid");
@@ -257,12 +256,11 @@ public class Email {
 
 		try {
 			Properties prop = new Properties();
-			InputStream inprop = null;
-
-			inprop = new FileInputStream("Emailconfig.properties");
+			
+			InputStream resourceStream = loader.getResourceAsStream(resourceName);
 
 			// load a properties file
-			prop.load(inprop);
+			prop.load(resourceStream);
 
 			// Sender's email ID needs to be mentioned	
 			String from =prop.getProperty("fromemailid");
