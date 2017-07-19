@@ -70,13 +70,17 @@
 						<li class=""><a ng-href="" ng-click="logoutsess(e)">Logout</a></li> -->
 						<button type="button" class="btn btn-default"
 							ng-click="mainmenu()"
-							style="margin-top: 7px; width: 120px; margin-right: 20px;border-color: white;">
+							style="margin-top: 7px; width: 120px; margin-right: 5px;border-color: white;">
 							<span class="glyphicon glyphicon-home"></span> Main Menu
 						</button>
 						<button type="button" class="btn btn-default" ng-click="changpass()"
-							style="margin-top: 7px; width: 165px; margin-right: 20px;border-color: white;">
+							style="margin-top: 7px; width: 165px; margin-right: 5px;border-color: white;">
 							<span class="glyphicon glyphicon-lock"></span> Change Password
 						</button>
+						<button type="button" class="btn btn-default" ng-click="logrepo()"
+							style="margin-top: 7px; width: 120px; margin-right: 5px;border-color: white;">
+							<span class="glyphicon glyphicon-list-alt"></span> Log Report
+						</button>						
 						<button type="button" class="btn btn-default" ng-click="logoutsess()"
 							style="margin-top: 7px;border-color: white;">
 							<span class="glyphicon glyphicon-off"></span> Logout
@@ -129,6 +133,7 @@
 		src="js/app/PPMasterController.js"></script>
 	<script type="application/javascript"
 		src="js/app/CompanyMasterController.js"></script>
+	<script type="application/javascript" src="js/app/LogReportController.js"></script>	
 	<script type="application/javascript" src="js/bootstrap/bsDropdown.js"></script>
 	<script src="js/jquery/chosen.jquery.js" type="text/javascript"></script>
 	<script src="docsupport/prism.js" type="text/javascript"

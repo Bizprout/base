@@ -76,4 +76,25 @@ public class SyncSuccessLogRepositoryImpl extends AbstractBaseRepository<SyncSuc
 		}
 		return user;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SyncSuccessLogDTO> getAllSyncData(int cmpid)
+	{
+		List<SyncSuccessLogDTO> user=null;
+		Query qry=null;
+		try {
+			logger.info("Inside getAllSyncData method......."+this.getClass());
+
+			Session session = getSession();
+
+			qry=session.createQuery("from SyncSuccessLogDTO where cmpid=:cmp ORDER BY successdate DESC");
+			qry.setParameter("cmp", cmpid);
+			
+			user=qry.list();
+
+		} catch (HibernateException e) {
+			logger.error(e.getMessage()+"...."+this.getClass());
+		}
+		return user;
+	}
 }

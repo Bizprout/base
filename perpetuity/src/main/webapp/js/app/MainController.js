@@ -5,7 +5,7 @@ baseApp.controller("MainController", function($scope, $location, $http, $rootSco
 	} else {
 		$("#menu").show();
 	}
-	
+		
 	$scope.mainmenu=function(){
 		$location.path("/home");
 	};
@@ -13,6 +13,10 @@ baseApp.controller("MainController", function($scope, $location, $http, $rootSco
 	$scope.changpass=function(){
 		$location.path("/changepassword");
 	};
+	
+	$scope.logrepo=function(){
+		$location.path("/logreport");
+	}
 	
 	$scope.logoutsess=function(){
 		

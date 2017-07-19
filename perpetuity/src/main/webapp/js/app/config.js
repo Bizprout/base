@@ -57,6 +57,12 @@ baseApp
 							{
 								templateUrl : "html/changepassword/ChangePassword.html",
 								controller : "ChangePasswordController"
+							})
+					.when(
+							"/logreport",
+							{
+								templateUrl : "html/reports/LogReport.html",
+								controller : "LogReportController"
 							});
 			$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 		});

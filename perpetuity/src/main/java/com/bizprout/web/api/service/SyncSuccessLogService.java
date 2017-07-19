@@ -9,5 +9,7 @@ public interface SyncSuccessLogService<T> {
 	public List<SyncSuccessLogDTO> getMastertypeData(int cmpid);
 	
 	public List<SyncSuccessLogDTO> getVouchertypeData(int cmpid);
+	
+	public List<SyncSuccessLogDTO> getAllSyncData(int cmpid);
 
 }

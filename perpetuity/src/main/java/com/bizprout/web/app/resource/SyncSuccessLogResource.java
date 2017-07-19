@@ -51,5 +51,20 @@ public class SyncSuccessLogResource {
 		}
 		return syncsuccessdto;
 	}
+	
+	@PostMapping(value="/getalldatabycmpid")
+	public List<SyncSuccessLogDTO> getAllSyncData(@RequestBody SyncSuccessLogDTO syncDTO)
+	{
+		List<SyncSuccessLogDTO> syncsuccessdto = null;
+		try {
+			logger.debug("Request......getAllSyncData......"+this.getClass());
+			
+			syncsuccessdto=syncservice.getAllSyncData(syncDTO.getCmpid());
+		} catch (Exception e) {
+			
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}
+		return syncsuccessdto;
+	}
 
 }

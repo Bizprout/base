@@ -43,4 +43,16 @@ public class SyncSuccessLogServiceImpl implements SyncSuccessLogService<SyncSucc
 		return res;
 	}
 
+	@Override
+	public List<SyncSuccessLogDTO> getAllSyncData(int cmpid) {
+		List<SyncSuccessLogDTO> res = null;
+		try {
+			logger.info("inside getAllSyncData ", this.getClass());
+			res = synclogrepo.getAllSyncData(cmpid);
+		} catch (Exception e) {
+			logger.error(e.getMessage()+"..."+this.getClass());
+		}		
+		return res;
+	}
+
 }

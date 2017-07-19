@@ -30,6 +30,9 @@ public class SyncSuccessLogDTO {
 	
 	@Column(name="sync_type")
 	private String synctype;
+	
+	@Column(name="description")
+	private String descript;
 
 	public int getSyncid() {
 		return syncid;
@@ -73,6 +76,14 @@ public class SyncSuccessLogDTO {
 
 	public void setCompdto(CompanyDTO compdto) {
 		this.compdto = compdto;
+	}
+
+	public String getDescript() {
+		return descript;
+	}
+
+	public void setDescript(String descript) {
+		this.descript = descript;
 	}
 
 }
