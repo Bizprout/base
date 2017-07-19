@@ -867,7 +867,7 @@ button.md-button::-moz-focus-inner {
 .md-button.md-icon-button {
     margin: 0 0px;
     height: 40px;
-    min-width: 0;
+    min-width: 30px;
     line-height: 24px;
     padding: 8px;
     width: 40px;
